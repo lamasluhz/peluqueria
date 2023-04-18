@@ -1,0 +1,15 @@
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\bin\Debug\net7.0\BackendPeluqueria.exe
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\bin\Debug\net7.0\BackendPeluqueria.deps.json
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\bin\Debug\net7.0\BackendPeluqueria.runtimeconfig.json
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\bin\Debug\net7.0\BackendPeluqueria.dll
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\bin\Debug\net7.0\BackendPeluqueria.pdb
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\BackendPeluqueria.csproj.AssemblyReference.cache
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\BackendPeluqueria.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\BackendPeluqueria.AssemblyInfoInputs.cache
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\BackendPeluqueria.AssemblyInfo.cs
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\BackendPeluqueria.csproj.CoreCompileInputs.cache
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\BackendPeluqueria.dll
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\refint\BackendPeluqueria.dll
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\BackendPeluqueria.pdb
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\BackendPeluqueria.genruntimeconfig.cache
+C:\Users\jorge\OneDrive\Escritorio\BackendPeluqueria\obj\Debug\net7.0\ref\BackendPeluqueria.dll
