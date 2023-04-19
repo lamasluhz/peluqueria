@@ -13,22 +13,25 @@ namespace PeluqueriaWebApi.Controllers
     [Route("api/[controller]")]
     public class PersonaController : ControllerBase
     {
-        private PeluqueriaContext DbPeluqueria;
-        public PersonaController(PeluqueriaContext context)
+        private readonly ILogger<PersonaController> _logger;
+        //private static List<Persona> personas = new List<Persona>();
+        private PeluqueriaContext _context;
+        public PersonaController(ILogger<PersonaController> logger, PeluqueriaContext context)
         {
-            DbPeluqueria = context;
+            _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
         public async Task<ActionResult> Get(){
-            var Result = await DbPeluqueria.Personas.ToListAsync();
+            var Result = await _context.Personas.ToListAsync();
             return Ok(Result); 
         }
 
         [HttpPost]
         public IActionResult PostPersona(Persona persona){
             if(ModelState.IsValid){
-                DbPeluqueria.Add(persona);
+                _context.Add(persona);
                 return CreatedAtAction("Get",routeValues:new{persona.Id},value:persona);
 
             }
@@ -37,14 +40,13 @@ namespace PeluqueriaWebApi.Controllers
         
         [HttpGet("{id}")]
         [Route("GetPersona")]
-        public IActionResult GetPersona(Guid id){
-            var item = DbPeluqueria.FirstOrDefault(x => x.Id == id);
+        public async Task<ActionResult> GetPersona(int id){
+            var item = await _context.Personas.FirstOrDefaultAsync(x=> x.Id == id);
 
             if(item == null){
-                return NotFound();
-
-             return Ok(item);   
+                return NotFound();  
             }
+            return Ok(item); 
         }
     }
 }
