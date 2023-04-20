@@ -38,15 +38,46 @@ namespace PeluqueriaWebApi.Controllers
             return new JsonResult("Ha ocurrido un error") {StatusCode = 500};
         }
         
-        [HttpGet("{id}")]
-        [Route("GetPersona")]
-        public async Task<ActionResult> GetPersona(int id){
-            var item = await _context.Personas.FirstOrDefaultAsync(x=> x.Id == id);
+        [HttpGet]
+        [Route("{id}")]
+        public IActionResult GetPersona(int id){
+            var item = _context.Personas.FirstOrDefaultAsync(x=> x.Id == id);
 
             if(item == null){
                 return NotFound();  
             }
             return Ok(item); 
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdatePersona(int id, Persona persona){
+            if (id == persona.Id) return BadRequest();
+
+            var existingPersona = _context.Personas.FirstOrDefault(x => x.Id == persona.Id);
+        
+            if (existingPersona == null)
+                return NotFound();
+
+            existingPersona.Nombres = persona.Nombres;
+            existingPersona.Apellidos = persona.Apellidos;
+            existingPersona.Cedula = persona.Cedula;
+            existingPersona.Correo = persona.Correo;
+            existingPersona.Direccion = persona.Direccion;
+            existingPersona.Telefono = persona.Telefono;
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletePersona(int id){
+            var existingPersona = _context.Personas.FirstOrDefault(x=> x.Id == id);
+
+            if(existingPersona == null)
+                return NotFound();
+
+            existingPersona.Eliminado = true;
+
+            return NoContent();   
         }
     }
 }
