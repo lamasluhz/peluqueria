@@ -67,16 +67,17 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeletePersona(int id)
+        public async Task<ActionResult<Persona>> DeletePersona(int id)
         {
-            var existingPersona = _context.Personas.FirstOrDefault(x => x.Id == id);
+            var persona = _context.Personas.FirstOrDefault(x => x.Id == id);
 
-            if (existingPersona == null)
+            if (persona == null)
                 return NotFound();
 
-            existingPersona.Eliminado = true;
+            persona.Eliminado = true;
+            await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(persona);
         }
     }
 }
