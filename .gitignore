@@ -1,0 +1,5 @@
+bin/
+bin/Debug/
+bin/Debug/net6.0
+obj/
+obj/staticwebassets.pack.sentinel
