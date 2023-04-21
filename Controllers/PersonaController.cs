@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using PeluqueriaWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using PeluqueriaWebApi.Controllers;
+using SampleMapper.Models.DTOs.Incoming;
 
 namespace PeluqueriaWebApi.Controllers
 {
@@ -14,6 +15,7 @@ namespace PeluqueriaWebApi.Controllers
     public class PersonaController : ControllerBase
     {
         private readonly ILogger<PersonaController> _logger;
+        //private static List<Persona> personas = new List<Persona>();
         private PeluqueriaContext _context;
         public PersonaController(ILogger<PersonaController> logger, PeluqueriaContext context)
         {
@@ -29,13 +31,24 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Persona>> PostPersona(Persona persona)
+        public async Task<ActionResult<PersonaCreationDto>> PostPersona(PersonaCreationDto persona)
         {
-
-            _context.Personas.Add(persona);
+            ///persona
+            var _persona = new Persona()
+    {
+       // persona DTO
+        Nombres= persona.Nombres,
+        Apellidos=persona.Apellidos,
+        Correo=persona.Correo,
+        Telefono=persona.Telefono,
+        Direccion=persona.Direccion,
+        Cedula=persona.Cedula,
+        Eliminado= false
+    };
+            _context.Personas.Add(_persona);
             await _context.SaveChangesAsync();
 
-            return new CreatedAtRouteResult("GetPersona", new { id = persona.Id }, persona);
+            return new CreatedAtRouteResult("GetPersona", new { id = _persona.Id }, persona);
         }
 
         [HttpGet("{id}", Name = "GetPersona")]
