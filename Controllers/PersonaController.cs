@@ -23,61 +23,60 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get(){
+        public async Task<ActionResult> Get()
+        {
             var Result = await _context.Personas.ToListAsync();
-            return Ok(Result); 
+            return Ok(Result);
         }
 
         [HttpPost]
-        public IActionResult PostPersona(Persona persona){
-            if(ModelState.IsValid){
-                _context.Add(persona);
-                return CreatedAtAction("Get",routeValues:new{persona.Id},value:persona);
+        public IActionResult PostPersona(Persona persona)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Personas.Add(persona);
+                //await _context.SaveChangesAsync();
+                return CreatedAtAction("Get", routeValues: new { persona.Id }, value: persona);
+                //return new CreatedAtRouteResult("GetPersona", new {id =  persona.Id }, persona);
 
             }
-            return new JsonResult("Ha ocurrido un error") {StatusCode = 500};
+            return new JsonResult("Ha ocurrido un error") { StatusCode = 500 };
         }
-        
-        [HttpGet]
-        [Route("{id}")]
-        public IActionResult GetPersona(int id){
-            var item = _context.Personas.FirstOrDefaultAsync(x=> x.Id == id);
 
-            if(item == null){
-                return NotFound();  
+        [HttpGet("{id}", Name = "GetPersona")]
+        public async Task<ActionResult<Persona>> GetPersona(int id)
+        {
+            var persona = await _context.Personas.FindAsync(id);
+
+            if (persona == null)
+            {
+                return NotFound();
             }
-            return Ok(item); 
+            return persona;
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdatePersona(int id, Persona persona){
-            if (id == persona.Id) return BadRequest();
+        public async Task<ActionResult<Persona>> UpdatePersona(int id, Persona persona)
+        {
+            if (id != persona.Id) return BadRequest();
 
-            var existingPersona = _context.Personas.FirstOrDefault(x => x.Id == persona.Id);
-        
-            if (existingPersona == null)
-                return NotFound();
+            _context.Entry(persona).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            existingPersona.Nombres = persona.Nombres;
-            existingPersona.Apellidos = persona.Apellidos;
-            existingPersona.Cedula = persona.Cedula;
-            existingPersona.Correo = persona.Correo;
-            existingPersona.Direccion = persona.Direccion;
-            existingPersona.Telefono = persona.Telefono;
-
-            return NoContent();
+            return Ok(persona);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeletePersona(int id){
-            var existingPersona = _context.Personas.FirstOrDefault(x=> x.Id == id);
+        public IActionResult DeletePersona(int id)
+        {
+            var existingPersona = _context.Personas.FirstOrDefault(x => x.Id == id);
 
-            if(existingPersona == null)
+            if (existingPersona == null)
                 return NotFound();
 
             existingPersona.Eliminado = true;
 
-            return NoContent();   
+            return NoContent();
         }
     }
 }
