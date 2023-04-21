@@ -1,5 +1,5 @@
-./bin/
-./bin/Debug/
-./bin/Debug/net6.0
-./obj/
-obj/Debug/net6.0/
+bin/
+bin/Debug/
+bin/Debug/net6.0
+obj/
+obj
