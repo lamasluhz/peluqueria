@@ -30,17 +30,13 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostPersona(Persona persona)
+        public async Task<ActionResult<Persona>> PostPersona(Persona persona)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Personas.Add(persona);
-                //await _context.SaveChangesAsync();
-                return CreatedAtAction("Get", routeValues: new { persona.Id }, value: persona);
-                //return new CreatedAtRouteResult("GetPersona", new {id =  persona.Id }, persona);
 
-            }
-            return new JsonResult("Ha ocurrido un error") { StatusCode = 500 };
+            _context.Personas.Add(persona);
+            await _context.SaveChangesAsync();
+
+            return new CreatedAtRouteResult("GetPersona", new { id = persona.Id }, persona);
         }
 
         [HttpGet("{id}", Name = "GetPersona")]
