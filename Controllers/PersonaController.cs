@@ -15,7 +15,6 @@ namespace PeluqueriaWebApi.Controllers
     public class PersonaController : ControllerBase
     {
         private readonly ILogger<PersonaController> _logger;
-        //private static List<Persona> personas = new List<Persona>();
         private PeluqueriaContext _context;
         public PersonaController(ILogger<PersonaController> logger, PeluqueriaContext context)
         {

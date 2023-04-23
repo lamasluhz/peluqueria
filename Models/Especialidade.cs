@@ -3,20 +3,18 @@ using System.Collections.Generic;
 
 namespace PeluqueriaWebApi.Models
 {
-    public partial class Peluquero
+    public partial class Especialidade
     {
-        public Peluquero()
+        public Especialidade()
         {
             DetallesEspecialidades = new HashSet<DetallesEspecialidade>();
-            DetallesTurnos = new HashSet<DetallesTurno>();
         }
 
         public int Id { get; set; }
-        public int IdPersona { get; set; }
+        public string Especialidad { get; set; } = null!;
+        public string? Descripcion { get; set; }
         public bool? Eliminado { get; set; }
 
-        public virtual Persona IdPersonaNavigation { get; set; } = null!;
         public virtual ICollection<DetallesEspecialidade> DetallesEspecialidades { get; set; }
-        public virtual ICollection<DetallesTurno> DetallesTurnos { get; set; }
     }
 }
