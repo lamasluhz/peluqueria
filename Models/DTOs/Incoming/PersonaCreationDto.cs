@@ -9,4 +9,6 @@ public class PersonaCreationDto
         public string? Direccion { get; set; }
         public string Cedula { get; set; } = null!;
 
+        public bool? Eliminado { get; set; }
+
 }

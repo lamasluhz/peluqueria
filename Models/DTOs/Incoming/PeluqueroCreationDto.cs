@@ -8,7 +8,17 @@ namespace PeluqueriaWebApi.Models.DTOs.Incoming
     public class PeluqueroCreationDto
     {
         public int Id { get; set; }
-        public int IdPersona { get; set; }
+
+        //public int IdPersona { get; set; }
+        public string Nombres { get; set; }
+        public string Apellidos { get; set; }
+        public string Correo { get; set; }
+        public string Telefono { get; set; }
+        public string Direccion { get; set; }
+        public string Cedula { get; set; }
+        ///redireccionar a persona
+        public List<EspecialidadCreationDto>? ListEspecialidades {get;set;}
+        public bool? Eliminado { get; set; }
        
     }
 }
