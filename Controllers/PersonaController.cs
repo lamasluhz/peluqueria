@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using PeluqueriaWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using PeluqueriaWebApi.Controllers;
-using SampleMapper.Models.DTOs.Incoming;
+using PeluqueriaWebApi.Models.DTOs.Outgoing;
 
 namespace PeluqueriaWebApi.Controllers
 {
@@ -30,7 +30,7 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PersonaCreationDto>> PostPersona(PersonaCreationDto persona)
+        public async Task<ActionResult<PersonaDto>> PostPersona(PersonaDto persona)
         {
             ///persona
             var _persona = new Persona()

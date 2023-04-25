@@ -7,10 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PeluqueriaWebApi.Models;
 using Microsoft.EntityFrameworkCore;
-using SampleMapper.Models.DTOs.Incoming;
-using PeluqueriaWebApi.Models.DTOs.Incoming;
 using PeluqueriaWebApi.Models.DTOs.Outgoing;
-
 namespace PeluqueriaWebApi.Controllers
 {
     [ApiController]
@@ -28,10 +25,30 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Peluquero>>> Get()
+        public async Task<ActionResult<Peluquero>> Get()
         {
             var Result = await _context.Peluqueros.ToListAsync();
             return Ok(Result);
+        }
+
+        [HttpGet("getEspecialidadPorPeluquero/{id}")]
+        public async Task<ActionResult<List<EspecialidadDto>>> GetEspecialidades(int id)
+        {
+            var detallesEspecialidades = await _context.DetallesEspecialidades.ToListAsync();
+            var especilidades = await _context.Especialidades.ToListAsync();
+            var peluqueros = await _context.Peluqueros.FindAsync(id);// trae la lista de peluqeros sql 
+
+            if (peluqueros == null) return BadRequest("No se encontro al peluquero");
+
+            var result = from dtesp in detallesEspecialidades
+                         where peluqueros.Id == dtesp.IdPeluquero
+                         join esp in especilidades
+                         on dtesp.IdEspecialidad equals esp.Id
+                         select new EspecialidadPeluqueroDto()
+                         {
+                             Especialidad = esp.Especialidad
+                         };
+            return result != null ? Ok(result.ToList()) : BadRequest("Error");
         }
 
         [HttpGet("getPeluqueros/")]// traer peluqueros
@@ -48,19 +65,21 @@ namespace PeluqueriaWebApi.Controllers
                              on p.Id equals d.IdPeluquero
                              join per in personas
                              on p.IdPersona equals per.Id
-                             //where p.Eliminado != true  para traer peluquero no eliminados
+                             where p.Eliminado != true  //para traer peluquero no eliminados
+                             group new { p, d, per } by p.Id into g
                              select new PeluqueroDto()
                              {
-                                 Id = p.Id,
-                                 Nombres = per.Nombres,
-                                 Apellidos = per.Apellidos,
-                                 Correo = per.Correo,
-                                 Telefono = per.Telefono,
-                                 Direccion = per.Direccion,
-                                 Cedula = per.Cedula,
-                                 Eliminado = per.Eliminado,
+                                 Id = g.Key,
+                                 Nombres = g.First().per.Nombres,
+                                 Apellidos = g.First().per.Apellidos,
+                                 Correo = g.First().per.Correo,
+                                 Telefono = g.First().per.Telefono,
+                                 Direccion = g.First().per.Direccion,
+                                 Cedula = g.First().per.Cedula,
+                                 Eliminado = g.First().per.Eliminado,
                                  ListEspecialidades = (from esp in especilidades
-                                                       where esp.Id == d.IdEspecialidad
+                                                       join det in detallesEspecialidades on esp.Id equals det.IdEspecialidad
+                                                       where det.IdPeluquero == g.Key
                                                        select new EspecialidadDto()
                                                        {
                                                            Id = esp.Id,
@@ -70,6 +89,8 @@ namespace PeluqueriaWebApi.Controllers
                                                        }).ToList()
 
                              };
+   
+
 
                 return result != null ? Ok(result.ToList()) : BadRequest("Error");
             }
@@ -78,6 +99,7 @@ namespace PeluqueriaWebApi.Controllers
                 return BadRequest(e);
             }
         }
+
 
         private List<PeluqueroDto> convertDtoPeluquero(List<Peluquero> peluqueros)
         {
@@ -106,7 +128,7 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PeluqueroCreationDto>> Post(PeluqueroDto peluqueroDto)
+        public async Task<ActionResult<PeluqueroDto>> Post(PeluqueroDto peluqueroDto)
         {
             var _persona = new Persona()
             {
@@ -143,7 +165,8 @@ namespace PeluqueriaWebApi.Controllers
                 var _detallesEspecialidad = new DetallesEspecialidade()
                 {
                     IdPeluquero = _peluqueros.Id,
-                    IdEspecialidad = _especialidad.Id
+                    IdEspecialidad = _especialidad.Id,
+                    Eliminado = false
                 };
 
                 _context.DetallesEspecialidades.Add(_detallesEspecialidad);
@@ -167,7 +190,7 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Persona>> Update(int id, Peluquero peluquero)
+        public async Task<ActionResult<PeluqueroDto>> Put(int id, PeluqueroDto peluquero)
         {
             if (id != peluquero.Id) return BadRequest();
 
@@ -178,9 +201,9 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Persona>> Delete(int id)
+        public async Task<ActionResult<Peluquero>> Delete(int id)
         {
-            var peluquero = _context.Personas.FirstOrDefault(x => x.Id == id);
+            var peluquero = _context.Peluqueros.FirstOrDefault(x => x.Id == id);
 
             if (peluquero == null)
                 return NotFound();
