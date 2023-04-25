@@ -99,6 +99,53 @@ namespace PeluqueriaWebApi.Controllers
             return new CreatedAtRouteResult("GetCliente", new { id = _cliente.Id }, clienteDto);
         }
 
+    //por id 
+        [HttpGet("{id}", Name = "GetCliente")]
+        public async Task<ActionResult<Cliente>> GetById(int id)
+        {
+            var cliente = await _context.Clientes.FindAsync(id);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+            return cliente;
+        }
+
+        [HttpPut("{id}")]//editar 
+        public async Task<ActionResult<Cliente>> Update(int id, ClienteDto cliente)
+        {
+            if (id != cliente.Id) return BadRequest();
+
+            _context.Entry(cliente).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return Ok(cliente);
+        
+        
+        
+        }
+
+
+
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Cliente>> Delete(int id)
+        {
+            var cliente = _context.Clientes.FirstOrDefault(x => x.Id == id);
+
+            if (cliente == null)
+                return NotFound();
+
+            cliente.Eliminado = true;
+            await _context.SaveChangesAsync();
+
+            return Ok(cliente);
+        }
+
+    
+
        
 
      
