@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PeluqueriaWebApi.Models;
 using Microsoft.EntityFrameworkCore;
-using SampleMapper.Models.DTOs.Incoming;
 using PeluqueriaWebApi.Models.DTOs.Incoming;
 using PeluqueriaWebApi.Models.DTOs.Outgoing;
 
