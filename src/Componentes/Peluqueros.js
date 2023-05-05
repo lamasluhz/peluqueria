@@ -19,7 +19,7 @@ const Peluquero = () => {
     return (
         <div>
             <div>
-                <h2 style="padding-left: 20px; margin-top: 15px; margin-bottom:-15px;">Peluqueros</h2>
+                <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Peluqueros</h2>
             </div>
 
             <div class="container">
@@ -27,8 +27,8 @@ const Peluquero = () => {
                 <br />
 
 
-                <div style="background-color: #f8e1e1; padding-top: 1%; padding-left: 1%;" ><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Buscar..." title="Type in a name" /> <button class="button"></button></div>
-                <table class="table table-striped table-hover border-black " style="border: 1px solid black;" id="myTable">
+                <div style={{ backgroundColor: '#f8e1e1', paddingTop: '1%', paddingLeft: '1%' }} ><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Buscar..." title="Type in a name" /> <button class="button"></button></div>
+                <table class="table table-striped table-hover border-black " style={{ border: '1px solid black' }} id="myTable">
                     <thead>
                         <tr>
                             <th scope="col">Nombre</th>
@@ -42,7 +42,7 @@ const Peluquero = () => {
                     <tbody>
                         {peluquero.map((peluquero, i) => {
                             return (
-                                <tr id={i}>
+                                <tr id={peluquero.id}>
                                     <td> {peluquero.nombres}</td>
                                     <td> {peluquero.cedula}</td>
                                     <td> {peluquero.correo}</td>
