@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 
 const url = 'https://localhost:7137/api/Peluquero/getPeluqueros'
@@ -8,14 +8,13 @@ const url = 'https://localhost:7137/api/Peluquero/getPeluqueros'
 const Peluquero = () => {
     const [peluquero, setPeluquero] = useState([]);
 
-    const obtenerPeluquero = () => {
-        axios.get(url).then(response => {
+    useEffect(() => {
+        const obtenerPeluquero = async () => {
+            const response = await axios.get(url);
             setPeluquero(response.data);
-
-        });
-
-    }
-    obtenerPeluquero()
+        }
+        obtenerPeluquero();
+    }, []);
     return (
         <div>
             <div>

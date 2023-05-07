@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 
 const url = 'https://localhost:7137/api/Cliente/getCliente'
@@ -11,11 +11,13 @@ const Clientes = () => {
   const obtenerClientes = () => {
     axios.get(url).then(response => {
       setClientes(response.data);
-
     });
-
   }
-  obtenerClientes()
+
+  useEffect(() => {
+    obtenerClientes();
+  }, []);
+  
   return (
     <div>
       <div>
