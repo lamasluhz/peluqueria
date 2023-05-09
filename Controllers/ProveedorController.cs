@@ -76,6 +76,47 @@ namespace PeluqueriaWebApi.Controllers
             }
         }
 
+
+        [HttpGet("GetProductosProveedor/{id}")]
+        public async Task<ActionResult<List<ProveedorDto>>> GetProductosProveedor(int id)
+        {
+
+            var stockProductos = await _context.StockProductos.ToListAsync();
+            var tiposProductos = await _context.TiposProductos.ToListAsync();
+            var productos = await _context.Productos.ToListAsync();
+            var depositos = await _context.Depositos.ToListAsync();
+            var proveedores = await _context.Proveedores.ToListAsync();
+
+            try
+            {
+                var result = from stock in stockProductos
+                             join prod in productos
+                             on stock.IdProducto equals prod.Id
+                             join pvdr in proveedores
+                             on stock.IdProveedor equals pvdr.Id
+                             join dep in depositos
+                             on stock.IdDeposito equals dep.Id
+                             join tipoPrd in tiposProductos
+                             on prod.IdTipoProducto equals tipoPrd.Id
+                             where pvdr.Id == id
+                             select new ProductoDto
+                             {   
+                                 Id = prod.Id, 
+                                 Nombre = prod.Nombre,
+                                 DescripcionTipoProducto = tipoPrd.Descripcion,
+                                 PrecioUnitario = prod.PrecioUnitario,
+                                 NotasAdicionales = prod.NotasAdicionales,
+                                 Eliminado = prod.Eliminado
+                             };
+
+                return result != null ? Ok(result.ToList()) : BadRequest("Error");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<ProveedorDto>> PostProveedor(ProveedorCreationDto proveedorDto)
         {

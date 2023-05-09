@@ -8,7 +8,6 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
     public class ProductoDto
     {
         public int Id { get; set; }
-        //public int IdTipoProducto { get; set; }
         public string DescripcionTipoProducto { get; set; }
         public string Nombre { get; set; } = null!;
         public decimal PrecioUnitario { get; set; }
