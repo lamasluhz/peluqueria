@@ -22,33 +22,37 @@ namespace PeluqueriaWebApi.Controllers
             _context = context;
         }
 
-        /*[HttpGet("getStockProductos/")]
+        [HttpGet("GetStockProductos/")]
         public async Task<ActionResult<List<StockProductoDto>>> GetStockProductos()
         {
             var stockProductos = await _context.StockProductos.ToListAsync();
             var tiposProductos = await _context.TiposProductos.ToListAsync();
             var productos = await _context.Productos.ToListAsync();
             var depositos = await _context.Depositos.ToListAsync();
+            var proveedores = await _context.Proveedores.ToListAsync();
 
             try
             {
-                var result = from stock in stockProductos
+                 var result = from stock in stockProductos
                              join prod in productos
                              on stock.IdProducto equals prod.Id
+                             join pvdr in proveedores
+                             on stock.IdProveedor equals pvdr.Id
                              join dep in depositos
                              on stock.IdDeposito equals dep.Id
                              join tipoPrd in tiposProductos
                              on prod.IdTipoProducto equals tipoPrd.Id
+
                              select new StockProductoDto()
                              {
                                  
                                  Nombre = prod.Nombre,
+                                 Proveedor = pvdr.NombreEmpresa,
                                  PrecioUnitario = prod.PrecioUnitario,
                                  Cantidad = stock.Cantidad,
                                  DescripcionTipoProducto = tipoPrd.Descripcion,
                                  SectorDeposito = dep.Sector,
-                                 DescripcionDeposito = dep.Descripcion,
-                                 Eliminado = false
+                                 Eliminado = stock.Eliminado
                              };
 
                 return result != null ? Ok(result.ToList()) : BadRequest("Error");
@@ -57,20 +61,7 @@ namespace PeluqueriaWebApi.Controllers
             {
                 return BadRequest(e);
             }
-        }*/
-
-        /*[HttpGet("getStockProductos/")]
-        public async Task<ActionResult<List<StockProductoDto>>> GetStockProductos()
-        {
-            var compras = await _context.Compras.ToListAsync();
-            var detallesCompras = await _context.DetallesCompras.ToListAsync();
-            var depositos = await _context.Depositos.ToListAsync();
-
-            var result = from stock in StockProducto
-                         join 
-         return null;
-        }*/
-
+        }
 
         [HttpGet]
         public async Task<ActionResult<StockProducto>> Get()
@@ -82,7 +73,6 @@ namespace PeluqueriaWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<StockProducto>> PostStock(StockCreationDto stockDto)
         {
-            Console.WriteLine("ESTOY AQUI x2");
             var stock = new StockProducto()
             {
                IdProveedor = stockDto.IdProveedor,

@@ -45,7 +45,7 @@ namespace PeluqueriaWebApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<CompraDto>> PostCompra(CompraDto compraDto)
+        public async Task<ActionResult<CompraDto>> PostCompra([FromBody] CompraDto compraDto)
         {
             var nuevaCompra = new Compra()
             {
