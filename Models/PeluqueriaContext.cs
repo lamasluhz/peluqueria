@@ -313,6 +313,10 @@ namespace PeluqueriaWebApi.Models
 
                 entity.Property(e => e.IdTipoProducto).HasColumnName("idTipoProducto");
 
+                entity.Property(e => e.Iva)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("iva");
+
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(30)
                     .IsUnicode(false)

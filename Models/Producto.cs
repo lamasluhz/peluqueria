@@ -17,6 +17,7 @@ namespace PeluqueriaWebApi.Models
         public decimal PrecioUnitario { get; set; }
         public string? NotasAdicionales { get; set; }
         public bool? Eliminado { get; set; }
+        public decimal? Iva { get; set; }
 
         public virtual TiposProducto IdTipoProductoNavigation { get; set; } = null!;
         public virtual ICollection<DetallesCompra> DetallesCompras { get; set; }

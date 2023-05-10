@@ -11,6 +11,7 @@ namespace PeluqueriaWebApi.Models.DTOs.Incoming
         public string Nombre { get; set; } = null!;
         public decimal PrecioUnitario { get; set; }
         public string? NotasAdicionales { get; set; }
+        public decimal? Iva { get; set; }
         
     }
 }

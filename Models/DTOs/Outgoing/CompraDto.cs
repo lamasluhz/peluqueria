@@ -12,7 +12,7 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
         //public DateTime Fecha { get; set; }
         //public decimal Total { get; set; }
         public string? NotasAdicionales { get; set; }
-        public decimal Iva { get; set; }
+        //public decimal Iva { get; set; }
         public List<DetalleCompraDto> DetalleCompraDtos { get; set; }
         //public bool? Eliminado { get; set; }
     }

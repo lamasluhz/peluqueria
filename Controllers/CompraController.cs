@@ -53,7 +53,7 @@ namespace PeluqueriaWebApi.Controllers
                 IdDeposito = compraDto.IdDeposito,
                 Fecha = DateTime.Now,
                 NotasAdicionales = compraDto.NotasAdicionales,
-                Iva = compraDto.Iva,
+                Iva = 0,
                 Total = 0,
                 Eliminado = false
             };
@@ -62,10 +62,9 @@ namespace PeluqueriaWebApi.Controllers
             _context.SaveChanges();
 
             var totalVenta = 0M;
-            
+            var totalIva = 0M;
             //Detalles de la compra
             List<DetalleCompraDto>? listDetalles = compraDto.DetalleCompraDtos;
-            Console.WriteLine(listDetalles.Count());
             foreach (var detalles in listDetalles)
             {
                 var subTotal = detalles.Cantidad * detalles.PrecioUnitario;
@@ -76,7 +75,7 @@ namespace PeluqueriaWebApi.Controllers
                     IdCompra = nuevaCompra.Id,
                     IdProducto = detalles.IdProducto,
                     Cantidad = detalles.Cantidad,
-                    PrecioUnitario = detalles.PrecioUnitario,//REVER :s
+                    PrecioUnitario = detalles.PrecioUnitario,
                     SubTotal = subTotal,
                     Iva = iva,
                     Eliminado = false
@@ -107,11 +106,14 @@ namespace PeluqueriaWebApi.Controllers
                     await stockController.PostStock(stockDto);
                 }
 
-            totalVenta += subTotal; //Total de la venta
-            }
-            var totalVentaIva = totalVenta * nuevaCompra.Iva;
+                totalVenta += subTotal; //Total de la venta
 
-            nuevaCompra.Total = totalVentaIva;
+                if (iva != 0)  totalIva += subTotal * iva;
+                
+            }
+
+            nuevaCompra.Total = totalVenta;
+            nuevaCompra.Iva = totalIva;
             await _context.SaveChangesAsync();
             return new CreatedAtRouteResult("GetCompra", new { id = nuevaCompra.Id }, compraDto);
         }

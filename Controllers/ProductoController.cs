@@ -40,6 +40,7 @@ namespace PeluqueriaWebApi.Controllers
                               Nombre = pdto.Nombre,
                               PrecioUnitario = pdto.PrecioUnitario,
                               NotasAdicionales = pdto.NotasAdicionales,
+                              Iva = pdto.Iva,
                               Eliminado = pdto.Eliminado
                           }).ToList();
             return result != null ? Ok(result) : BadRequest("Error");
@@ -55,6 +56,7 @@ namespace PeluqueriaWebApi.Controllers
                 IdTipoProducto = productoDto.IdTipoProducto,
                 PrecioUnitario = productoDto.PrecioUnitario,
                 NotasAdicionales = productoDto.NotasAdicionales,
+                Iva = productoDto.Iva,
                 Eliminado = false
             };
             _context.Productos.Add(_producto);
@@ -78,6 +80,7 @@ namespace PeluqueriaWebApi.Controllers
                 Nombre = producto.Nombre,
                 PrecioUnitario = producto.PrecioUnitario,
                 NotasAdicionales = producto.NotasAdicionales,
+                Iva = producto.Iva,
                 Eliminado = producto.Eliminado
             };
 
@@ -95,6 +98,7 @@ namespace PeluqueriaWebApi.Controllers
             producto.Nombre = productoDto.Nombre;
             producto.PrecioUnitario = productoDto.PrecioUnitario;
             producto.NotasAdicionales = productoDto.NotasAdicionales;
+            producto.Iva = productoDto.Iva;
 
             await _context.SaveChangesAsync();
 

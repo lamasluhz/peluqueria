@@ -106,6 +106,7 @@ namespace PeluqueriaWebApi.Controllers
                                  DescripcionTipoProducto = tipoPrd.Descripcion,
                                  PrecioUnitario = prod.PrecioUnitario,
                                  NotasAdicionales = prod.NotasAdicionales,
+                                 Iva = prod.Iva,
                                  Eliminado = prod.Eliminado
                              };
 
