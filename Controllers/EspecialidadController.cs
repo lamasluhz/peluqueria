@@ -9,6 +9,7 @@ using PeluqueriaWebApi.Models;
 using PeluqueriaWebApi.Models.DTOs.Outgoing;
 using Microsoft.EntityFrameworkCore;
 using PeluqueriaWebApi.Models.DTOs.Outgoing;
+using PeluqueriaWebApi.Models.DTOs.Incoming;
 
 namespace PeluqueriaWebApi.Controllers
 {
@@ -26,41 +27,54 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Especialidade>> Get(){
-            var especialidades = await _context.Especialidades.ToListAsync();
-
-            
-            return especialidades != null ? Ok(especialidades) : BadRequest("Error");
-        }
-
-        [HttpGet ("getEspecialidades/")]
-        public async Task<ActionResult<List<EspecialidadDto>>> GetEspecialidades()
+        public async Task<ActionResult<EspecialidadDto>> GetEspecialidades()
         {
             var especialidades = await _context.Especialidades.ToListAsync();
 
             var result = (from esp in especialidades
-                         select new EspecialidadDto(){
-                            Id = esp.Id,
-                            Especialidad = esp.Descripcion,
-                            Descripcion = esp.Descripcion,
-                            Eliminado = esp.Eliminado
-                         }).ToList();
+                          select new EspecialidadDto()
+                          {
+                              Id = esp.Id,
+                              Especialidad = esp.Descripcion,
+                              Descripcion = esp.Descripcion,
+                              Eliminado = esp.Eliminado
+                          }).ToList();
 
-            return result != null ? Ok(result.ToList()) : BadRequest("Error");
+            return result != null ? Ok(result) : BadRequest("Error");
         }
 
         [HttpPost]
-        public async Task<ActionResult<Especialidade>> Post(EspecialidadDto especialidadDto){
-            var _especialidad = new Especialidade(){
-                Id = especialidadDto.Id,
+        public async Task<ActionResult<EspecialidadDto>> PostEspecialidad(EspecialidadCreationDto especialidadDto)
+        {
+            var _especialidad = new Especialidade()
+            {
                 Especialidad = especialidadDto.Especialidad,
                 Descripcion = especialidadDto.Descripcion,
                 Eliminado = false
             };
-                _context.Especialidades.Add(_especialidad);
-                await _context.SaveChangesAsync();
+            _context.Especialidades.Add(_especialidad);
+            await _context.SaveChangesAsync();
 
-                return new CreatedAtRouteResult("GetEspecialidad", new {id = _especialidad.Id}, especialidadDto);
+            return new CreatedAtRouteResult("GetEspecialidad", new { id = _especialidad.Id }, especialidadDto);
         }
-    } 
+
+        [HttpGet("{id}", Name = "GetEspecialidad")]
+        public async Task<ActionResult<EspecialidadDto>> GetById(int id)
+        {
+            var especialidad = await _context.Especialidades.FindAsync(id);
+
+            if (especialidad == null) return NotFound();
+
+
+            var result = new EspecialidadDto()
+            {
+                Id = especialidad.Id,
+                Especialidad = especialidad.Descripcion,
+                Descripcion = especialidad.Descripcion,
+                Eliminado = especialidad.Eliminado
+            };
+
+            return result != null ? Ok(result) : BadRequest("Error");
+        }
+    }
 }

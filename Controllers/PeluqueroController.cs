@@ -25,20 +25,20 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Peluquero>> Get()
+        public async Task<ActionResult<List<Peluquero>>> Get()
         {
             var Result = await _context.Peluqueros.ToListAsync();
             return Ok(Result);
         }
 
-        [HttpGet("getEspecialidadPorPeluquero/{id}")]
+        [HttpGet("GetEspecialidadPorPeluquero/{id}")]
         public async Task<ActionResult<List<EspecialidadDto>>> GetEspecialidades(int id)
         {
             var detallesEspecialidades = await _context.DetallesEspecialidades.ToListAsync();
             var especilidades = await _context.Especialidades.ToListAsync();
             var peluqueros = await _context.Peluqueros.FindAsync(id);// trae la lista de peluqeros sql 
 
-            if (peluqueros == null) return BadRequest("No se encontro al peluquero");
+            if (peluqueros == null) return NotFound();
 
             var result = from dtesp in detallesEspecialidades
                          where peluqueros.Id == dtesp.IdPeluquero
@@ -51,8 +51,8 @@ namespace PeluqueriaWebApi.Controllers
             return result != null ? Ok(result.ToList()) : BadRequest("Error");
         }
 
-        [HttpGet("getPeluqueros/")]// traer peluqueros
-        public async Task<ActionResult<List<PeluqueroDto>>> GetAlter()
+        [HttpGet("GetPeluqueros/")]// traer peluqueros
+        public async Task<ActionResult<PeluqueroDto>> GetAlter()
         {
             var peluqueros = await _context.Peluqueros.ToListAsync();// trae la lista de peluqeros sql 
             var detallesEspecialidades = await _context.DetallesEspecialidades.ToListAsync();
@@ -89,42 +89,12 @@ namespace PeluqueriaWebApi.Controllers
                                                        }).ToList()
 
                              };
-   
-
-
-                return result != null ? Ok(result.ToList()) : BadRequest("Error");
+                return result != null ? Ok(result) : BadRequest("Error");
             }
             catch (Exception e)
             {
                 return BadRequest(e);
             }
-        }
-
-
-        private List<PeluqueroDto> convertDtoPeluquero(List<Peluquero> peluqueros)
-        {
-            if (peluqueros != null)
-            {
-                return peluqueros.Select(a => new PeluqueroDto()
-                {
-                    Id = a.Id,
-                    Nombres = a.IdPersonaNavigation.Nombres,
-                    Apellidos = a.IdPersonaNavigation.Apellidos,
-                    Direccion = a.IdPersonaNavigation.Direccion,
-                    Telefono = a.IdPersonaNavigation.Telefono,
-                    Correo = a.IdPersonaNavigation.Correo,
-                    Eliminado = a.Eliminado,
-                    ListEspecialidades = a.DetallesEspecialidades.Select(b => new EspecialidadDto()
-                    {
-                        Id = b.Id,
-                        Especialidad = b.IdEspecialidadNavigation.Especialidad,
-                        Descripcion = b.IdEspecialidadNavigation.Descripcion,
-                        Eliminado = false
-                    }
-                    ).ToList()
-                }).ToList();
-            }
-            return new List<PeluqueroDto> { };
         }
 
         [HttpPost]
@@ -178,27 +148,60 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpGet("{id}", Name = "GetPeluquero")]
-        public async Task<ActionResult<Peluquero>> GetById(int id)
+         public async Task<ActionResult<Peluquero>> GetById(int id)
         {
             var peluquero = await _context.Peluqueros.FindAsync(id);
 
-            if (peluquero == null)
-            {
-                return NotFound();
-            }
+            if (peluquero == null) NotFound();
+
             return peluquero;
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<PeluqueroDto>> Put(int id, PeluqueroDto peluquero)
-        {
-            if (id != peluquero.Id) return BadRequest();
 
-            _context.Entry(peluquero).State = EntityState.Modified;
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Peluquero>> Put(int id, PersonaDto peluqueroDto)
+        {
+            if (id == peluqueroDto.Id) return BadRequest();
+            var peluquero = await _context.Peluqueros.FindAsync(id);
+            if(peluquero == null) return NotFound();
+
+            var persona = await _context.Personas.FirstOrDefaultAsync(a=> a.Id == peluquero.IdPersona);
+            persona.Nombres = peluqueroDto.Nombres;
+            persona.Apellidos = peluqueroDto.Apellidos;
+            persona.Cedula = peluqueroDto.Cedula;
+            persona.Correo = peluqueroDto.Correo;
+            persona.Direccion = peluqueroDto.Direccion;
+            persona.Telefono = peluqueroDto.Telefono;       
             await _context.SaveChangesAsync();
 
             return Ok(peluquero);
         }
+
+        [HttpPut("UpdatePeluquero/{id}")]
+        public async Task<ActionResult<PeluqueroDto>> UpdatePeluquero(int id, PeluqueroDto peluqueroDto)
+        {
+            if (id == peluqueroDto.Id) return BadRequest();
+            var peluquero = await _context.Peluqueros.FindAsync(id);
+            if(peluquero == null) return NotFound();
+
+            var persona = await _context.Personas.FirstOrDefaultAsync(a=> a.Id == peluquero.IdPersona);
+            persona.Nombres = peluqueroDto.Nombres;
+            persona.Apellidos = peluqueroDto.Apellidos;
+            persona.Cedula = peluqueroDto.Cedula;
+            persona.Correo = peluqueroDto.Correo;
+            persona.Direccion = peluqueroDto.Direccion;
+            persona.Telefono = peluqueroDto.Telefono;       
+            await _context.SaveChangesAsync();
+
+            foreach(var esp in peluqueroDto.ListEspecialidades){
+               var especilidad = await _context.Especialidades.FirstOrDefaultAsync(a=> a.Id == esp.Id);        
+               especilidad.Descripcion = esp.Descripcion;
+               especilidad.Especialidad = esp.Especialidad;
+               await _context.SaveChangesAsync();
+            }
+
+            return Ok(peluqueroDto);
+        }        
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Peluquero>> Delete(int id)
@@ -209,6 +212,8 @@ namespace PeluqueriaWebApi.Controllers
                 return NotFound();
 
             peluquero.Eliminado = true;
+            peluquero.IdPersonaNavigation.Eliminado = true;
+            
             await _context.SaveChangesAsync();
 
             return Ok(peluquero);

@@ -32,10 +32,8 @@ namespace PeluqueriaWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<PersonaDto>> PostPersona(PersonaDto persona)
         {
-            ///persona
             var _persona = new Persona()
     {
-       // persona DTO
         Nombres= persona.Nombres,
         Apellidos=persona.Apellidos,
         Correo=persona.Correo,
