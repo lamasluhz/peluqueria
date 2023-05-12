@@ -1,0 +1,130 @@
+
+@font-face{
+    font-family: "Titulos";
+    src: url("../fonts/AlegreyaSansSC-Regular.ttf"), url("../fonts/AlegreyaSansSC-Regular.eot"), url("../fonts/AlegreyaSansSC-Regular.woff"), url("../fonts/AlegreyaSansSC-Regular.woff2"), url("../fonts/AlegreyaSansSC-Regular.svg");
+}
+@font-face{
+    font-family: "Parrafos";
+    src: url("../fonts/OpenSans-CondLight.ttf"), url("../fonts/OpenSans-CondLight.eot"), url("../fonts/OpenSans-CondLight.woff"), url("../fonts/OpenSans-CondLight.woff2"), url("../fonts/OpenSans-CondLight.svg");
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-size: 16px;
+    font-family: "Parrafos" !important;
+    background-color: #fff;
+}
+header {
+    background-color: #ffefff;
+    color: #000000;
+    padding: 1px;
+    text-align: center;
+  }
+  
+.navbar-background{
+    background: #f8e1e1;
+}
+
+.navbar {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.navbar-brand {
+    padding: 10px;
+}
+
+.navbar-brand:not(:first-child) {
+    margin-left: 10px;
+}
+
+.navbar-nav {
+    margin: 0 auto;
+    display: inline-block;
+}
+  
+/* Tablas ================ */
+
+/* aqui */
+.table-fixed thead {
+    width: 97%;
+}
+
+.inputHeader {
+    width: 100%
+}
+
+.table-fixed tbody {
+    height: 230px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.row {
+    padding: 2px;
+    
+}
+
+
+.table-fixed thead,
+.table-fixed tbody,
+.table-fixed tr,
+.table-fixed td,
+.table-fixed th {
+    display: block;
+}
+
+.table-fixed tbody td,
+.table-fixed thead>tr>th {
+    float: left;
+    border-bottom-width: 0;
+}
+
+.button {
+    background-image: url('/css/agregar.png');
+    background-size: 25px;
+    margin-top: 5px;
+    padding: 20px; /* Agrega un poco de espacio alrededor del texto */
+    text-align: center; /* Centra el texto dentro del botón */
+    text-decoration: none; /* Quita la subrayado del texto del botón */
+    display: inline-block; /* Hace que el botón sea un elemento en línea */
+    font-size: 24px; /* Tamaño del texto del botón */
+    width: 35px; /* Ancho del botón */
+    height: 35px;
+    float: right;
+    border: 1px solid #ddd;
+    margin-right: 10px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+/*BUSCADOR*/
+
+#myInput {
+    background-image: url('/css/searchicon1.png');
+    background-size: 25px;
+    background-position: 10px 12px;
+    background-repeat: no-repeat;
+    width: 50%;
+    font-size: 16px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    
+}
+/* Animaciones ================ */
+@-webkit-keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
