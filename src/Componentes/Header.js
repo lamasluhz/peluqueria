@@ -1,29 +1,30 @@
 import React from 'react';
 import { NavLink } from "react-router-dom";
-
+import { Navbar, Nav } from 'react-bootstrap';
 
 const estilo = { paddingLeft: '10px' }
 
 const Header = () => {
-    return (<header>
-        <h3 >HAJOLUSA</h3>
-        <nav className="navbar navbar-expand-lg navbar-light navbar-background" >
+    return (
+        <div>
+            <h1 style={{ display: 'flex', justifyContent: 'center' }}>Halojusa</h1>
+            <Navbar bg="light" expand="lg" style={{ display: "flex", alignItems: 'center' }}>
+                <Navbar.Toggle aria-controls="navbarNavAltMarkup" />
 
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse " id="navbarNavAltMarkup">
-                <div className="navbar-nav"  >
-                    <NavLink className="navbar-brand" to="/clientes" style={estilo}>Clientes</NavLink>
-                    <NavLink className="navbar-brand" to="/peluqueros" style={estilo}>Peluqueros</NavLink>
-                    <NavLink className="navbar-brand" to="" style={estilo}>Servicios</NavLink>
-                    <NavLink className="navbar-brand" to="" style={estilo}>Reservas</NavLink>
-                    <NavLink className="navbar-brand" to="" style={estilo}>Compras</NavLink>
-                    <NavLink className="navbar-brand" to="" style={estilo}>Venta</NavLink>
-                </div>
-            </div>
-        </nav>
-    </header>)
+                <Navbar.Collapse id="navbarNavAltMarkup">
+                    <Nav className="mr-auto w-100 justify-content-start" style={{ backgroundColor: "#FFD1BC", paddingLeft: '30px', fontSize: '20px' }}>
+                        <NavLink className="nav-link" to="/clientes" style={estilo}>Clientes</NavLink>
+                        <NavLink className="nav-link" to="/peluqueros" style={estilo}>Peluqueros</NavLink>
+                        <NavLink className="nav-link" to="" style={estilo}>Servicios</NavLink>
+                        <NavLink className="nav-link" to="" style={estilo}>Reservas</NavLink>
+                        <NavLink className="nav-link" to="" style={estilo}>Compras</NavLink>
+                        <NavLink className="nav-link" to="" style={estilo}>Venta</NavLink>
+                    </Nav>
+                </Navbar.Collapse>
+
+            </Navbar>
+        </div>
+    )
 }
 
-export default Header
+export default Header;
