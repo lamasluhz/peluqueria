@@ -1,25 +1,63 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
-
-
+import React, { useEffect, useState } from "react";
+import ClienteModal from "./ClienteModal";
+import Buscador from "./Buscador";
+import { Modal, Form, Button } from 'react-bootstrap';
 const url = 'https://localhost:7137/api/Cliente/getCliente'
 
 
 const Clientes = () => {
   const [clientes, setClientes] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const handleModal = () => {
+    console.log(showModal);
+    setShowModal(!showModal);
+  };
+  const handleClose = (data) => {
+    axios.post('https://localhost:7137/api/Cliente/postCliente', {
+      "id": 0,
+      "nombres": data,
+      "apellidos": "string",
+      "correo": "string",
+      "telefono": "string",
+      "direccion": "string",
+      "cedula": "string",
+      "ruc": "string",
+      "eliminado": true
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'accept': 'text/plain'
+      }
 
-  const obtenerClientes = () => {
-    axios.get(url).then(response => {
-      setClientes(response.data);
-    });
+    })
+      .then(response => {
+        // Aquí puedes manejar la respuesta si es necesario
+      })
+      .catch(error => {
+        // Aquí puedes manejar el error si la petición falla
+      });
+    setShowModal(!showModal);
   }
 
   useEffect(() => {
-    obtenerClientes();
-  }, []);
-  
+    const obtenerClientes = () => {
+      axios.get(url).then(response => {
+        setClientes(response.data);
+
+      })
+        .catch(error => {
+          console.log(error)
+        });
+
+    }
+    obtenerClientes()
+  }, [])
+
+
   return (
-    <div>
+
+    < div >
       <div>
         <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Clientes</h2>
       </div>
@@ -29,7 +67,13 @@ const Clientes = () => {
         <br />
 
         {/* <!-- TABLAS --> */}
-        <div style={{ backgroundColor: '#f8e1e1', paddingTop: '1%', paddingLeft: '1%' }} ><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Buscar..." title="Type in a name" /> <button className="button"></button></div>
+
+
+        <ClienteModal showModal={showModal} handleClose={handleClose} />
+
+        <Buscador action={handleModal} />
+
+
         <table className="table table-striped table-hover border-black " style={{
           border: '1px solid black'
         }} id="myTable"
@@ -46,6 +90,7 @@ const Clientes = () => {
             </tr>
           </thead >
           <tbody>
+
             {clientes.map((cliente, i) => {
               return (
                 <tr id={i}>

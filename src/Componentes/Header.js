@@ -17,7 +17,7 @@ const Header = () => {
                         <NavLink className="nav-link" to="/peluqueros" style={estilo}>Peluqueros</NavLink>
                         <NavLink className="nav-link" to="" style={estilo}>Servicios</NavLink>
                         <NavLink className="nav-link" to="" style={estilo}>Reservas</NavLink>
-                        <NavLink className="nav-link" to="" style={estilo}>Compras</NavLink>
+                        <NavLink className="nav-link" to="/stock" style={estilo}>Compras</NavLink>
                         <NavLink className="nav-link" to="" style={estilo}>Venta</NavLink>
                     </Nav>
                 </Navbar.Collapse>
