@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-
+import Buscador from "./Buscador";
+import PeluqueroModal from "./PeluqueroModal";
 
 const url = 'https://localhost:7137/api/Peluquero/getPeluqueros'
 
@@ -15,6 +16,12 @@ const Peluquero = () => {
         }
         obtenerPeluquero();
     }, []);
+
+    const [showModal, setShowModal] = useState(false);
+    const handleModal = () => {
+        console.log(showModal);
+        setShowModal(!showModal);
+    };
     return (
         <div>
             <div>
@@ -24,12 +31,11 @@ const Peluquero = () => {
             <div class="container">
 
                 <br />
-
-
-                <div style={{ backgroundColor: '#f8e1e1', paddingTop: '1%', paddingLeft: '1%' }} ><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Buscar..." title="Type in a name" /> <button class="button"></button></div>
-                <table class="table table-striped table-hover border-black " style={{ border: '1px solid black' }} id="myTable">
+                <PeluqueroModal showModal={showModal} handleClose={handleModal} />
+                <Buscador action={handleModal} />
+                <table class="table table-striped table-hover border-black " style={{ border: '1px solid black', }} id="myTable">
                     <thead>
-                        <tr>
+                        <tr style={{ backgroundColor: '#FFE2D9' }}>
                             <th scope="col">Nombre</th>
                             <th scope="col">C.I.</th>
                             <th scope="col">Correo</th>
@@ -56,7 +62,7 @@ const Peluquero = () => {
                     </tbody>
                 </table>
             </div>
-        </div>)
+        </div >)
 }
 
 export default Peluquero
