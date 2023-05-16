@@ -75,11 +75,11 @@ const Clientes = () => {
 
 
         <table className="table table-striped table-hover border-black " style={{
-          border: '1px solid black'
+          border: '1px solid black',
         }} id="myTable"
         >
           < thead >
-            <tr>
+            <tr style={{ backgroundColor: '#FFE2D9' }}>
               <th scope="col">Nombre</th>
               <th scope="col">C.I.</th>
               <th scope="col">Correo</th>

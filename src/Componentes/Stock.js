@@ -2,7 +2,7 @@ import { Table, Image } from 'react-bootstrap';
 import BuscadorProductos from './BuscadorProductos';
 const Stock = () => {
     return (
-        <div>
+        <div style={{ padding: '0 15%' }}>
             <div>
                 <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>
                     Stock de Productos</h2>
@@ -12,7 +12,7 @@ const Stock = () => {
             <BuscadorProductos />
             <Table bordered hover>
                 <thead>
-                    <tr className="table-dark">
+                    <tr style={{ backgroundColor: '#FFE2D9' }}>
                         <th>Imagen</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
