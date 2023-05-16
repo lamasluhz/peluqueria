@@ -1,0 +1,108 @@
+.calendar {
+    
+    width: fit-content;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    
+  }
+
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .month-year {
+    font-weight: bold;
+  }
+  
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 2cm);
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .weekday {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2cm;
+    /* border: 1px solid #ccc; */
+    border-radius: 5px;
+  }
+  
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, 2cm);
+    gap: 5px;
+  }
+  
+  .day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2cm;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .day:hover {
+    background-color: #ebebeb;
+  }
+  
+  .selected {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .empty-day {
+    width: 2cm;
+    height: 2cm;
+  }
+  
+  .button-container{
+    display: flex;
+    justify-content: space-between
+  }
+ 
+  #services-buttons button {
+    background-color: #F9D5E5;
+    color: #555;
+    font-size: 1.2em;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+  }
+  
+  #services-buttons button:hover {
+    background-color: #F2B4D1;
+    color: white;
+  }
+  
+  #services-select {
+    margin: 10px 0;
+  }
+  
+  #services-select label {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  #services-select select {
+    font-size: 1.2em;
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+    margin-left: 5px;
+  }
+  
+
