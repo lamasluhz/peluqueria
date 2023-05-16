@@ -7,6 +7,7 @@ import {
   Header,
   Peluqueros,
 } from "./Componentes";
+import Reservas from "./Componentes/Reservas";
 
 ReactDOM.render(
   <Router>
@@ -14,6 +15,7 @@ ReactDOM.render(
     <Routes>
       <Route path="/clientes" element={<Clientes />} />
       <Route path="/peluqueros" element={<Peluqueros />} />
+      <Route path="/reservas" element={< Reservas />}/>
     </Routes>
   </Router>,
 
