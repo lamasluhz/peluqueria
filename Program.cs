@@ -8,7 +8,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
     {
-        builder.AllowAnyOrigin();
+        builder.AllowAnyOrigin()
+        .AllowAnyHeader() // Add this line to allow any header
+            .AllowAnyMethod(); // Add this line to allow any HTTP method
     });
 });
 
@@ -30,12 +32,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors("CorsPolicy");
-    
-    
+
+
 }
 
 
-  
+
 
 
 
