@@ -54,19 +54,7 @@ namespace PeluqueriaWebApi.Controllers
                 return BadRequest(e);
             }
      }
-     /*
-[HttpGet("{tipo}", Name = "GetTipo")]
-public async Task<ActionResult<TipoServicio>> GetTipo(string tipo)
-{
-    var tipoServicio = await _context.TipoServicios.FirstOrDefaultAsync(ts => ts.Tipo == tipo);
-
-    if (tipoServicio == null)
-    {
-        return NotFound();
-    }
-
-    return Ok(tipoServicio);
-}*/
+     
 
 [HttpGet("{tipo}", Name = "GetTipo")]
  public async Task<ActionResult<IEnumerable<TipoServicio>>> GetTipo(string tipo)
@@ -80,5 +68,84 @@ public async Task<ActionResult<TipoServicio>> GetTipo(string tipo)
 
     return Ok(tipoServicios);
 }
+
+
+[HttpPost]
+public async Task<ActionResult<TipoServicioDto>> Post(TipoServicioDto servicioDto)
+{
+    var servicio = new TiposServicio
+    {
+        Tipo = servicioDto.Tipo,
+        Descripcion = servicioDto.Descripcion,
+        DecMonto = servicioDto.DecMonto,
+        Eliminado = servicioDto.Eliminado
+    };
+
+    try
+    {
+        _context.TiposServicios.Add(servicio);
+        await _context.SaveChangesAsync();
+
+        servicioDto.Id = servicio.Id; // Actualizar el ID del servicio creado en el DTO
+
+        return CreatedAtRoute("GetTipo", new { tipo = servicio.Tipo }, servicioDto);
+    }
+    catch (Exception e)
+    {
+        return BadRequest(e);
     }
 }
+
+[HttpPut("{id}")]
+public async Task<ActionResult<TipoServicioDto>> Put(int id, TipoServicioDto servicioDto)
+{
+    var servicio = await _context.TiposServicios.FindAsync(id);
+
+    if (servicio == null)
+    {
+        return NotFound();
+    }
+
+    servicio.Tipo = servicioDto.Tipo;
+    servicio.Descripcion = servicioDto.Descripcion;
+    servicio.DecMonto = servicioDto.DecMonto;
+    servicio.Eliminado = servicioDto.Eliminado;
+
+    try
+    {
+        await _context.SaveChangesAsync();
+        return Ok(servicioDto);
+    }
+    catch (Exception e)
+    {
+        return BadRequest(e);
+    }
+}
+[HttpDelete("{id}")]
+public async Task<ActionResult> Delete(int id)
+{
+    var servicio = await _context.TiposServicios.FindAsync(id);
+
+    if (servicio == null)
+    {
+        return NotFound();
+    }
+
+    servicio.Eliminado = true;
+
+    try
+    {
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+    catch (Exception e)
+    {
+        return BadRequest(e);
+    }
+}
+
+
+
+    }
+}
+

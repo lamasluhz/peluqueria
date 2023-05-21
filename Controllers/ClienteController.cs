@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using PeluqueriaWebApi.Models.DTOs.Incoming;
 using PeluqueriaWebApi.Models.DTOs.Outgoing;
 
+
 namespace PeluqueriaWebApi.Controllers
 {
     [ApiController]
@@ -111,41 +112,78 @@ namespace PeluqueriaWebApi.Controllers
             return cliente;
         }
 
-        [HttpPut("{id}")]//editar 
-        public async Task<ActionResult<Cliente>> Update(int id, ClienteDto cliente)
-        {
-            if (id != cliente.Id) return BadRequest();
+       // ...
 
-            _context.Entry(cliente).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+[HttpPut("{id}")] // Editar un cliente
+public async Task<ActionResult<Cliente>> Update(int id, ClienteDto clienteDto)
+{
+    var cliente = await _context.Clientes.FindAsync(id);
 
-            return Ok(cliente);
-        
-        
-        
-        }
+    if (cliente == null)
+    {
+        return NotFound();
+    }
+
+    var persona = await _context.Personas.FindAsync(cliente.IdPersona);
+
+    if (persona == null)
+    {
+        return NotFound();
+    }
+
+    persona.Nombres = clienteDto.Nombres;
+    persona.Apellidos = clienteDto.Apellidos;
+    persona.Cedula = clienteDto.Cedula;
+    persona.Correo = clienteDto.Correo;
+    persona.Telefono = clienteDto.Telefono;
+    persona.Direccion = clienteDto.Direccion;
+
+    cliente.Ruc = clienteDto.Ruc;
+
+    try
+    {
+        await _context.SaveChangesAsync();
+        return Ok(clienteDto);
+    }
+    catch (Exception e)
+    {
+        return BadRequest(e);
+    }
+}
 
 
 
+[HttpDelete("{id}")] // Eliminar un cliente y su persona asociada
+public async Task<ActionResult> Delete(int id)
+{
+    var cliente = await _context.Clientes.FindAsync(id);
 
+    if (cliente == null)
+    {
+        return NotFound();
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Cliente>> Delete(int id)
-        {
-            var cliente = _context.Clientes.FirstOrDefault(x => x.Id == id);
+    var persona = await _context.Personas.FindAsync(cliente.IdPersona);
 
-            if (cliente == null)
-                return NotFound();
+    if (persona == null)
+    {
+        return NotFound();
+    }
 
-            cliente.Eliminado = true;
-            await _context.SaveChangesAsync();
+    cliente.Eliminado = true;
+    persona.Eliminado = true;
 
-            return Ok(cliente);
-        }
+    try
+    {
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+    catch (Exception e)
+    {
+        return BadRequest(e);
+    }
+}
 
-    
-
-       
 
      
     }

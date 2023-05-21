@@ -36,7 +36,7 @@ namespace PeluqueriaWebApi.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=LLAMAZ\\SQLEXPRESS;Database=Peluqueria;Trusted_Connection=True;");
             }
         }
@@ -160,103 +160,6 @@ namespace PeluqueriaWebApi.Models
                     .HasForeignKey(d => d.IdProducto)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__detallesC__idPro__3587F3E0");
-            });
-
-            modelBuilder.Entity<Compra>(entity =>
-            {
-                entity.ToTable("compras");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
-
-                entity.Property(e => e.Fecha)
-                    .HasColumnType("date")
-                    .HasColumnName("fecha");
-
-                entity.Property(e => e.IdDeposito).HasColumnName("idDeposito");
-
-                entity.Property(e => e.IdProveedor).HasColumnName("idProveedor");
-
-                entity.Property(e => e.Iva)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("iva");
-
-                entity.Property(e => e.NotasAdicionales)
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("notasAdicionales");
-
-                entity.Property(e => e.Total)
-                    .HasColumnType("decimal(19, 5)")
-                    .HasColumnName("total");
-
-                entity.HasOne(d => d.IdDepositoNavigation)
-                    .WithMany(p => p.Compras)
-                    .HasForeignKey(d => d.IdDeposito)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__compras__idDepos__0F624AF8");
-
-                entity.HasOne(d => d.IdProveedorNavigation)
-                    .WithMany(p => p.Compras)
-                    .HasForeignKey(d => d.IdProveedor)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__compras__idProve__0E6E26BF");
-            });
-
-            modelBuilder.Entity<Deposito>(entity =>
-            {
-                entity.ToTable("depositos");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Descripcion)
-                    .HasMaxLength(60)
-                    .IsUnicode(false)
-                    .HasColumnName("descripcion");
-
-                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
-
-                entity.Property(e => e.Sector).HasColumnName("sector");
-            });
-
-            modelBuilder.Entity<DetallesCompra>(entity =>
-            {
-                entity.ToTable("detallesCompras");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
-
-                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
-
-                entity.Property(e => e.IdCompra).HasColumnName("idCompra");
-
-                entity.Property(e => e.IdProducto).HasColumnName("idProducto");
-
-                entity.Property(e => e.Iva)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("iva");
-
-                entity.Property(e => e.PrecioUnitario)
-                    .HasColumnType("decimal(19, 5)")
-                    .HasColumnName("precioUnitario");
-
-                entity.Property(e => e.SubTotal)
-                    .HasColumnType("decimal(19, 5)")
-                    .HasColumnName("subTotal");
-
-                entity.HasOne(d => d.IdCompraNavigation)
-                    .WithMany(p => p.DetallesCompras)
-                    .HasForeignKey(d => d.IdCompra)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__detallesC__idCom__123EB7A3");
-
-                entity.HasOne(d => d.IdProductoNavigation)
-                    .WithMany(p => p.DetallesCompras)
-                    .HasForeignKey(d => d.IdProducto)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__detallesC__idPro__1332DBDC");
             });
 
             modelBuilder.Entity<DetallesEspecialidade>(entity =>
@@ -400,6 +303,41 @@ namespace PeluqueriaWebApi.Models
                     .HasColumnName("telefono");
             });
 
+            modelBuilder.Entity<Producto>(entity =>
+            {
+                entity.ToTable("productos");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+
+                entity.Property(e => e.IdTipoProducto).HasColumnName("idTipoProducto");
+
+                entity.Property(e => e.Iva)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("iva");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.NotasAdicionales)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("notasAdicionales");
+
+                entity.Property(e => e.PrecioUnitario)
+                    .HasColumnType("decimal(19, 5)")
+                    .HasColumnName("precioUnitario");
+
+                entity.HasOne(d => d.IdTipoProductoNavigation)
+                    .WithMany(p => p.Productos)
+                    .HasForeignKey(d => d.IdTipoProducto)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__productos__idTip__2739D489");
+            });
+
             modelBuilder.Entity<Proveedore>(entity =>
             {
                 entity.ToTable("proveedores");
@@ -460,55 +398,6 @@ namespace PeluqueriaWebApi.Models
                     .HasForeignKey(d => d.IdProveedor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__stockProd__idPro__37703C52");
-            });
-
-            modelBuilder.Entity<TiposProducto>(entity =>
-            {
-                entity.ToTable("tiposProductos");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Descripcion)
-                    .HasMaxLength(60)
-                    .IsUnicode(false)
-                    .HasColumnName("descripcion");
-
-                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
-            });
-
-            modelBuilder.Entity<StockProducto>(entity =>
-            {
-                entity.ToTable("stockProductos");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
-
-                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
-
-                entity.Property(e => e.IdDeposito).HasColumnName("idDeposito");
-
-                entity.Property(e => e.IdProducto).HasColumnName("idProducto");
-
-                entity.Property(e => e.IdProveedor).HasColumnName("idProveedor");
-
-                entity.HasOne(d => d.IdDepositoNavigation)
-                    .WithMany(p => p.StockProductos)
-                    .HasForeignKey(d => d.IdDeposito)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__stockProd__idDep__0A9D95DB");
-
-                entity.HasOne(d => d.IdProductoNavigation)
-                    .WithMany(p => p.StockProductos)
-                    .HasForeignKey(d => d.IdProducto)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__stockProd__idPro__09A971A2");
-
-                entity.HasOne(d => d.IdProveedorNavigation)
-                    .WithMany(p => p.StockProductos)
-                    .HasForeignKey(d => d.IdProveedor)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__stockProd__idPro__2739D489");
             });
 
             modelBuilder.Entity<TiposProducto>(entity =>
