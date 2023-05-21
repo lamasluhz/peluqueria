@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "../css/Calendario.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+//import "bootstrap/dist/css/bootstrap.min.css";
 // eslint-disable-next-line
 import { Button, Modal } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { Link } from "react-router-dom";
 // import ReservasMes from './reservas-mes';

@@ -59,7 +59,9 @@ const Clientes = () => {
 
     < div >
       <div>
+        <hr style={{marginBottom:'-15px', borderTop: '2px solid #B4D8E9'}}/>
         <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Clientes</h2>
+        <hr style={{borderTop: '2px solid #B4D8E9'}}/>
       </div>
 
       <div className="container">
@@ -74,12 +76,12 @@ const Clientes = () => {
         <Buscador action={handleModal} />
 
 
-        <table className="table table-striped table-hover border-black " style={{
+        <table className="table table-striped table-hover border-white " style={{
           border: '1px solid black',
         }} id="myTable"
         >
           < thead >
-            <tr style={{ backgroundColor: '#FFE2D9' }}>
+            <tr style={{ backgroundColor: '#c3dce8' }}>
               <th scope="col">Nombre</th>
               <th scope="col">C.I.</th>
               <th scope="col">Correo</th>
@@ -112,4 +114,4 @@ const Clientes = () => {
   )
 }
 
-export default Clientes
+export default Clientes;
