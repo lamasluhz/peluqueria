@@ -7,7 +7,9 @@ const estilo = { paddingLeft: '10px'}
 const Header = () => {
     return (
         <div>
-            <div style = {{backgroundImage:`url('https://static.vecteezy.com/system/resources/previews/003/026/014/non_2x/soft-pastel-colors-gradient-blur-free-photo.jpg')`}}>
+            <div style={{
+        background: 'linear-gradient(to right, #ffffff, #a8e8ff, #ffffff)',
+    }}>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <img src="./logo1.png" class="image-logo2" alt="Logo" />
                 </div>
@@ -24,6 +26,7 @@ const Header = () => {
                         <NavLink className="nav-link" to="/stock" style={estilo}> <img src='/compras.png' style={{maxHeight:20, maxWidth:25}}/> Compras </NavLink>
                         <NavLink className="nav-link" to="" style={estilo}> <img src='/venta.png' style={{maxHeight:20, maxWidth:25}}/> Venta </NavLink>
                         <NavLink className="nav-link" to="/facturas" style={estilo}>Factura</NavLink>
+                        <NavLink className="nav-link" to="/principal" style={estilo}>Inicio</NavLink>
 
 
                     </Nav>

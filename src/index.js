@@ -8,11 +8,11 @@ import {
   Peluqueros,
   Stock,
   Manicuras,
+  Principal,
   Facturas,
   Peinados,Maquillajes,Tinturas,Cortes,Servicios, Lavados
 } from "./Componentes";
 import Reservas from "./Componentes/Reservas";
-
 
 ReactDOM.render(
   <Router>
@@ -30,14 +30,8 @@ ReactDOM.render(
       <Route path="/servicios" element={< Servicios />}/>
       <Route path="/lavados" element={< Lavados />}/>
       <Route path="/facturas" element={< Facturas />}/>
-
-
-
-
-
-      
-
       <Route path="/reservas" element={< Reservas />}/>
+      <Route path="/principal" element={< Principal />}/>
     </Routes>
   </Router>,
 

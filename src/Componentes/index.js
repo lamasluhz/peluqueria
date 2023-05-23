@@ -11,3 +11,4 @@ export { default as Tinturas } from "./Tinturas"
 export { default as Servicios } from './Servicios'
 export { default as Lavados } from './Lavados'
 export { default as Facturas } from './Facturas'
+export { default as Principal } from './Principal'
