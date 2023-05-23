@@ -1,12 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState} from "react";
 import '../css/Inicio.css';
 import Button from 'react-bootstrap/Button';
-import { Link } from "react-router-dom";
-import Clientes from "./Clientes";
-const Principal = () => {
+
+
+const Principal = (props) => {
+
+    function ocultarDiv() {
+        props.acceder(true);
+      }
+
     return (
-        <div>
-            <div id="contenedor-centrado">\
+        <div className="miDivPrincipal">
+            <div id="contenedor-centrado">
 
                 <div id="contenedor-imagen">
                     <img src="/inicio.gif" style={{ maxHeight: '100%', maxWidth: '60%', borderColor: 'black' }} />
@@ -20,9 +25,9 @@ const Principal = () => {
                     </div>
 
                     <div id="contenedor-boton" >
-                        <Link to="/clientes">
-                            <Button variant="primary" className="btn-ancho">Ingresar</Button>
-                        </Link>
+                        
+                            <Button variant="primary" className="btn-ancho" onClick={ocultarDiv}>Ingresar</Button>
+                       
 
                     </div>
                 </div>

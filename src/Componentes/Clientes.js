@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import ClienteModal from "./ClienteModal";
 import Buscador from "./Buscador";
 import { Modal, Form, Button } from 'react-bootstrap';
+import Header from "./Header";
 const url = 'https://localhost:7137/api/Cliente/getCliente'
 
 
 const Clientes = () => {
+ 
   const [clientes, setClientes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const handleModal = () => {

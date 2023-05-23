@@ -1,3 +1,8 @@
+.miDivPrincipal{
+    background-color: rgb(9, 95, 124);
+    height: 150%;
+}
+
 #contenedor-centrado {
     border-radius: 5%;
     position: fixed;
@@ -12,7 +17,7 @@
 #contenedor-imagen {
     border-color: rgb(0, 0, 0);
     flex: 2;
-    background: #ffffff;
+    background: #fcfcfc;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -26,9 +26,6 @@ const Header = () => {
                         <NavLink className="nav-link" to="/stock" style={estilo}> <img src='/compras.png' style={{maxHeight:20, maxWidth:25}}/> Compras </NavLink>
                         <NavLink className="nav-link" to="" style={estilo}> <img src='/venta.png' style={{maxHeight:20, maxWidth:25}}/> Venta </NavLink>
                         <NavLink className="nav-link" to="/facturas" style={estilo}>Factura</NavLink>
-                        <NavLink className="nav-link" to="/principal" style={estilo}>Inicio</NavLink>
-
-
                     </Nav>
                 </Navbar.Collapse>
 
