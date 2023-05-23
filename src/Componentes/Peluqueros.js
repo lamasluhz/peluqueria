@@ -2,25 +2,75 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Buscador from "./Buscador";
 import PeluqueroModal from "./PeluqueroModal";
-
+import PeluquerosRow from "./PeluquerosRow";
 const url = 'https://localhost:7137/api/Peluquero/getPeluqueros'
 
 
 const Peluquero = () => {
-    const [peluquero, setPeluquero] = useState([]);
-
+    const [peluqueros, setPeluqueros] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const obtenerPeluqueros = async () => {
+        const response = await axios.get(url);
+        setPeluqueros(response.data);
+    }
+    const headers = {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    }
     useEffect(() => {
-        const obtenerPeluquero = async () => {
-            const response = await axios.get(url);
-            setPeluquero(response.data);
-        }
-        obtenerPeluquero();
+        obtenerPeluqueros();
     }, []);
 
-    const [showModal, setShowModal] = useState(false);
+    const handleFieldUpdate = (id, values) => {
+        axios.put(`https://localhost:7137/api/Peluquero/${id}`, {
+            values
+        }, headers)
+            .then(response => {
+                console.log(response);
+                obtenerPeluqueros(); // Refresh the client list after field update
+            })
+            .catch(error => {
+                console.error('Error updating cliente:', error);
+            });
+    };
     const handleModal = () => {
         console.log(showModal);
         setShowModal(!showModal);
+    };
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
+    const handleDeleteCliente = (id) => {
+        axios.delete(`https://localhost:7137/api/Peluquero/${id}`)
+            .then(response => {
+                console.log(response);
+                obtenerPeluqueros(); // Refresh the client list after deletion
+            })
+            .catch(error => {
+                console.error('Error deleting cliente:', error);
+            });
+    };
+
+    const renderPeluqueros = () => {
+        const filteredClientes = peluqueros.filter(peluquero =>
+            peluquero.nombres.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        return filteredClientes.map((peluquero, i) => {
+            if (peluquero.eliminado) {
+                return null; // Skip rendering if 'eliminado' is true
+            }
+
+            return (
+                <PeluquerosRow
+                    key={peluquero.id}
+                    cliente={peluquero}
+                    handleFieldUpdate={handleFieldUpdate}
+                    handleDeleteCliente={handleDeleteCliente}
+                />
+            );
+        });
     };
     return (
         <div>
@@ -41,24 +91,11 @@ const Peluquero = () => {
                             <th scope="col">Correo</th>
                             <th scope="col">Direccion</th>
                             <th scope="col">Telefono</th>
-                            <th scope="col">Otros</th>
+                            <th scope="col">Otros</th>  <th scope="col">Edit</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {peluquero.map((peluquero, i) => {
-                            return (
-                                <tr id={peluquero.id}>
-                                    <td> {peluquero.nombres}</td>
-                                    <td> {peluquero.cedula}</td>
-                                    <td> {peluquero.correo}</td>
-                                    <td> {peluquero.direccion}</td>
-                                    <td> {peluquero.telefono}</td>
-                                    <td><i className="fa-solid fa-arrows-to-eye"></i></td>
-                                    <td><i className="fa-solid fa-pen" style={{ marginRight: '15px' }}></i> <i class="fa-solid fa-trash"></i></td>
-                                </tr>
-                            )
-
-                        })}
+                        {renderPeluqueros()}
                     </tbody>
                 </table>
             </div>
