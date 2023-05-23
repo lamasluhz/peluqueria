@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const ClienteModal = ({ showModal, handleClose }) => {
     const [formValues, setFormValues] = useState({
-        nombre: '',
-        apellido: '',
+        nombres: '',
+        apellidos: '',
         cedula: '',
         telefono: '',
         correo: '',
@@ -18,33 +19,42 @@ const ClienteModal = ({ showModal, handleClose }) => {
     };
 
     const handleClienteModal = () => {
-        console.log(formValues);
+        axios
+            .post('https://localhost:7137/api/Cliente/postCliente', formValues)
+            .then((response) => {
+                console.log('PUT request successful');
+                console.log(response.data); // You can do something with the response if needed
+            })
+            .catch((error) => {
+                console.error('Error making PUT request:', error);
+            });
         handleClose();
+
     };
 
     return (
         <Modal show={showModal} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Agregar Peluquero</Modal.Title>
+                <Modal.Title>Agregar Cliente</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Group controlId="formNombre">
+                    <Form.Group controlId="formNombres">
                         <Form.Label>Nombre</Form.Label>
                         <Form.Control
                             type="text"
-                            name="nombre"
-                            value={formValues.nombre}
+                            name="nombres"
+                            value={formValues.nombres}
                             onChange={handleInputChange}
                         />
                     </Form.Group>
 
-                    <Form.Group controlId="formApellido">
+                    <Form.Group controlId="formApellidos">
                         <Form.Label>Apellido</Form.Label>
                         <Form.Control
                             type="text"
-                            name="apellido"
-                            value={formValues.apellido}
+                            name="apellidos"
+                            value={formValues.apellidos}
                             onChange={handleInputChange}
                         />
                     </Form.Group>

@@ -1,18 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../css/Calendario.css";
-//import "bootstrap/dist/css/bootstrap.min.css";
-// eslint-disable-next-line
 import { Button, Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import Buscador from "./Buscador";
+import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Link } from "react-router-dom";
-// import ReservasMes from './reservas-mes';
 
 const Calendar = () => {
   //Utilizo hook useState de react
   const [date, setDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+  const handleModal = () => {
+    console.log(showModal);
+    setShowModal(!showModal);
+  };
+
+  const [selectedCliente, setSelectedCliente] = useState("");
+const [selectedService, setSelectedService] = useState("");
+
+
 
   ///Array 1
   const monthNames = [
@@ -60,6 +69,7 @@ const Calendar = () => {
   // La función handleCloseModal se ejecuta cuando se cierra el modal y oculta el modal.
   const handleCloseModal = () => {
     setShowModal(false);
+    setSelectedCliente("");
   };
   //renderHeader renderiza la cabecera del calendario, que incluye botones para navegar entre meses
   // y muestra el mes y año actual.
@@ -123,9 +133,28 @@ const Calendar = () => {
 
     return <div className="days">{days}</div>;
   };
-  const [selectedService, setSelectedService] = useState("");
+  const [clientes, setClientes] = useState([]);
 
+useEffect(() => {
+  const fetchClientes = async () => {
+    try {
+      const response = await axios.get("https://localhost:7137/api/Cliente/getCliente");
+      setClientes(response.data);
+    } catch (error) {
+      console.error("Error al obtener la lista de clientes:", error);
+    }
+  };
+
+  fetchClientes();
+}, []);
+  
+
+  // const [selectedCliente, setSelectedCliente] = useState("");
+
+  
   return (
+
+<div>
     <div className="calendar">
       {renderHeader()}
       <div className="weekdays">
@@ -149,14 +178,7 @@ const Calendar = () => {
     Create
   </button>
 
-  {/* <button
-    className="btn btn-primary additional-button"
-    onClick={() => console.log("Additional Button Clicked")}
-  >
-  <Link to="/reservas-mes" className="btn btn-primary additional-button">
-    Reservas del mes
-  </Link>
-</button> */}
+
   <Link to="/reservas-mes" className="btn btn-primary additional-button" style={{ backgroundColor: '#FF8E8C', borderColor: '#FF8E8C' }}>
     Reservas del mes
   </Link>
@@ -173,36 +195,44 @@ const Calendar = () => {
           <div className="form-group">
             <label htmlFor="nombre_cliente">Cliente</label>
             <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                id="nombre_cliente"
-                placeholder="Nombre completo"
-              />
+            <select
+  className="form-control"
+  id="nombre_cliente"
+  value={selectedCliente}
+  onChange={(e) => setSelectedCliente(e.target.value)}
+>
+  <option value="">Seleccionar cliente</option>
+  {clientes.map((cliente) => (
+    <option key={cliente.id} value={cliente.id}>
+    {cliente.nombres} {cliente.apellidos}
+  </option>
+  ))}
+</select>
+
             </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="servicios">Servicios</label>
             <div className="mt-2">
-              <button
-                type="button"
-                className={`btn btn-outline-secondary btn-sm ${
-                  selectedService === "lavado" ? "active" : ""
-                }`}
-                onClick={() => setSelectedService("lavado")}
-              >
-                Lavado y Secado
-              </button>
-              <button
-                type="button"
-                className={`btn btn-outline-secondary btn-sm ${
-                  selectedService === "corte" ? "active" : ""
-                }`}
-                onClick={() => setSelectedService("corte")}
-              >
-                Corte
-              </button>
+            <button
+  type="button"
+  className={`btn btn-outline-secondary btn-sm ${
+    selectedService === "lavado" ? "active" : ""
+  }`}
+  onClick={() => setSelectedService("lavado")}
+>
+  Lavado y Secado
+</button>
+<button
+  type="button"
+  className={`btn btn-outline-secondary btn-sm ${
+    selectedService === "corte" ? "active" : ""
+  }`}
+  onClick={() => setSelectedService("corte")}
+>
+  Corte
+</button>
             </div>
           </div>
 
@@ -231,6 +261,7 @@ const Calendar = () => {
             <div className="row">
               <div className="col-sm-6">
                 <label htmlFor="hora_inicio">Hora de inicio</label>
+                {/* AAAAAAAAAAAAAAAAAAAAAAAAAA */}
                 <input type="time" className="form-control" id="hora_inicio" />
               </div>
               <div className="col-sm-6">
@@ -241,9 +272,9 @@ const Calendar = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <button className="btn btn-danger" onClick={handleCloseModal}>
+          {/* <button className="btn btn-danger" onClick={handleCloseModal}>
             Anular Turno
-          </button>
+          </button> */}
           <button className="btn btn-secondary" onClick={handleCloseModal}>
             Cerrar
           </button>
@@ -252,6 +283,41 @@ const Calendar = () => {
           </button>
         </Modal.Footer>
       </Modal>
+    </div>
+
+    <div> 
+      <div>
+        <hr style={{marginBottom:'-15px', borderTop: '2px solid #B4D8E9'}}/>
+        <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Reservas "MES"</h2>
+        <hr style={{borderTop: '2px solid #B4D8E9'}}/>
+      </div>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
+    <div style={{marginBottom: '10px'}}>
+      <Buscador action={handleModal} />
+    </div>
+     <div>
+     <table className="table table-striped table-hover border-white" style={{border: '1px solid black'}} id="myTable">
+      
+          < thead >
+            <tr style={{ backgroundColor: '#c3dce8' }}>
+              <th scope="col">Nombre</th>
+              <th scope="col">Hora</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Peluquero</th>
+              <th scope="col">Servicios</th>
+              
+              <th scope="col">Otros</th>
+            </tr>
+          </thead >
+          <tbody>
+            
+          </tbody>
+          </table>
+          </div>
+
+    </div>
+    </div>
+
     </div>
   );
 };

@@ -3,18 +3,102 @@ import React, { useEffect, useState } from "react";
 import ClienteModal from "./ClienteModal";
 import Buscador from "./Buscador";
 import { Modal, Form, Button } from 'react-bootstrap';
-import Header from "./Header";
-const url = 'https://localhost:7137/api/Cliente/getCliente'
-
+import ClienteRow from "./ClientesRow";
+const url = 'https://localhost:7137/api/Cliente/getCliente';
 
 const Clientes = () => {
  
   const [clientes, setClientes] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+
+  const headers = {
+    'accept': 'text/plain',
+    'Content-Type': 'application/json'
+  }
   const handleModal = () => {
     console.log(showModal);
     setShowModal(!showModal);
   };
+
+  useEffect(() => {
+    obtenerClientes();
+  }, []);
+
+  const obtenerClientes = () => {
+    axios.get(url)
+      .then(response => {
+        setClientes(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+
+
+
+  const handleDeleteCliente = (id) => {
+    axios.delete(`https://localhost:7137/api/Cliente/${id}`)
+      .then(response => {
+        console.log(response);
+        obtenerClientes(); // Refresh the client list after deletion
+      })
+      .catch(error => {
+        console.error('Error deleting cliente:', error);
+      });
+  };
+
+  const handleFieldUpdate = (id, values) => {
+    axios.put(`https://localhost:7137/api/Cliente/${id}`,
+      values
+      // {
+      //   "id": 0,
+      //   "nombres": "string",
+      //   "apellidos": "string",
+      //   "correo": "string",
+      //   "telefono": "string",
+      //   "direccion": "string",
+      //   "cedula": "string",
+      //   "ruc": "string",
+      //   "eliminado": true
+      // }
+      , headers)
+      .then(response => {
+        console.log(response);
+        obtenerClientes(); // Refresh the client list after field update
+      })
+      .catch(error => {
+        console.error('Error updating cliente:', error);
+      });
+  };
+
+  const renderClientes = () => {
+    const filteredClientes = clientes.filter(cliente =>
+      cliente.nombres.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return filteredClientes.map((cliente, i) => {
+      if (cliente.eliminado) {
+        return null; // Skip rendering if 'eliminado' is true
+      }
+
+      return (
+        <ClienteRow
+          key={cliente.id}
+          cliente={cliente}
+          handleFieldUpdate={handleFieldUpdate}
+          handleDeleteCliente={handleDeleteCliente}
+        />
+      );
+    });
+  };
+
   const handleClose = (data) => {
     axios.post('https://localhost:7137/api/Cliente/postCliente', {
       "id": 0,
@@ -34,56 +118,32 @@ const Clientes = () => {
 
     })
       .then(response => {
-        // Aquí puedes manejar la respuesta si es necesario
+        obtenerClientes(); // Refresh the client list after adding a new client
       })
       .catch(error => {
-        // Aquí puedes manejar el error si la petición falla
+        console.error('Error adding cliente:', error);
       });
     setShowModal(!showModal);
   }
 
-  useEffect(() => {
-    const obtenerClientes = () => {
-      axios.get(url).then(response => {
-        setClientes(response.data);
-
-      })
-        .catch(error => {
-          console.log(error)
-        });
-
-    }
-    obtenerClientes()
-  }, [])
-
-
   return (
-
-    < div >
+    <div>
       <div>
-        <hr style={{marginBottom:'-15px', borderTop: '2px solid #B4D8E9'}}/>
+        <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
         <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Clientes</h2>
-        <hr style={{borderTop: '2px solid #B4D8E9'}}/>
+        <hr style={{ borderTop: '2px solid #B4D8E9' }} />
       </div>
 
       <div className="container">
-
         <br />
 
         {/* <!-- TABLAS --> */}
-
-
         <ClienteModal showModal={showModal} handleClose={handleClose} />
+        <Buscador action={handleModal} handleSearch={handleSearch} />
 
-        <Buscador action={handleModal} />
-
-
-        <table className="table table-striped table-hover border-white " style={{
-          border: '1px solid black',
-        }} id="myTable"
-        >
-          < thead >
-            <tr style={{ backgroundColor: '#c3dce8' }}>
+        <table className="table table-striped table-hover border-white" style={{ border: '1px solid white' }} id="myTable">
+          <thead>
+            <tr style={{ backgroundColor: '#B4D8E9' }}>
               <th scope="col">Nombre</th>
               <th scope="col">C.I.</th>
               <th scope="col">Correo</th>
@@ -92,28 +152,16 @@ const Clientes = () => {
               <th scope="col">Historial</th>
               <th scope="col">Otros</th>
             </tr>
-          </thead >
+          </thead>
           <tbody>
-
-            {clientes.map((cliente, i) => {
-              return (
-                <tr id={i}>
-                  <td> {cliente.nombres}</td>
-                  <td> {cliente.cedula}</td>
-                  <td> {cliente.correo}</td>
-                  <td> {cliente.direccion}</td>
-                  <td> {cliente.telefono}</td>
-                  <td><i className="fa-solid fa-arrows-to-eye"></i></td>
-                  <td><i className="fa-solid fa-pen" style={{ marginRight: '15px' }}></i> <i class="fa-solid fa-trash"></i></td>
-                </tr>
-              )
-
-            })}
+            {renderClientes()}
           </tbody>
-        </table >
+        </table>
       </div>
-    </div >
-  )
-}
+    </div>
+  );
+};
+
+
 
 export default Clientes;
