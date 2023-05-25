@@ -14,7 +14,7 @@ namespace PeluqueriaWebApi.Models
         public bool? Eliminado { get; set; }
 
         public virtual Peluquero IdPeluqueroNavigation { get; set; } = null!;
-        public virtual Cliente IdTipoServicioNavigation { get; set; } = null!;
+        public virtual TiposServicio IdTipoServicioNavigation { get; set; } = null!;
         public virtual Turno IdTurnoNavigation { get; set; } = null!;
     }
 }

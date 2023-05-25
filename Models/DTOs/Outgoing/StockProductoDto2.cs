@@ -14,7 +14,6 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
         public decimal PrecioUnitario { get; set; }
         public string DescripcionTipoProducto { get; set; } = null!;  //tipo de producto dentro de producto
         public int SectorDeposito { get; set; } //Deposito
-        public bool? Eliminado { get; set; }
     }
 
 }

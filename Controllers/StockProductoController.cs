@@ -46,6 +46,7 @@ namespace PeluqueriaWebApi.Controllers
                              select new StockProductoDto()
                              {
 
+                                 Id = stock.Id,
                                  Nombre = prod.Nombre,
                                  Proveedor = pvdr.NombreEmpresa,
                                  PrecioUnitario = prod.PrecioUnitario,
@@ -120,17 +121,20 @@ namespace PeluqueriaWebApi.Controllers
             var stock = await _context.StockProductos.FindAsync(id);
             if (stock == null) return NotFound();
 
-            var proveedor = await _context.Proveedores.FindAsync(stock.IdProveedor);
+            var proveedor = await _context.Proveedores.FirstOrDefaultAsync( prd => prd.Id == stock.IdProveedor);
             proveedor.NombreEmpresa = stockProductoDto.Proveedor;
             await _context.SaveChangesAsync();
 
-            var producto = await _context.Productos.FindAsync(stock.IdProducto);
+            var producto = await _context.Productos.FirstOrDefaultAsync( p => p.Id == stock.IdProducto);
             producto.Nombre = stockProductoDto.Nombre;
             producto.PrecioUnitario = stockProductoDto.PrecioUnitario;
-            producto.IdTipoProductoNavigation.Descripcion = stockProductoDto.DescripcionTipoProducto;
             await _context.SaveChangesAsync();
 
-            var sector = await _context.Depositos.FindAsync(stock.IdDeposito);
+            var tipoProducto = await _context.TiposProductos.FindAsync(producto.IdTipoProducto);
+            tipoProducto.Descripcion = stockProductoDto.DescripcionTipoProducto;
+            await _context.SaveChangesAsync();
+
+            var sector = await _context.Depositos.FirstOrDefaultAsync( d => d.Id == stock.IdDeposito);
             sector.Sector = stockProductoDto.SectorDeposito;
             await _context.SaveChangesAsync();
 

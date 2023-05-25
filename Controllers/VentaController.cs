@@ -25,20 +25,22 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Venta>> Get(){
+        public async Task<ActionResult<Venta>> Get()
+        {
             var ventas = _context.Ventas.ToListAsync();
-            return Ok(ventas);    
+            return Ok(ventas);
         }
 
         [HttpGet("{id}", Name = "GetVenta")]
-        public async Task<ActionResult<Venta>> GetById(int id){
+        public async Task<ActionResult<Venta>> GetById(int id)
+        {
             var venta = _context.Ventas.FindAsync(id);
             if (venta == null) return NotFound();
 
             return Ok(venta);
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public async Task<ActionResult<Venta>> Post([FromBody] VentaDto ventaDto){
             var nuevaVenta = new Venta{
                 IdCliente = ventaDto.IdCliente,
@@ -66,8 +68,8 @@ namespace PeluqueriaWebApi.Controllers
                 };
             }
             return null;
-        }
-        
+        }*/
+
 
     }
 }
