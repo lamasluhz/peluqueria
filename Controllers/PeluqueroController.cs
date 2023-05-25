@@ -180,7 +180,7 @@ namespace PeluqueriaWebApi.Controllers
         [HttpPut("UpdatePeluquero/{id}")]
         public async Task<ActionResult<PeluqueroDto>> UpdatePeluquero(int id, PeluqueroDto peluqueroDto)
         {
-            if (id == peluqueroDto.Id) return BadRequest();
+            if (id != peluqueroDto.Id) return BadRequest();
             var peluquero = await _context.Peluqueros.FindAsync(id);
             if(peluquero == null) return NotFound();
 

@@ -5,14 +5,16 @@ using System.Threading.Tasks;
 
 namespace PeluqueriaWebApi.Models.DTOs.Outgoing
 {
-    public class ProductoDto
+    public class StockProductoDto2
     {
+
         public int Id { get; set; }
-        public string? Categoria { get; set; }
+        public string Proveedor { get; set; } = null!;
         public string Nombre { get; set; } = null!;
         public decimal PrecioUnitario { get; set; }
-        public string? NotasAdicionales { get; set; }
-        public decimal? Iva { get; set; }
+        public string DescripcionTipoProducto { get; set; } = null!;  //tipo de producto dentro de producto
+        public int SectorDeposito { get; set; } //Deposito
         public bool? Eliminado { get; set; }
     }
+
 }

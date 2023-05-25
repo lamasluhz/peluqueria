@@ -9,6 +9,7 @@ namespace PeluqueriaWebApi.Models
         {
             DetallesCompras = new HashSet<DetallesCompra>();
             StockProductos = new HashSet<StockProducto>();
+            VentasDetalles = new HashSet<VentasDetalle>();
         }
 
         public int Id { get; set; }
@@ -22,5 +23,6 @@ namespace PeluqueriaWebApi.Models
         public virtual TiposProducto IdTipoProductoNavigation { get; set; } = null!;
         public virtual ICollection<DetallesCompra> DetallesCompras { get; set; }
         public virtual ICollection<StockProducto> StockProductos { get; set; }
+        public virtual ICollection<VentasDetalle> VentasDetalles { get; set; }
     }
 }

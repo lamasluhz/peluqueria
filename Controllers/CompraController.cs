@@ -51,13 +51,12 @@ namespace PeluqueriaWebApi.Controllers
             {
                 IdProveedor = compraDto.IdProveedor,
                 IdDeposito = compraDto.IdDeposito,
-                Fecha = DateTime.Now,
-                NotasAdicionales = compraDto.NotasAdicionales,
+                NotasAdicionales = "Compras Realizadas",
                 Iva = 0,
                 Total = 0,
                 Eliminado = false
             };
-
+            // nuevaCompra.IdProveedorNavigation.NombreEmpresa
             _context.Compras.Add(nuevaCompra);
             _context.SaveChanges();
 
@@ -85,6 +84,10 @@ namespace PeluqueriaWebApi.Controllers
 
                 //Stock Producto
                 var stockProducto = _context.StockProductos.SingleOrDefault(s => s.IdProducto == nuevoDetalle.IdProducto && s.IdDeposito == nuevaCompra.IdDeposito && s.IdProveedor == nuevaCompra.IdProveedor);
+                //var stockProducto = _context.StockProductos.SingleOrDefault(s => s.IdProductoNavigation.Nombre.Equals(nuevoDetalle.IdProductoNavigation.Nombre) &&
+                                                                            //s.IdProductoNavigation.Iva == nuevoDetalle.Iva &&
+                                                                            //s.IdProductoNavigation.PrecioUnitario == nuevoDetalle.PrecioUnitario &&
+                                                                            //s.IdProductoNavigation.IdTipoProductoNavigation.Descripcion.Equals(nuevoDetalle.IdProductoNavigation.IdTipoProductoNavigation.Descripcion));
 
                 if (stockProducto != null)
                 {
@@ -108,8 +111,8 @@ namespace PeluqueriaWebApi.Controllers
 
                 totalVenta += subTotal; //Total de la venta
 
-                if (iva != 0)  totalIva += subTotal * iva;
-                
+                if (iva != 0) totalIva += subTotal * iva;
+
             }
 
             nuevaCompra.Total = totalVenta;

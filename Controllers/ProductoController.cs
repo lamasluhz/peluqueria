@@ -36,7 +36,7 @@ namespace PeluqueriaWebApi.Controllers
                           select new ProductoDto()
                           {
                               Id = pdto.Id,
-                              DescripcionTipoProducto = tpdto.Descripcion,
+                              Categoria = tpdto.Descripcion,
                               Nombre = pdto.Nombre,
                               PrecioUnitario = pdto.PrecioUnitario,
                               NotasAdicionales = pdto.NotasAdicionales,
@@ -76,7 +76,7 @@ namespace PeluqueriaWebApi.Controllers
             var result = new ProductoDto()
             {
                 Id = producto.Id,
-                DescripcionTipoProducto = tipo.Descripcion,
+                Categoria = tipo.Descripcion,
                 Nombre = producto.Nombre,
                 PrecioUnitario = producto.PrecioUnitario,
                 NotasAdicionales = producto.NotasAdicionales,
@@ -108,7 +108,7 @@ namespace PeluqueriaWebApi.Controllers
             {
                 Id = producto.Id,
                 Nombre = producto.Nombre,
-                DescripcionTipoProducto = tipo.Descripcion,
+                Categoria = tipo.Descripcion,
                 PrecioUnitario = producto.PrecioUnitario,
                 NotasAdicionales = producto.NotasAdicionales,
                 Eliminado = producto.Eliminado
