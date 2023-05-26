@@ -8,6 +8,8 @@ namespace PeluqueriaWebApi.Models
         public Turno()
         {
             DetallesTurnos = new HashSet<DetallesTurno>();
+            //IdClienteNavigation = new HashSet<Cliente>();
+            
         }
 
         public int Id { get; set; }

@@ -60,7 +60,7 @@ public async Task<ActionResult<List<DetallesTurnoDto>>> Get()
             .FirstOrDefault(),
         TipoServicio = _context.TiposServicios
             .Where(ts => ts.Id == dt.IdTipoServicio)
-            .Select(ts => ts.Tipo)
+            .Select(ts => ts.Descripcion)
             .FirstOrDefault(),
         ClienteNombre = _context.Turnos
             .Where(t => t.Id == dt.IdTurno)
@@ -93,10 +93,6 @@ public async Task<ActionResult<List<DetallesTurnoDto>>> Get()
 
 
 
-
-
-
-//////////////////////////////////////////////////////////////
 [HttpPost]
 public IActionResult Create(DetallesCreateTurnoDto dto)
 {
@@ -110,34 +106,189 @@ public IActionResult Create(DetallesCreateTurnoDto dto)
     var turno = new Turno
     {
         Fecha = dto.Fecha.GetValueOrDefault(DateTime.Now), // Obtener el valor de Fecha o usar la fecha actual si es nulo
-        IdCliente=dto.IdCliente,
-        HoraInicio = TimeSpan.Parse(dto.horaInicio),
-        HoraFinalizacion = TimeSpan.Parse(dto.horaFinalizacion),
-         Eliminado = dto.Eliminado.GetValueOrDefault(false) // Obtener el valor de Eliminado o usar false si es nulo
+        IdCliente = dto.IdCliente,
+        HoraInicio = TimeSpan.Parse(dto.HoraInicio),
+        HoraFinalizacion = TimeSpan.Parse(dto.HoraFinalizacion),
+        Eliminado = dto.Eliminado.GetValueOrDefault(false) // Obtener el valor de Eliminado o usar false si es nulo
     };
 
-    // Crear un nuevo objeto DetallesTurno y asignar los valores del DTO
-    var detallesTurno = new DetallesTurno
+    // Guardar el objeto Turno en la base de datos
+    _context.Turnos.Add(turno);
+    _context.SaveChanges();
+
+ // Calcular la suma del DecMonto de los servicios
+    decimal sumaDecMonto = (decimal)_context.TiposServicios
+        .Where(ts => dto.IdsTipoServicio.Contains(ts.Id))
+        .Sum(ts => ts.DecMonto);
+
+    // Recorrer la lista de tipos de servicio y crear un objeto DetallesTurno para cada uno
+    foreach (int idTipoServicio in dto.IdsTipoServicio)
     {
-        IdTurno = turno.Id,
-        IdTipoServicio = dto.IdTipoServicio,
-        IdPeluquero = dto.IdPeluquero,
-        DecMonto = dto.DecMonto,
-        Fecha = dto.Fecha,
-        Eliminado = dto.Eliminado
-    };
+        var detallesTurno = new DetallesTurno
+        {
+            IdTurno = turno.Id,
+            IdTipoServicio = idTipoServicio,
+            IdPeluquero = dto.IdPeluquero,
+            DecMonto = sumaDecMonto,
+            Fecha = dto.Fecha,
+            Eliminado = false
+        };
 
-    // Guardar los objetos en la base de datos
-    // (Aquí debes utilizar tu contexto de base de datos y guardar los objetos según tu implementación)
-
-     _context.Turnos.Add(turno);
-    _context.SaveChangesAsync();
-     _context.DetallesTurnos.Add(detallesTurno);
-     _context.SaveChangesAsync();
+        // Guardar el objeto DetallesTurno en la base de datos
+        _context.DetallesTurnos.Add(detallesTurno);
+        _context.SaveChanges();
+    }
 
     // Devolver una respuesta de éxito
     return Ok();
 }
+
+
+
+[HttpGet("GetDetallesTurnoGeneral/{id}")]
+public async Task<ActionResult<DetallesTurnoResponseDto>> GetDetallesTurno(int id)
+{
+    var turno = await _context.Turnos
+        .Include(t => t.DetallesTurnos)
+            .ThenInclude(dt => dt.IdTipoServicioNavigation)
+        .Include(t => t.IdClienteNavigation)
+        .Include(t => t.DetallesTurnos)
+            .ThenInclude(dt => dt.IdPeluqueroNavigation)
+        .FirstOrDefaultAsync(t => t.Id == id);
+
+    if (turno == null)
+        return NotFound();
+
+    var servicios = turno.DetallesTurnos.Select(dt => new ServicioDto
+    {
+        Id = dt.IdTipoServicioNavigation.Id,
+        TipoServicio = dt.IdTipoServicioNavigation.Tipo,
+        Monto = dt.DecMonto ?? 0
+    }).ToList();
+
+    var montoTotal = servicios.Sum(s => s.Monto);
+
+var detallesTurnoResponse = new DetallesTurnoResponseDto
+{
+    Id = turno.Id,
+    Cliente = _context.Turnos
+        .Where(t => t.Id == turno.Id)
+        .Join(_context.Clientes,
+            t => t.IdCliente,
+            c => c.IdPersona,
+            (t, c) => c)
+        .Join(_context.Personas,
+            c => c.IdPersona,
+            p => p.Id,
+            (c, p) => $"{p.Nombres} {p.Apellidos}")
+        .FirstOrDefault(),
+    Peluquero = _context.Peluqueros
+        .Where(p => p.Id == turno.DetallesTurnos.First().IdPeluquero)
+        .Join(_context.Personas,
+            p => p.IdPersona,
+            pe => pe.Id,
+            (p, pe) => new { p, pe })
+        .Select(x => $"{x.pe.Nombres} {x.pe.Apellidos}")
+        .FirstOrDefault(),
+    Servicios = servicios,
+    MontoTotal = montoTotal,
+    Fecha = turno.Fecha, // Agrega la propiedad Fecha
+    HoraInicio = _context.Turnos
+        .Where(t => t.Id == turno.Id)
+        .Select(t => t.HoraInicio)
+        .FirstOrDefault(), // Agrega la propiedad HoraInicio
+    HoraFinalizacion = _context.Turnos
+        .Where(t => t.Id == turno.Id)
+        .Select(t => t.HoraFinalizacion)
+        .FirstOrDefault() // Agrega la propiedad HoraFinalizacion
+};
+
+
+
+
+
+    return detallesTurnoResponse;
+}
+
+
+
+[HttpPut("ActualizarDetallesTurno/{id}")]
+public async Task<IActionResult> ActualizarDetallesTurno(int id, DetallesTurnoUpdateDto detallesTurnoDto)
+{
+    var turno = await _context.Turnos
+        .Include(t => t.DetallesTurnos)
+        .FirstOrDefaultAsync(t => t.Id == id);
+
+    if (turno == null)
+        return NotFound();
+
+    // Actualizar los datos del turno con los valores del DTO
+    turno.HoraInicio = detallesTurnoDto.HoraInicio;
+    turno.HoraFinalizacion = detallesTurnoDto.HoraFinalizacion;
+
+    // Actualizar los servicios
+    foreach (var servicioDto in detallesTurnoDto.Servicios)
+    {
+        var servicio = turno.DetallesTurnos.FirstOrDefault(dt => dt.IdTipoServicio == servicioDto.Id);
+        if (servicio != null)
+        {
+            servicio.DecMonto = servicioDto.Monto;
+            // Actualizar otras propiedades del servicio si es necesario
+        }
+    }
+
+    // Guardar los cambios en la base de datos
+    try
+    {
+        await _context.SaveChangesAsync();
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        // Manejar excepciones de concurrencia si es necesario
+        throw;
+    }
+
+    // Mapear el resultado a un DetallesTurnoResponseDto para devolver en la respuesta
+    var detallesTurnoResponse = new DetallesTurnoResponseDto
+    {
+        Id = turno.Id,
+        Cliente = _context.Turnos
+            .Where(t => t.Id == turno.Id)
+            .Join(_context.Clientes,
+                t => t.IdCliente,
+                c => c.IdPersona,
+                (t, c) => c)
+            .Join(_context.Personas,
+                c => c.IdPersona,
+                p => p.Id,
+                (c, p) => $"{p.Nombres} {p.Apellidos}")
+            .FirstOrDefault(),
+        Peluquero = _context.Peluqueros
+            .Where(p => p.Id == turno.DetallesTurnos.First().IdPeluquero)
+            .Join(_context.Personas,
+                p => p.IdPersona,
+                pe => pe.Id,
+                (p, pe) => new { p, pe })
+            .Select(x => $"{x.pe.Nombres} {x.pe.Apellidos}")
+            .FirstOrDefault(),
+        Servicios = turno.DetallesTurnos.Select(dt => new ServicioDto
+        {
+            Id = dt.IdTipoServicioNavigation.Id,
+            TipoServicio = dt.IdTipoServicioNavigation.Tipo,
+            Monto = dt.DecMonto ?? 0
+        }).ToList(),
+        MontoTotal = turno.DetallesTurnos.Sum(dt => dt.DecMonto ?? 0),
+        Fecha = turno.Fecha,
+        HoraInicio = turno.HoraInicio,
+        HoraFinalizacion = turno.HoraFinalizacion
+    };
+
+    return Ok(detallesTurnoResponse);
+}
+
+
+
+
 
     }
 }
