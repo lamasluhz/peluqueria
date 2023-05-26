@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import '../css/Inicio.css';
 import Button from 'react-bootstrap/Button';
 
@@ -7,7 +7,7 @@ const Principal = (props) => {
 
     function ocultarDiv() {
         props.acceder(true);
-      }
+    }
 
     return (
         <div className="miDivPrincipal">
@@ -25,9 +25,9 @@ const Principal = (props) => {
                     </div>
 
                     <div id="contenedor-boton" >
-                        
-                            <Button variant="primary" className="btn-ancho" onClick={ocultarDiv}>Ingresar</Button>
-                       
+
+                        <Button variant="primary" className="btn-ancho" onClick={ocultarDiv} id="btnIngresar">Ingresar</Button>
+
 
                     </div>
                 </div>

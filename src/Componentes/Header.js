@@ -11,7 +11,7 @@ const Header = () => {
         background: 'linear-gradient(to right, #ffffff, #a8e8ff, #ffffff)',
     }}>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <img src="./logo1.png" class="image-logo2" alt="Logo" />
+                    <img src="./logo-principal.png" class="image-logo2" alt="Logo" />
                 </div>
             </div>
             <Navbar expand="lg" style={{ display: "flex", alignItems: 'center' }}>
