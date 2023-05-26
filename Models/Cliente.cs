@@ -8,6 +8,7 @@ namespace PeluqueriaWebApi.Models
         public Cliente()
         {
             Turnos = new HashSet<Turno>();
+            Venta = new HashSet<Venta>();
         }
 
         public int Id { get; set; }
@@ -17,5 +18,6 @@ namespace PeluqueriaWebApi.Models
 
         public virtual Persona IdPersonaNavigation { get; set; } = null!;
         public virtual ICollection<Turno> Turnos { get; set; }
+        public virtual ICollection<Venta> Venta { get; set; }
     }
 }

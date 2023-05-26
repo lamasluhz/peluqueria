@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace PeluqueriaWebApi.Models.DTOs.Outgoing
 {
-    public class CompraDto
+    public class VentaDto
     {
-        public int IdProveedor { get; set; }
+        public int IdCliente { get; set; }
+        //public int IdCaja { get; set; }
         public int IdDeposito { get; set; }
-        public List<DetalleCompraDto>? DetalleCompraDtos { get; set; }
-
+        public List<DetalleVentaDto> DetalleVentaDto { get; set; }
     }
 }

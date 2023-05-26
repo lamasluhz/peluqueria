@@ -33,7 +33,7 @@ namespace PeluqueriaWebApi.Controllers
 
             try
             {
-                 var result = from stock in stockProductos
+                var result = from stock in stockProductos
                              join prod in productos
                              on stock.IdProducto equals prod.Id
                              join pvdr in proveedores
@@ -45,7 +45,8 @@ namespace PeluqueriaWebApi.Controllers
 
                              select new StockProductoDto()
                              {
-                                 
+
+                                 Id = stock.Id,
                                  Nombre = prod.Nombre,
                                  Proveedor = pvdr.NombreEmpresa,
                                  PrecioUnitario = prod.PrecioUnitario,
@@ -75,17 +76,17 @@ namespace PeluqueriaWebApi.Controllers
         {
             var stock = new StockProducto()
             {
-               IdProveedor = stockDto.IdProveedor,
-               IdDeposito = stockDto.IdDeposito,
-               IdProducto = stockDto.IdProducto,
-               Cantidad = stockDto.Cantidad,
-               Eliminado = false
+                IdProveedor = stockDto.IdProveedor,
+                IdDeposito = stockDto.IdDeposito,
+                IdProducto = stockDto.IdProducto,
+                Cantidad = stockDto.Cantidad,
+                Eliminado = false
             };
-            
+
             _context.StockProductos.Add(stock);
             await _context.SaveChangesAsync();
 
-             return new CreatedAtRouteResult("GetStockProducto", new { id = stock.Id}, stock);
+            return new CreatedAtRouteResult("GetStockProducto", new { id = stock.Id }, stock);
         }
 
         [HttpGet("{id}", Name = "GetStockProducto")]
@@ -111,8 +112,38 @@ namespace PeluqueriaWebApi.Controllers
             return Ok(stockProducto);
         }
 
+
+
+        [HttpPut("Update/{id}")]
+        public async Task<ActionResult<StockProductoDto>> PutStockProducto(int id, StockProductoDto2 stockProductoDto)
+        {
+            if (id != stockProductoDto.Id) return BadRequest();
+            var stock = await _context.StockProductos.FindAsync(id);
+            if (stock == null) return NotFound();
+
+            var proveedor = await _context.Proveedores.FirstOrDefaultAsync( prd => prd.Id == stock.IdProveedor);
+            proveedor.NombreEmpresa = stockProductoDto.Proveedor;
+            await _context.SaveChangesAsync();
+
+            var producto = await _context.Productos.FirstOrDefaultAsync( p => p.Id == stock.IdProducto);
+            producto.Nombre = stockProductoDto.Nombre;
+            producto.PrecioUnitario = stockProductoDto.PrecioUnitario;
+            await _context.SaveChangesAsync();
+
+            var tipoProducto = await _context.TiposProductos.FindAsync(producto.IdTipoProducto);
+            tipoProducto.Descripcion = stockProductoDto.DescripcionTipoProducto;
+            await _context.SaveChangesAsync();
+
+            var sector = await _context.Depositos.FirstOrDefaultAsync( d => d.Id == stock.IdDeposito);
+            sector.Sector = stockProductoDto.SectorDeposito;
+            await _context.SaveChangesAsync();
+
+            return Ok(stockProductoDto);
+        }
+
+
         [HttpDelete("{id}")]
-        public async Task<ActionResult<StockProducto>> DeletePersona(int id)
+        public async Task<ActionResult<StockProducto>> DeleteStock(int id)
         {
             var stockProducto = _context.StockProductos.FirstOrDefault(x => x.Id == id);
 

@@ -2250,19 +2250,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\luzla\\.nuget\\packages\\": {}
+    "C:\\Users\\jorge\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\luzla\\OneDrive\\Escritorio\\peluqueria-Backend\\peluqueria-Backend\\PeluqueriaWebApi.csproj",
+      "projectUniqueName": "C:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\PeluqueriaWebApi.csproj",
       "projectName": "PeluqueriaWebApi",
-      "projectPath": "C:\\Users\\luzla\\OneDrive\\Escritorio\\peluqueria-Backend\\peluqueria-Backend\\PeluqueriaWebApi.csproj",
-      "packagesPath": "C:\\Users\\luzla\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\luzla\\OneDrive\\Escritorio\\peluqueria-Backend\\peluqueria-Backend\\obj\\",
+      "projectPath": "C:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\PeluqueriaWebApi.csproj",
+      "packagesPath": "C:\\Users\\jorge\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\luzla\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\jorge\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"

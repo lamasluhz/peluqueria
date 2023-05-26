@@ -11,7 +11,6 @@ namespace PeluqueriaWebApi.Models.DTOs.Incoming
         public int IdDeposito { get; set; }
         public int Cantidad { get; set; }
         public int IdProveedor { get; set; }
-        //public bool Eliminado { get; set; }
     
     }
 }

@@ -180,7 +180,7 @@ namespace PeluqueriaWebApi.Controllers
         [HttpPut("UpdatePeluquero/{id}")]
         public async Task<ActionResult<PeluqueroDto>> UpdatePeluquero(int id, PeluqueroDto peluqueroDto)
         {
-            if (id == peluqueroDto.Id) return BadRequest();
+            if (id != peluqueroDto.Id) return BadRequest();
             var peluquero = await _context.Peluqueros.FindAsync(id);
             if(peluquero == null) return NotFound();
 
@@ -212,9 +212,12 @@ namespace PeluqueriaWebApi.Controllers
                 return NotFound();
 
             peluquero.Eliminado = true;
-            peluquero.IdPersonaNavigation.Eliminado = true;
-            
             await _context.SaveChangesAsync();
+
+            var persona = await _context.Personas.FindAsync(peluquero.IdPersona);
+            persona.Eliminado = true;
+            await _context.SaveChangesAsync();
+
 
             return Ok(peluquero);
         }

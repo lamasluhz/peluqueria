@@ -32,14 +32,31 @@ namespace PeluqueriaWebApi.Controllers
         }
 
 
-        [HttpGet("{id}", Name = "GetProveedor")]
+        /*[HttpGet("{id}", Name = "GetProveedor")]
         public async Task<ActionResult<Proveedore>> GetById(int id)
         {
-            var proveedor = await _context.Proveedores.FindAsync(id);
+            var proveedor = _context.Proveedores.FindAsync(id);
 
             if (proveedor == null) return NotFound();
 
-            return proveedor;
+            return Ok(proveedor);
+        }*/
+
+
+        [HttpGet("{id}", Name = "GetProveedorEmpresa")]
+        public async Task<ActionResult<ProveedorEmpresaDto>> GetProveedorEmpresa(int id)
+        {
+            var proveedor = await _context.Proveedores.FindAsync(id);
+            if (proveedor == null) return NotFound();
+
+            var result = new ProveedorEmpresaDto
+            {
+                Id = proveedor.Id,
+                NombreEmpresa = proveedor.NombreEmpresa,
+                Ruc = proveedor.Ruc
+            };
+
+            return result;
         }
 
         [HttpGet("GetProveedores/")]
@@ -100,10 +117,10 @@ namespace PeluqueriaWebApi.Controllers
                              on prod.IdTipoProducto equals tipoPrd.Id
                              where pvdr.Id == id
                              select new ProductoDto
-                             {   
-                                 Id = prod.Id, 
+                             {
+                                 Id = prod.Id,
                                  Nombre = prod.Nombre,
-                                 DescripcionTipoProducto = tipoPrd.Descripcion,
+                                 Categoria = tipoPrd.Descripcion,
                                  PrecioUnitario = prod.PrecioUnitario,
                                  NotasAdicionales = prod.NotasAdicionales,
                                  Iva = prod.Iva,
@@ -143,7 +160,6 @@ namespace PeluqueriaWebApi.Controllers
             };
             _context.Proveedores.Add(_proveedor);
             _context.SaveChanges();
-
             await _context.SaveChangesAsync();
             return new CreatedAtRouteResult("GetProveedor", new { id = _proveedor.Id }, proveedorDto);
         }
@@ -174,17 +190,19 @@ namespace PeluqueriaWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Peluquero>> DeleteProveedor(int id)
         {
-            var _proveedor = _context.Proveedores.FirstOrDefault(x => x.Id == id);
+            var proveedor = _context.Proveedores.FirstOrDefault(x => x.Id == id);
 
-            if (_proveedor == null)
+            if (proveedor == null)
                 return NotFound();
 
-            _proveedor.Eliminado = true;
-            _proveedor.IdPersonaNavigation.Eliminado = true;
-
+            proveedor.Eliminado = true;
             await _context.SaveChangesAsync();
 
-            return Ok(_proveedor);
+            var persona = await _context.Personas.FindAsync(proveedor.IdPersona);
+            persona.Eliminado = true;
+            await _context.SaveChangesAsync();
+
+            return Ok(proveedor);
         }
 
 

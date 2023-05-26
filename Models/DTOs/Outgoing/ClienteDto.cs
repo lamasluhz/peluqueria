@@ -14,10 +14,7 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
         public string Telefono { get; set; }
         public string Direccion { get; set; }
         public string Cedula { get; set; }
-
-         public string Ruc { get; set; }
-        ///redireccionar a persona
-        
+        public string Ruc { get; set; }        
         public bool? Eliminado { get; set; }
     }
 }

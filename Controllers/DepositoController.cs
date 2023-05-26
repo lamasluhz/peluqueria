@@ -19,9 +19,8 @@ namespace PeluqueriaWebApi.Controllers
 
         private PeluqueriaContext _context;
 
-        public DepositoController(ILogger<DepositoController> logger, PeluqueriaContext context)
+        public DepositoController(PeluqueriaContext context)
         {
-            _logger = logger;
             _context = context;
         }
 

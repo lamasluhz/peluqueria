@@ -31,13 +31,15 @@ namespace PeluqueriaWebApi.Models
         public virtual DbSet<TiposProducto> TiposProductos { get; set; } = null!;
         public virtual DbSet<TiposServicio> TiposServicios { get; set; } = null!;
         public virtual DbSet<Turno> Turnos { get; set; } = null!;
+        public virtual DbSet<Venta> Ventas { get; set; } = null!;
+        public virtual DbSet<VentasDetalle> VentasDetalles { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=LLAMAZ\\SQLEXPRESS;Database=Peluqueria;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=LAPTOP-8KPIBKP5\\SQLEXPRESS;Database=Peluqueria;Trusted_Connection=True;");
             }
         }
 
@@ -75,7 +77,8 @@ namespace PeluqueriaWebApi.Models
 
                 entity.Property(e => e.Fecha)
                     .HasColumnType("date")
-                    .HasColumnName("fecha");
+                    .HasColumnName("fecha")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.IdDeposito).HasColumnName("idDeposito");
 
@@ -460,6 +463,94 @@ namespace PeluqueriaWebApi.Models
                     .HasForeignKey(d => d.IdCliente)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__turnos__idClient__59FA5E80");
+            });
+
+            modelBuilder.Entity<Venta>(entity =>
+            {
+                entity.ToTable("ventas");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("date")
+                    .HasColumnName("fecha")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdCliente).HasColumnName("idCliente");
+
+                entity.Property(e => e.IdDeposito).HasColumnName("idDeposito");
+
+                entity.Property(e => e.Iva)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("iva");
+
+                entity.Property(e => e.NotasAdicionales)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("notasAdicionales");
+
+                entity.Property(e => e.Total)
+                    .HasColumnType("decimal(10, 5)")
+                    .HasColumnName("total");
+
+                entity.HasOne(d => d.IdClienteNavigation)
+                    .WithMany(p => p.Venta)
+                    .HasForeignKey(d => d.IdCliente)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ventas__idClient__3C34F16F");
+
+                entity.HasOne(d => d.IdDepositoNavigation)
+                    .WithMany(p => p.Venta)
+                    .HasForeignKey(d => d.IdDeposito)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ventas__idDeposi__3D2915A8");
+            });
+
+            modelBuilder.Entity<VentasDetalle>(entity =>
+            {
+                entity.ToTable("ventasDetalles");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+
+                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+
+                entity.Property(e => e.IdProducto).HasColumnName("idProducto");
+
+                entity.Property(e => e.IdTurno).HasColumnName("idTurno");
+
+                entity.Property(e => e.IdVenta).HasColumnName("idVenta");
+
+                entity.Property(e => e.Iva)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("iva");
+
+                entity.Property(e => e.PrecioUnitario)
+                    .HasColumnType("decimal(19, 5)")
+                    .HasColumnName("precioUnitario");
+
+                entity.Property(e => e.SubTotal)
+                    .HasColumnType("decimal(19, 5)")
+                    .HasColumnName("subTotal");
+
+                entity.HasOne(d => d.IdProductoNavigation)
+                    .WithMany(p => p.VentasDetalles)
+                    .HasForeignKey(d => d.IdProducto)
+                    .HasConstraintName("FK__ventasDet__idPro__489AC854");
+
+                entity.HasOne(d => d.IdTurnoNavigation)
+                    .WithMany(p => p.VentasDetalles)
+                    .HasForeignKey(d => d.IdTurno)
+                    .HasConstraintName("FK__ventasDet__idTur__498EEC8D");
+
+                entity.HasOne(d => d.IdVentaNavigation)
+                    .WithMany(p => p.VentasDetalles)
+                    .HasForeignKey(d => d.IdVenta)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ventasDet__idVen__47A6A41B");
             });
 
             OnModelCreatingPartial(modelBuilder);
