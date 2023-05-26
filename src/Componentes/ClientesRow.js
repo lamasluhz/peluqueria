@@ -31,6 +31,7 @@ const ClienteRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
     const handleSaveEdit = () => {
         handleFieldUpdate(cliente.id, editedFields);
         setEditing(false);
+
     };
 
     const handleChange = (e, field) => {
@@ -116,16 +117,16 @@ const ClienteRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
                 ) : (
                     <i
                         className="fa-solid fa-pen"
-                        style={{ marginRight: "15px" }}
+                        style={{ marginRight: "15px", cursor: 'pointer' }}
                         onClick={handleEdit}
                     ></i>
                 )}
-                <i
+                <i onClick={() => handleDeleteCliente(cliente.id)}
                     className="fa-solid fa-trash"
-                    onClick={() => handleDeleteCliente(cliente.id)}
+                    style={{ marginRight: "15px", cursor: 'pointer' }}
                 ></i>
             </td>
-        </tr>
+        </tr >
     );
 };
 

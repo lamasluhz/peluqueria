@@ -7,9 +7,13 @@ import ClienteRow from "./ClientesRow";
 const url = 'https://localhost:7137/api/Cliente/getCliente';
 
 const Clientes = () => {
- 
+
   const [clientes, setClientes] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false); // Estado para el modal de confirmación
+  const [selectedClienteId, setSelectedClienteId] = useState(null); // Estado para almacenar el ID del cliente seleccionado
+
+
   const [searchQuery, setSearchQuery] = useState('');
 
 
@@ -41,17 +45,27 @@ const Clientes = () => {
   };
 
 
-
-
   const handleDeleteCliente = (id) => {
-    axios.delete(`https://localhost:7137/api/Cliente/${id}`)
-      .then(response => {
+    setSelectedClienteId(id); // Guardar el ID del cliente seleccionado
+    setShowConfirmationModal(true); // Mostrar el modal de confirmación
+  };
+
+  const handleConfirmDeleteCliente = () => {
+    axios
+      .delete(`https://localhost:7137/api/Cliente/${selectedClienteId}`)
+      .then((response) => {
         console.log(response);
-        obtenerClientes(); // Refresh the client list after deletion
+        obtenerClientes(); // Actualizar la lista de clientes después de eliminar
       })
-      .catch(error => {
-        console.error('Error deleting cliente:', error);
+      .catch((error) => {
+        console.error("Error deleting cliente:", error);
       });
+
+    setShowConfirmationModal(false); // Cerrar el modal de confirmación
+  };
+  const handleCancelDeleteCliente = () => {
+    setSelectedClienteId(null); // Reiniciar el ID del cliente seleccionado
+    setShowConfirmationModal(false); // Cerrar el modal de confirmación
   };
 
   const handleFieldUpdate = (id, values) => {
@@ -158,6 +172,22 @@ const Clientes = () => {
           </tbody>
         </table>
       </div>
+      <Modal show={showConfirmationModal} onHide={handleCancelDeleteCliente}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>¿Estás seguro de que deseas eliminar este cliente?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelDeleteCliente}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleConfirmDeleteCliente}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
