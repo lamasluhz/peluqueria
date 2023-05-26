@@ -39,7 +39,7 @@ namespace PeluqueriaWebApi.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=LAPTOP-8KPIBKP5\\SQLEXPRESS;Database=Peluqueria;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=LLAMAZ\\SQLEXPRESS;Database=Peluqueria;Trusted_Connection=True;");
             }
         }
 
@@ -539,18 +539,18 @@ namespace PeluqueriaWebApi.Models
                 entity.HasOne(d => d.IdProductoNavigation)
                     .WithMany(p => p.VentasDetalles)
                     .HasForeignKey(d => d.IdProducto)
-                    .HasConstraintName("FK__ventasDet__idPro__489AC854");
+                    .HasConstraintName("FK__ventasDet__idPro__41EDCAC5");
 
                 entity.HasOne(d => d.IdTurnoNavigation)
                     .WithMany(p => p.VentasDetalles)
                     .HasForeignKey(d => d.IdTurno)
-                    .HasConstraintName("FK__ventasDet__idTur__498EEC8D");
+                    .HasConstraintName("FK__ventasDet__idTur__42E1EEFE");
 
                 entity.HasOne(d => d.IdVentaNavigation)
                     .WithMany(p => p.VentasDetalles)
                     .HasForeignKey(d => d.IdVenta)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ventasDet__idVen__47A6A41B");
+                    .HasConstraintName("FK__ventasDet__idVen__40F9A68C");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -289,6 +289,74 @@ public async Task<IActionResult> ActualizarDetallesTurno(int id, DetallesTurnoUp
 
 
 
+//// detalles sin id 
+[HttpGet("GetDetallesTurnoGeneral")]
+public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno()
+{
+    var turnos = await _context.Turnos
+        .Include(t => t.DetallesTurnos)
+            .ThenInclude(dt => dt.IdTipoServicioNavigation)
+        .Include(t => t.IdClienteNavigation)
+        .Include(t => t.DetallesTurnos)
+            .ThenInclude(dt => dt.IdPeluqueroNavigation)
+        .ToListAsync();
+
+    var detallesTurnoResponses = new List<DetallesTurnoResponseDto>();
+
+    foreach (var turno in turnos)
+    {
+        var servicios = turno.DetallesTurnos.Select(dt => new ServicioDto
+        {
+            Id = dt.IdTipoServicioNavigation.Id,
+            TipoServicio = dt.IdTipoServicioNavigation.Tipo,
+            Monto = dt.DecMonto ?? 0
+        }).ToList();
+
+        var montoTotal = servicios.Sum(s => s.Monto);
+
+        var detallesTurnoResponse = new DetallesTurnoResponseDto
+        {
+            Id = turno.Id,
+            Cliente = _context.Turnos
+                .Where(t => t.Id == turno.Id)
+                .Join(_context.Clientes,
+                    t => t.IdCliente,
+                    c => c.IdPersona,
+                    (t, c) => c)
+                .Join(_context.Personas,
+                    c => c.IdPersona,
+                    p => p.Id,
+                    (c, p) => $"{p.Nombres} {p.Apellidos}")
+                .FirstOrDefault(),
+            Peluquero = turno.DetallesTurnos.Any()
+                ? _context.Peluqueros
+                    .Where(p => p.Id == turno.DetallesTurnos.First().IdPeluquero)
+                    .Join(_context.Personas,
+                        p => p.IdPersona,
+                        pe => pe.Id,
+                        (p, pe) => new { p, pe })
+                    .Select(x => $"{x.pe.Nombres} {x.pe.Apellidos}")
+                    .FirstOrDefault()
+                : string.Empty,
+            Servicios = servicios,
+            MontoTotal = montoTotal,
+            Fecha = turno.Fecha, // Agrega la propiedad Fecha
+            HoraInicio = _context.Turnos
+                .Where(t => t.Id == turno.Id)
+                .Select(t => t.HoraInicio)
+                .FirstOrDefault(), // Agrega la propiedad HoraInicio
+            HoraFinalizacion = _context.Turnos
+                .Where(t => t.Id == turno.Id)
+                .Select(t => t.HoraFinalizacion)
+                .FirstOrDefault() // Agrega la propiedad HoraFinalizacion
+        };
+
+        detallesTurnoResponses.Add(detallesTurnoResponse);
+    }
+
+    return detallesTurnoResponses;
+}
+
 
     }
 }
