@@ -1,32 +1,60 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Form, Button, Dropdown } from 'react-bootstrap';
+import Select from 'react-select';
+import axios from 'axios';
 
 const PeluqueroModal = ({ showModal, handleClose }) => {
     const [formValues, setFormValues] = useState({
-        nombre: '',
-        apellido: '',
+        nombres: '',
+        apellidos: '',
+        correo: '',
         cedula: '',
         telefono: '',
-        correo: '',
         direccion: '',
-        ruc: '',
-        especialidad: '',
+        listEspecialidades: [],
+        eliminado: 'false'
     });
+    const [options, setOptions] = useState([])
 
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('https://localhost:7137/api/Especialidad');
+            const data = response.data;
+
+            setOptions(data.map(item => ({
+                value: item.id,
+                label: item.especialidad
+            })));
+
+            console.log(options);
+            return options
+            // Now, "options" is in the format you need
+        } catch (error) {
+            console.error(`Error: ${error}`);
+        }
+    };
+
+
+    const [selectedOptions, setSelectedOptions] = useState([]);
+
+    const handleSelectChange = (selectedOptions) => {
+        setSelectedOptions(selectedOptions);
+    };
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
     };
 
-    const handleDropdownChange = (event) => {
-        setFormValues((prevValues) => ({
-            ...prevValues,
-            especialidad: event.target.value,
-        }));
-    };
-
-    const handleAddStylist = () => {
-        console.log(formValues);
+    const handleAddStylist = (e) => {
+        e.preventDefault();
+        axios.post('https://localhost:7137/api/Peluquero', formValues)
+            .then(response => {
+                console.log(response.data); // You can check the server response
+            })
+            .catch(error => {
+                console.error(`Error: ${error}`);
+            });
         handleClose();
     };
 
@@ -108,14 +136,14 @@ const PeluqueroModal = ({ showModal, handleClose }) => {
                     </Form.Group>
 
                     <Form.Group controlId="formEspecialidad">
-                        <Form.Label>Especialidad</Form.Label>
-                        <Form.Select aria-label="Default select example">
-                            <option>Seleccione la especialidad</option>
-                            <option value="corte">Corte</option>
-                            <option value="tintura">Tintura</option>
-                            <option value="peinado">Peinados</option>
-                        </Form.Select>
+                        <Select
+                            isMulti
+                            options={options}
+                            value={selectedOptions}
+                            onChange={handleSelectChange}
+                        />
                     </Form.Group>
+
                 </Form>
             </Modal.Body>
             <Modal.Footer>
@@ -129,5 +157,6 @@ const PeluqueroModal = ({ showModal, handleClose }) => {
         </Modal>
     );
 };
+
 
 export default PeluqueroModal;
