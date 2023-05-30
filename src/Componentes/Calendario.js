@@ -5,9 +5,47 @@ import { Link } from "react-router-dom";
 import Buscador from "./Buscador";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Select from 'react-select';
 
 
 const Calendar = () => {
+
+
+//// segundo post en modal 
+
+const [formValues, setFormValues] = useState({
+  idCliente: 0,
+  idPeluquero: 0,
+  fecha: "",
+  horaInicio: "",
+  horaFinalizacion: "",
+  servicios: []
+});
+
+const handleFormSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    // Realizar la solicitud POST con los datos del formulario
+    const response = await axios.post('https://localhost:7137/api/DetallesTurno', formValues);
+    // Realizar acciones adicionales después de guardar el turno, como mostrar un mensaje de éxito o redireccionar a otra página
+    console.log(response.data);
+  } catch (error) {
+    // Manejar cualquier error que ocurra durante la solicitud
+    console.error(error);
+  }
+};
+
+
+
+
+  ///////////////////////////
+
+// para el servicio 
+const [selectedServices, setSelectedServices] = useState([]);
+const [servicios, setServicios] = useState([]);
+
+
   //Utilizo hook useState de react
   const [date, setDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
@@ -19,9 +57,10 @@ const Calendar = () => {
   };
 
   const [selectedCliente, setSelectedCliente] = useState("");
-  const [selectedService, setSelectedService] = useState("");
+  const [selectedService, setSelectedService] = useState([]);
   const [selectedPeluqueros, setSelectedPeluqueros] = useState([]);
   const [reservas, setReservas] = useState([]);
+
 
   ///Array 1
   const monthNames = [
@@ -136,6 +175,9 @@ const Calendar = () => {
   };
   const [clientes, setClientes] = useState([]);
   const [peluqueros, setPeluqueros] = useState([]);
+  const [Servicios, setServicio] = useState([]);
+  
+
   useEffect(() => {
     const fetchClientes = async () => {
       try {
@@ -148,7 +190,18 @@ const Calendar = () => {
       }
     };
     fetchClientes();
-
+///servicios 
+const fetchServicios = async () => {
+  try {
+    const response = await axios.get(
+      "https://localhost:7137/api/TiposServicios/getServicios"
+    );
+    setServicios(response.data);
+  } catch (error) {
+    console.error("Error al obtener la lista de Servicios", error);
+  }
+};
+fetchServicios();
     const fetchPeluqueros = async () => {
       try {
         const response = await axios.get(
@@ -180,6 +233,15 @@ const Calendar = () => {
   const horaFinalizacionFormateada = horaFinalizacion.slice(0, 5);
   return `${horaInicioFormateada} - ${horaFinalizacionFormateada}`;
 };
+
+const handleSelectChange = (selectedOptions) => {
+  setSelectedServices(selectedOptions);
+};
+
+const serviciosOptions = servicios.map((servicio) => ({
+  value: servicio.id,
+  label: `${servicio.descripcion} ${servicio.decMonto}`,
+}));
 
 // Función para formatear la fecha (ejemplo: "2023-05-26")
 const formatearFecha = (fecha) => {
@@ -230,21 +292,21 @@ const formatearFecha = (fecha) => {
           <Modal.Body>
             <div className="form-group">
               <label htmlFor="nombre_cliente">Cliente</label>
-              <div className="input-group">
-                <select
-                  className="form-control"
-                  id="nombre_cliente"
-                  value={selectedCliente}
-                  onChange={(e) => setSelectedCliente(e.target.value)}
-                >
-                  <option value="">Seleccionar cliente</option>
-                  {clientes.map((cliente) => (
-                    <option key={cliente.id} value={cliente.id}>
-                      {cliente.nombres} {cliente.apellidos}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              
+              <select
+          className="form-control"
+          id="nombre_cliente"
+          value={selectedCliente}
+          onChange={(e) => setSelectedCliente(e.target.value)}
+        >
+          <option value="">Seleccionar cliente</option>
+          {clientes.map((cliente) => (
+            <option key={cliente.id} value={cliente.id}>
+              {cliente.nombres} {cliente.apellidos}
+            </option>
+          ))}
+        </select>
+              
             </div>
 
             {/* <div className="form-group">
@@ -272,11 +334,22 @@ const formatearFecha = (fecha) => {
             </div> */}
 
             <div className="form-group">
-              <label htmlFor="opciones">Servicios</label>
-              <select className="form-control" id="opciones">
-                <option value="">Seleccionar opción</option>
-               {/* Aqui deben aparecer las opciones  */}
-              </select>
+            <label htmlFor="servicios">Servicios</label>
+        <Select
+          id="servicios"
+          options={serviciosOptions}
+          value={selectedServices}
+          isMulti
+          onChange={handleSelectChange}
+        />
+          
+          {Servicios.map((servicios) => (
+            <option key={servicios.id} value={servicios.id}>
+              
+              {servicios.descripcion} {servicios.decMonto}
+            </option>
+          ))}
+              
             </div>
             
             <div className="form-group">
@@ -304,14 +377,22 @@ const formatearFecha = (fecha) => {
                   <label htmlFor="hora_inicio">Hora de inicio</label>
                   {/* AAAAAAAAAAAAAAAAAAAAAAAAAA */}
                   <input
-                    type="time"
-                    className="form-control"
-                    id="hora_inicio"
-                  />
+            type="time"
+            className="form-control"
+            id="horaInicio"
+         
+           
+          />
                 </div>
                 <div className="col-sm-6">
                   <label htmlFor="hora_fin">Hora de finalización</label>
-                  <input type="time" className="form-control" id="hora_fin" />
+                  <input
+            type="time"
+            className="form-control"
+            id="horaFinalizacion"
+          
+           
+          />
                 </div>
               </div>
             </div>
@@ -323,8 +404,8 @@ const formatearFecha = (fecha) => {
             <button className="btn btn-secondary" onClick={handleCloseModal}>
               Cerrar
             </button>
-            <button className="btn btn-primary" onClick={handleCloseModal}>
-              Guardar
+            <button className="btn btn-primary" onClick={handleFormSubmit}>
+  Guardar
             </button>
           </Modal.Footer>
         </Modal>
