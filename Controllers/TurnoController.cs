@@ -45,7 +45,8 @@ namespace PeluqueriaWebApi.Controllers
                         Direccion = t.IdClienteNavigation.IdPersonaNavigation.Direccion,
                         Ruc = t.IdClienteNavigation.Ruc,
                         Eliminado = false
-                    }
+                    },
+                    Estado= "pendiente"
                 })
                 .ToListAsync();
 

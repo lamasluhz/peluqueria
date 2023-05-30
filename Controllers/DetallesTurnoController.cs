@@ -36,7 +36,7 @@ namespace PeluqueriaWebApi.Controllers
 
 
 
-    [HttpGet]
+    [HttpGet]//  get generalizado de detalles turnos 
 public async Task<ActionResult<List<DetallesTurnoDto>>> Get()
 {
     var detallesTurno = await _context.DetallesTurnos.ToListAsync();
@@ -91,7 +91,7 @@ public async Task<ActionResult<List<DetallesTurnoDto>>> Get()
 }
 
 
-
+// post de turno y detalle turno donde añadimos mas de un servicio en diferentes detelles para el mismo turno 
 
 [HttpPost]
 public IActionResult Create(DetallesCreateTurnoDto dto)
@@ -109,7 +109,8 @@ public IActionResult Create(DetallesCreateTurnoDto dto)
         IdCliente = dto.IdCliente,
         HoraInicio = TimeSpan.Parse(dto.HoraInicio),
         HoraFinalizacion = TimeSpan.Parse(dto.HoraFinalizacion),
-        Eliminado = dto.Eliminado.GetValueOrDefault(false) // Obtener el valor de Eliminado o usar false si es nulo
+        Eliminado = dto.Eliminado.GetValueOrDefault(false), // Obtener el valor de Eliminado o usar false si es nulo
+        Estado = "pendiente"
     };
 
     // Guardar el objeto Turno en la base de datos
@@ -144,7 +145,7 @@ public IActionResult Create(DetallesCreateTurnoDto dto)
 }
 
 
-
+//listado por id de turno 
 [HttpGet("GetDetallesTurnoGeneral/{id}")]
 public async Task<ActionResult<DetallesTurnoResponseDto>> GetDetallesTurno(int id)
 {
@@ -211,7 +212,7 @@ var detallesTurnoResponse = new DetallesTurnoResponseDto
 }
 
 
-
+// Edit 
 [HttpPut("ActualizarDetallesTurno/{id}")]
 public async Task<IActionResult> ActualizarDetallesTurno(int id, DetallesTurnoUpdateDto detallesTurnoDto)
 {
@@ -225,6 +226,7 @@ public async Task<IActionResult> ActualizarDetallesTurno(int id, DetallesTurnoUp
     // Actualizar los datos del turno con los valores del DTO
     turno.HoraInicio = detallesTurnoDto.HoraInicio;
     turno.HoraFinalizacion = detallesTurnoDto.HoraFinalizacion;
+    turno.Estado=detallesTurnoDto.Estado;
 
     // Actualizar los servicios
     foreach (var servicioDto in detallesTurnoDto.Servicios)
@@ -280,7 +282,8 @@ public async Task<IActionResult> ActualizarDetallesTurno(int id, DetallesTurnoUp
         MontoTotal = turno.DetallesTurnos.Sum(dt => dt.DecMonto ?? 0),
         Fecha = turno.Fecha,
         HoraInicio = turno.HoraInicio,
-        HoraFinalizacion = turno.HoraFinalizacion
+        HoraFinalizacion = turno.HoraFinalizacion,
+        Estado = turno.Estado
     };
 
     return Ok(detallesTurnoResponse);
@@ -289,7 +292,7 @@ public async Task<IActionResult> ActualizarDetallesTurno(int id, DetallesTurnoUp
 
 
 
-//// detalles sin id 
+//// detalles sin id filtrado por turno
 [HttpGet("GetDetallesTurnoGeneral")]
 public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno()
 {
@@ -348,7 +351,12 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
             HoraFinalizacion = _context.Turnos
                 .Where(t => t.Id == turno.Id)
                 .Select(t => t.HoraFinalizacion)
-                .FirstOrDefault() // Agrega la propiedad HoraFinalizacion
+                .FirstOrDefault(),
+                Estado =_context.Turnos
+                .Where(t => t.Id == turno.Id)
+                .Select(t => t.Estado)
+                .FirstOrDefault()
+            // Agrega la propiedad HoraFinalizacion
         };
 
         detallesTurnoResponses.Add(detallesTurnoResponse);

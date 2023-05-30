@@ -10,6 +10,7 @@ public class DetallesTurnoResponseDto
     public DateTime Fecha { get; set; } // Nueva propiedad Fecha
     public TimeSpan HoraInicio { get; set; } // Nueva propiedad HoraInicio
     public TimeSpan HoraFinalizacion { get; set; } // Nueva propiedad HoraFinalizacion
+     public string Estado { get; set; }
 
 }
 }

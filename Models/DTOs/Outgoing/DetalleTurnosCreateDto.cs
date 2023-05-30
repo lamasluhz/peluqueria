@@ -15,6 +15,8 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
         public bool? Eliminado { get; set; }
         public string HoraInicio { get; set; }
         public string HoraFinalizacion { get; set; }
+        
+        public string Estado { get; set; } 
 
       
     }

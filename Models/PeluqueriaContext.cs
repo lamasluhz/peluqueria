@@ -448,6 +448,11 @@ namespace PeluqueriaWebApi.Models
 
                 entity.Property(e => e.Eliminado).HasColumnName("eliminado");
 
+                entity.Property(e => e.Estado)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("estado");
+
                 entity.Property(e => e.Fecha)
                     .HasColumnType("date")
                     .HasColumnName("fecha");
