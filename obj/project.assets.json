@@ -2302,11 +2302,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\PeluqueriaWebApi.csproj",
+      "projectUniqueName": "C:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\PeluqueriaWebApi.csproj",
       "projectName": "PeluqueriaWebApi",
-      "projectPath": "c:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\PeluqueriaWebApi.csproj",
+      "projectPath": "C:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\PeluqueriaWebApi.csproj",
       "packagesPath": "C:\\Users\\jorge\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\obj\\",
+      "outputPath": "C:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\jorge\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -2386,5 +2386,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.408\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problema al leer el archivo de caché C:\\Users\\jorge\\OneDrive\\Escritorio\\Peluqueria-Backend\\PeluqueriaWebApi\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

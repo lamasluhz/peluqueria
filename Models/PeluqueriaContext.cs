@@ -219,19 +219,19 @@ namespace PeluqueriaWebApi.Models
                     .WithMany(p => p.DetallesTurnos)
                     .HasForeignKey(d => d.IdPeluquero)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__detallesT__idPel__73BA3083");
+                    .HasConstraintName("FK__detallesT__idPel__56B3DD81");
 
                 entity.HasOne(d => d.IdTipoServicioNavigation)
                     .WithMany(p => p.DetallesTurnos)
                     .HasForeignKey(d => d.IdTipoServicio)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__detallesT__idTip__72C60C4A");
+                    .HasConstraintName("FK__detallesT__idTip__55BFB948");
 
                 entity.HasOne(d => d.IdTurnoNavigation)
                     .WithMany(p => p.DetallesTurnos)
                     .HasForeignKey(d => d.IdTurno)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__detallesT__idTur__71D1E811");
+                    .HasConstraintName("FK__detallesT__idTur__54CB950F");
             });
 
             modelBuilder.Entity<Especialidade>(entity =>
@@ -498,6 +498,11 @@ namespace PeluqueriaWebApi.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+
+                entity.Property(e => e.Estado)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("estado");
 
                 entity.Property(e => e.Fecha)
                     .HasColumnType("date")

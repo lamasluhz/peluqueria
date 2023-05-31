@@ -19,6 +19,8 @@ public class DetallesTurnoDto
     public string ClienteNombre { get; set; }
     public string PeluqueroNombre { get; set; }
     public decimal? CostoServicio { get; set; }
+     
+    public string Estado { get; set; }
 }
 
 
