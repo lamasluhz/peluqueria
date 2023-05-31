@@ -6,7 +6,7 @@ const Servicios = () => {
     <>
       <div>
         <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-        <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Servicios</h2>
+        <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px',fontWeight: 'bold' }}>Servicios</h2>
         <hr style={{ borderTop: '2px solid #B4D8E9' }} />
       </div>
       <Container>

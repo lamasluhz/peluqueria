@@ -28,8 +28,8 @@ const App = () => {
 
   return (
     <Router>
-      {ingresar ? <Header /> : <Principal acceder={acceder} />}
-      <Routes>
+      {ingresar ? <Header acceder={acceder}/> : <Principal acceder={acceder} />}
+      {ingresar ? <Routes>
         <Route path="/clientes" element={<Clientes />} />
         <Route path="/peluqueros" element={<Peluqueros />} />
         <Route path="/reservas" element={<Reservas />} />
@@ -42,8 +42,8 @@ const App = () => {
         <Route path="/servicios" element={<Servicios />} />
         <Route path="/lavados" element={<Lavados />} />
         <Route path="/facturas" element={<Facturas />} />
-      </Routes>
-    </Router>
+      </Routes>: null}
+    </Router> 
   );
 };
 

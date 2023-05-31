@@ -69,7 +69,18 @@
     height: 126px;
 }
 
-
+.image-principal{
+    width: 200px;
+    height: 40px;
+}
+.vertical-line {
+    width: 1px;
+    height: 100%;
+    background-color: #ddd;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
 #nombre-empresa {
     font-size: 25px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;

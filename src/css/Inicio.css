@@ -1,7 +1,11 @@
-.miDivPrincipal{
-    background-color: rgb(9, 95, 124);
-    height: 150%;
-}
+.miDivPrincipal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #ffffff, #a7f1e5);
+  }
 
 #contenedor-centrado {
     border-radius: 5%;
@@ -32,21 +36,13 @@
     background: linear-gradient(180deg, #ffffff, #c5d5e7);
     border-radius: 0 10px 10px 0;
     box-shadow: 10px 0 10px rgba(0, 0, 0, 0.3);
-
-
-}
-
-
-#contenedor-boton {
-    margin-top: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
 }
 
-#contenedor-bienvenida {
-    margin-left: 10%;
-    margin-top: 10%;
-}
 
 .btn-ancho {
     width: 200px;
@@ -70,7 +66,6 @@
 .divisor {
     display: flex;
     align-items: center;
-    width: 80%;
     color: #47b2e4;
 }
 
@@ -88,4 +83,26 @@
 
 .divisor::after {
     margin-left: 10px;
+}
+
+
+#contenedor-bienvenida {
+    margin-top: 10%;
+    flex: 1;
+}
+
+#contenerLogin{
+    flex: 2;
+    justify-content: center;
+    align-items: center;
+}
+
+.linea{
+    color: #47b2e4;
+}
+
+#divButton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
