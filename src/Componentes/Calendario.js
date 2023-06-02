@@ -6,6 +6,11 @@ import Buscador from "./Buscador";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Select from "react-select";
+import { IoEyeSharp } from 'react-icons/io5';
+import { BiPencil } from 'react-icons/bi';
+
+
+
 
 const Calendar = () => {
   //// segundo post en modal
@@ -45,11 +50,16 @@ const Calendar = () => {
   // para el servicio
   const [selectedServices, setSelectedServices] = useState([]);
   const [servicios, setServicios] = useState([]);
+  const [selectedReserva, setSelectedReserva] = useState(null);
 
   //Utilizo hook useState de react
   const [date, setDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showModal1, setShowModal1] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+  
+
 
   const handleModal = () => {
     console.log(showModal);
@@ -110,6 +120,27 @@ const Calendar = () => {
     setSelectedCliente("");
     setSelectedPeluqueros("");
   };
+  const handleShowModal1 = (index) => {
+    setSelectedReserva(reservas[index]);
+    setShowModal1(true);
+  };
+  
+  
+  const handleCloseModal1 = () => {
+    setShowModal1(false);
+  };
+  
+  const handleShowModal2 = () => {
+    setShowModal2(true);
+  };
+  
+  const handleCloseModal2 = () => {
+    setShowModal2(false);
+  };
+  
+  
+
+
   //renderHeader renderiza la cabecera del calendario, que incluye botones para navegar entre meses
   // y muestra el mes y año actual.
   const renderHeader = () => {
@@ -362,6 +393,7 @@ const Calendar = () => {
 
       {/* Tabla de reservas */}
       <div>
+      
         <div>
           <hr
             style={{ marginBottom: "-15px", borderTop: "2px solid #B4D8E9" }}
@@ -399,7 +431,7 @@ const Calendar = () => {
                 </tr>
               </thead>
               <tbody>
-                {reservas.map((reserva) => (
+                {reservas.map((reserva, index) => (
                   <tr key={reserva.id}>
                     <td>{reserva.cliente}</td>
                     <td>
@@ -414,13 +446,22 @@ const Calendar = () => {
                       {reserva.servicios.map((servicio) => (
                         <div key={servicio.id}>
                           <span>{servicio.tipoServicio}</span>
+                          <span> </span>
+                          <span>{servicio.descripcion}</span>
                           <span> - </span>
                           <span>{servicio.monto}</span>
                         </div>
                       ))}
                     </td>
                     <td>{reserva.montoTotal}</td>
-                    <td>...</td>{" "}
+                    <td> <IoEyeSharp
+    size={20}
+    onClick={() => handleShowModal1(index)}
+    style={{ cursor: 'pointer' }}
+  />  
+                    <BiPencil size={20} onClick={handleShowModal2} style={{ cursor: 'pointer' }} />
+                    </td>{" "}
+                    
                     {/* Agrega aquí los datos adicionales que quieras mostrar */}
                   </tr>
                 ))}
@@ -428,6 +469,63 @@ const Calendar = () => {
             </table>
           </div>
         </div>
+       <Modal show={showModal1} onHide={handleCloseModal1}>
+  <Modal.Header closeButton>
+    <Modal.Title>Facturar</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+  {selectedReserva && (
+  <div>
+    <p>Fecha: {selectedReserva.fecha.split('T')[0]}</p>
+    <p>Cliente: {selectedReserva.cliente}</p>
+    <p>
+      Servicio:
+      {selectedReserva.servicio && selectedReserva.servicio.length > 0 ? (
+        <ul>
+          {selectedReserva.servicio.map((servicio) => (
+            <li key={servicio.id}>
+              {servicio.tipoServicio} - {servicio.descripcion} - {servicio.monto}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <span>...</span>
+      )}
+    </p>
+    <p>Peluquero: {selectedReserva.peluquero}</p>
+    <p>Hora de inicio: {selectedReserva.horaInicio}</p>
+    <p>Hora de finalización: {selectedReserva.horaFinalizacion}</p>
+    <p>Totalidad: {selectedReserva.montoTotal}</p>
+    {/* Agrega aquí los demás detalles que quieras mostrar */}
+  </div>
+)}
+
+
+
+
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleCloseModal1}>
+      Facturar
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+
+<Modal show={showModal2} onHide={handleCloseModal2}>
+  <Modal.Header closeButton>
+    <Modal.Title>Descripción 2</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    Aquí puedes agregar la descripción correspondiente al botón 2.
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleCloseModal2}>
+      Cerrar
+    </Button>
+  </Modal.Footer>
+</Modal>
+
       </div>
     </div>
   );
