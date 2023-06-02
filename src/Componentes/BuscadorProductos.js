@@ -1,8 +1,8 @@
 import React from "react";
-import { InputGroup, FormControl, Button } from "react-bootstrap";
+import { InputGroup, FormControl, Button, Nav } from "react-bootstrap";
 import { BsSearch, BsPerson } from "react-icons/bs";
 import { IoMdPersonAdd } from "react-icons/io";
-
+import { NavLink } from "react-router-dom";
 const BuscadorProductos = ({ action }) => {
     return (
         <InputGroup>
@@ -10,9 +10,8 @@ const BuscadorProductos = ({ action }) => {
                 <BsSearch />
             </InputGroup.Text>
             <FormControl placeholder="Buscar" />
-            <Button variant="light" onClick={action}>
-                Proveedores
-            </Button>
+            <NavLink to='/proveedores'>Proveedores</NavLink>
+
         </InputGroup>
     );
 };

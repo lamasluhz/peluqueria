@@ -5,14 +5,15 @@ import axios from 'axios';
 
 const PeluqueroModal = ({ showModal, handleClose }) => {
     const [formValues, setFormValues] = useState({
-        nombres: '',
-        apellidos: '',
-        correo: '',
-        cedula: '',
-        telefono: '',
-        direccion: '',
+        id: 0,
+        nombres: "",
+        apellidos: "",
+        correo: "",
+        telefono: "",
+        direccion: "",
+        cedula: "",
         listEspecialidades: [],
-        eliminado: 'false'
+        eliminado: false
     });
     const [options, setOptions] = useState([])
 
@@ -69,8 +70,8 @@ const PeluqueroModal = ({ showModal, handleClose }) => {
                         <Form.Label>Nombre</Form.Label>
                         <Form.Control
                             type="text"
-                            name="nombre"
-                            value={formValues.nombre}
+                            name="nombres"
+                            value={formValues.nombres}
                             onChange={handleInputChange}
                         />
                     </Form.Group>
@@ -79,8 +80,8 @@ const PeluqueroModal = ({ showModal, handleClose }) => {
                         <Form.Label>Apellido</Form.Label>
                         <Form.Control
                             type="text"
-                            name="apellido"
-                            value={formValues.apellido}
+                            name="apellidos"
+                            value={formValues.apellidos}
                             onChange={handleInputChange}
                         />
                     </Form.Group>

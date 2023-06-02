@@ -10,6 +10,7 @@ const Peluquero = () => {
     const [peluqueros, setPeluqueros] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [showModal, setShowModal] = useState(false);
+
     const obtenerPeluqueros = async () => {
         const response = await axios.get(url);
         setPeluqueros(response.data);
@@ -23,8 +24,8 @@ const Peluquero = () => {
     }, []);
 
     const handleFieldUpdate = (id, values) => {
-        axios.put(`https://localhost:7137/api/Peluquero/${id}`, {
-            values
+        axios.put(`https://localhost:7137/api/Peluquero/UpdatePeluquero/${id}`, {
+            ...values
         }, headers)
             .then(response => {
                 console.log(response);
@@ -41,7 +42,7 @@ const Peluquero = () => {
     const handleSearch = (query) => {
         setSearchQuery(query);
     };
-    const handleDeleteCliente = (id) => {
+    const handleDeletePeluquero = (id) => {
         axios.delete(`https://localhost:7137/api/Peluquero/${id}`)
             .then(response => {
                 console.log(response);
@@ -49,6 +50,7 @@ const Peluquero = () => {
             })
             .catch(error => {
                 console.error('Error deleting cliente:', error);
+                obtenerPeluqueros();
             });
     };
 
@@ -65,9 +67,9 @@ const Peluquero = () => {
             return (
                 <PeluquerosRow
                     key={peluquero.id}
-                    cliente={peluquero}
+                    peluquero={peluquero}
                     handleFieldUpdate={handleFieldUpdate}
-                    handleDeleteCliente={handleDeleteCliente}
+                    handleDeletePeluquero={handleDeletePeluquero}
                 />
             );
         });
@@ -76,7 +78,7 @@ const Peluquero = () => {
         <div>
             <div>
                 <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-                <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' ,fontWeight: 'bold'}}>Peluqueros</h2>
+                <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px', fontWeight: 'bold' }}>Peluqueros</h2>
                 <hr style={{ borderTop: '2px solid #B4D8E9' }} />
             </div>
 
@@ -84,7 +86,7 @@ const Peluquero = () => {
 
                 <br />
                 <PeluqueroModal showModal={showModal} handleClose={handleModal} />
-                <Buscador action={handleModal} />
+                <Buscador action={handleModal} handleSearch={handleSearch} />
                 <table className="table table-striped table-hover border-white" style={{ border: '1px solid white' }} id="myTable">
                     <thead>
                         <tr style={{ backgroundColor: '#B4D8E9' }}>
