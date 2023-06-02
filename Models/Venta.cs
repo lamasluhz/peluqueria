@@ -9,6 +9,7 @@ namespace PeluqueriaWebApi.Models
         {
             Facturas = new HashSet<Factura>();
             VentasDetalles = new HashSet<VentasDetalle>();
+             Fecha = DateTime.Now;
         }
 
         public int Id { get; set; }
