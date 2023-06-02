@@ -22,7 +22,7 @@ const GraficosProductos = () => {
   const colors = ['#90EE90', '#FFA500', '#4169E1', '#FFC0CB', '#FFFF00', '#87CEEB'];
 
   return (
-    <div style={{ width: '100%', height: 300, borderRadius: '10px', background: 'linear-gradient(90deg, #d6f1ff, #d6f1ff, white)' }}>
+    <div style={{ width: '100%', height: 300, borderRadius: '10px'}}>
  
       <PieChart width={500} height={300}>
         <Pie
