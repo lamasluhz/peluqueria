@@ -5,46 +5,46 @@ import { Link } from "react-router-dom";
 import Buscador from "./Buscador";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Select from 'react-select';
-
+import Select from "react-select";
 
 const Calendar = () => {
+  //// segundo post en modal
 
+  const handleFormSubmit = () => {
+    // Construye el objeto de datos a enviar en la solicitud POST
+    const valores = selectedServices.map(objeto => objeto.value);
+    const data = {
+      idsTipoServicio: valores,
+      idCliente: selectedCliente,
+      idPeluquero: selectedPeluqueros,
+      fecha: new Date().toISOString(),
+      eliminado: true,
+      horaInicio: document.getElementById("horaInicio").value,
+      horaFinalizacion: document.getElementById("horaFinalizacion").value,
+      estado: "pendiente"
+    };
+    console.log(data)
+    // Realiza la solicitud POST utilizando Axios
+    axios
+      .post("https://localhost:7137/api/DetallesTurno", data)
+      .then((response) => {
+        // Aquí puedes realizar cualquier acción adicional después de guardar los datos
+        console.log("Datos guardados exitosamente:", response.data);
+      })
+      .catch((error) => {
+        // Manejo de errores en caso de que la solicitud falle
+        console.error("Error al guardar los datos:", error);
+      });
 
-//// segundo post en modal 
-
-const [formValues, setFormValues] = useState({
-  idCliente: 0,
-  idPeluquero: 0,
-  fecha: "",
-  horaInicio: "",
-  horaFinalizacion: "",
-  servicios: []
-});
-
-const handleFormSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    // Realizar la solicitud POST con los datos del formulario
-    const response = await axios.post('https://localhost:7137/api/DetallesTurno', formValues);
-    // Realizar acciones adicionales después de guardar el turno, como mostrar un mensaje de éxito o redireccionar a otra página
-    console.log(response.data);
-  } catch (error) {
-    // Manejar cualquier error que ocurra durante la solicitud
-    console.error(error);
-  }
-};
-
-
-
+    // Cierra el modal después de guardar los datos
+    handleCloseModal();
+  };
 
   ///////////////////////////
 
-// para el servicio 
-const [selectedServices, setSelectedServices] = useState([]);
-const [servicios, setServicios] = useState([]);
-
+  // para el servicio
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [servicios, setServicios] = useState([]);
 
   //Utilizo hook useState de react
   const [date, setDate] = useState(new Date());
@@ -57,10 +57,9 @@ const [servicios, setServicios] = useState([]);
   };
 
   const [selectedCliente, setSelectedCliente] = useState("");
-  const [selectedService, setSelectedService] = useState([]);
+
   const [selectedPeluqueros, setSelectedPeluqueros] = useState([]);
   const [reservas, setReservas] = useState([]);
-
 
   ///Array 1
   const monthNames = [
@@ -176,7 +175,6 @@ const [servicios, setServicios] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [peluqueros, setPeluqueros] = useState([]);
   const [Servicios, setServicio] = useState([]);
-  
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -190,18 +188,18 @@ const [servicios, setServicios] = useState([]);
       }
     };
     fetchClientes();
-///servicios 
-const fetchServicios = async () => {
-  try {
-    const response = await axios.get(
-      "https://localhost:7137/api/TiposServicios/getServicios"
-    );
-    setServicios(response.data);
-  } catch (error) {
-    console.error("Error al obtener la lista de Servicios", error);
-  }
-};
-fetchServicios();
+    ///servicios
+    const fetchServicios = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:7137/api/TiposServicios/getServicios"
+        );
+        setServicios(response.data);
+      } catch (error) {
+        console.error("Error al obtener la lista de Servicios", error);
+      }
+    };
+    fetchServicios();
     const fetchPeluqueros = async () => {
       try {
         const response = await axios.get(
@@ -216,10 +214,12 @@ fetchServicios();
 
     const obtenerReservas = async () => {
       try {
-        const response = await axios.get('https://localhost:7137/api/DetallesTurno/GetDetallesTurnoGeneral');
+        const response = await axios.get(
+          "https://localhost:7137/api/DetallesTurno/GetDetallesTurnoGeneral"
+        );
         const datosReserva = response.data;
         setReservas(datosReserva);
- // Guardar la reserva en el estado
+        // Guardar la reserva en el estado
       } catch (error) {
         console.error(error);
       }
@@ -227,26 +227,26 @@ fetchServicios();
 
     obtenerReservas();
   }, []);
- // Función para formatear la hora (ejemplo: "11:30 - 12:00")
- const formatearHora = (horaInicio, horaFinalizacion) => {
-  const horaInicioFormateada = horaInicio.slice(0, 5);
-  const horaFinalizacionFormateada = horaFinalizacion.slice(0, 5);
-  return `${horaInicioFormateada} - ${horaFinalizacionFormateada}`;
-};
+  // Función para formatear la hora (ejemplo: "11:30 - 12:00")
+  const formatearHora = (horaInicio, horaFinalizacion) => {
+    const horaInicioFormateada = horaInicio.slice(0, 5);
+    const horaFinalizacionFormateada = horaFinalizacion.slice(0, 5);
+    return `${horaInicioFormateada} - ${horaFinalizacionFormateada}`;
+  };
 
-const handleSelectChange = (selectedOptions) => {
-  setSelectedServices(selectedOptions);
-};
+  const handleSelectChange = (selectedOptions) => {
+    setSelectedServices(selectedOptions);
+  };
 
-const serviciosOptions = servicios.map((servicio) => ({
-  value: servicio.id,
-  label: `${servicio.descripcion} ${servicio.decMonto}`,
-}));
+  const serviciosOptions = servicios.map((servicio) => ({
+    value: servicio.id,
+    label: `${servicio.descripcion} ${servicio.decMonto}`,
+  }));
 
-// Función para formatear la fecha (ejemplo: "2023-05-26")
-const formatearFecha = (fecha) => {
-  return fecha.slice(0, 10);
-};
+  // Función para formatear la fecha (ejemplo: "2023-05-26")
+  const formatearFecha = (fecha) => {
+    return fecha.slice(0, 10);
+  };
 
   // const [selectedCliente, setSelectedCliente] = useState("");
 
@@ -264,7 +264,6 @@ const formatearFecha = (fecha) => {
         {renderDays()}
 
         <div className="button-container" style={{ marginBottom: "20px" }}>
-          {/* Aca tambien hice cambioss */}
           <button
             className="btn btn-primary create-button"
             onClick={handleCreateClick}
@@ -273,14 +272,6 @@ const formatearFecha = (fecha) => {
           >
             Create
           </button>
-
-          <Link
-            to="/reservas-mes"
-            className="btn btn-primary additional-button"
-            style={{ backgroundColor: "#FF8E8C", borderColor: "#FF8E8C" }}
-          >
-            Reservas del mes
-          </Link>
         </div>
 
         <Modal show={showModal} onHide={handleCloseModal}>
@@ -292,128 +283,85 @@ const formatearFecha = (fecha) => {
           <Modal.Body>
             <div className="form-group">
               <label htmlFor="nombre_cliente">Cliente</label>
-              
-              <select
-          className="form-control"
-          id="nombre_cliente"
-          value={selectedCliente}
-          onChange={(e) => setSelectedCliente(e.target.value)}
-        >
-          <option value="">Seleccionar cliente</option>
-          {clientes.map((cliente) => (
-            <option key={cliente.id} value={cliente.id}>
-              {cliente.nombres} {cliente.apellidos}
-            </option>
-          ))}
-        </select>
-              
-            </div>
-
-            {/* <div className="form-group">
-              <label htmlFor="servicios">Servicios</label>
-              <div className="mt-2">
-                <button
-                  type="button"
-                  className={`btn btn-outline-secondary btn-sm ${
-                    selectedService === "lavado" ? "active" : ""
-                  }`}
-                  onClick={() => setSelectedService("lavado")}
-                >
-                  Lavado y Secado
-                </button>
-                <button
-                  type="button"
-                  className={`btn btn-outline-secondary btn-sm ${
-                    selectedService === "corte" ? "active" : ""
-                  }`}
-                  onClick={() => setSelectedService("corte")}
-                >
-                  Corte
-                </button>
-              </div>
-            </div> */}
-
-            <div className="form-group">
-            <label htmlFor="servicios">Servicios</label>
-        <Select
-          id="servicios"
-          options={serviciosOptions}
-          value={selectedServices}
-          isMulti
-          onChange={handleSelectChange}
-        />
-          
-          {Servicios.map((servicios) => (
-            <option key={servicios.id} value={servicios.id}>
-              
-              {servicios.descripcion} {servicios.decMonto}
-            </option>
-          ))}
-              
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="peluquero">Peluquero</label>
-              <div className="input-group">
-
               <select
                 className="form-control"
-                id="peluquero"
-                value={selectedPeluqueros}
-                onChange={(e) => setSelectedPeluqueros(e.target.value)}
-              >
-                <option value="">Seleccionar peluquero</option>
-                {peluqueros.map((peluquero) => (
-                  <option key={peluquero.id} value={peluquero.id}>
-                    {peluquero.nombres}
+                id="nombre_cliente"
+                value={selectedCliente}
+                onChange={(e) => setSelectedCliente(e.target.value)}>
+                <option value="">Seleccionar cliente</option>
+                {clientes.map((cliente) => (
+                  <option key={cliente.id} value={cliente.id}>
+                    {cliente.nombres} {cliente.apellidos}
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="servicios">Servicios</label>
+              <Select
+                id="servicios"
+                options={serviciosOptions}
+                value={selectedServices}
+                isMulti 
+                onChange={handleSelectChange}
+              />
+
+                    {/* no funciona */}
+              {Servicios.map((servicios) => (
+                <option key={servicios.id} value={servicios.id}>
+                  {servicios.descripcion} {servicios.decMonto}
+                </option>
+              ))}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="peluquero">Peluquero</label>
+              <div className="input-group">
+                <select
+                  className="form-control"
+                  id="peluquero"
+                  value={selectedPeluqueros}
+                  onChange={(e) => setSelectedPeluqueros(e.target.value)}>
+                  <option value="">Seleccionar peluquero</option>
+                  {peluqueros.map((peluquero) => (
+                    <option key={peluquero.id} value={peluquero.id}>
+                      {peluquero.nombres}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="form-group">
               <div className="row">
                 <div className="col-sm-6">
                   <label htmlFor="hora_inicio">Hora de inicio</label>
-                  {/* AAAAAAAAAAAAAAAAAAAAAAAAAA */}
-                  <input
-            type="time"
-            className="form-control"
-            id="horaInicio"
-         
-           
-          />
+                  <input type="time" className="form-control" id="horaInicio" />
                 </div>
                 <div className="col-sm-6">
                   <label htmlFor="hora_fin">Hora de finalización</label>
                   <input
-            type="time"
-            className="form-control"
-            id="horaFinalizacion"
-          
-           
-          />
+                    type="time"
+                    className="form-control"
+                    id="horaFinalizacion"
+                  />
                 </div>
               </div>
             </div>
           </Modal.Body>
           <Modal.Footer>
-            {/* <button className="btn btn-danger" onClick={handleCloseModal}>
-            Anular Turno
-          </button> */}
+        
             <button className="btn btn-secondary" onClick={handleCloseModal}>
               Cerrar
             </button>
             <button className="btn btn-primary" onClick={handleFormSubmit}>
-  Guardar
+              Guardar
             </button>
           </Modal.Footer>
         </Modal>
       </div>
 
- {/* Tabla de reservas */}
+      {/* Tabla de reservas */}
       <div>
-       
         <div>
           <hr
             style={{ marginBottom: "-15px", borderTop: "2px solid #B4D8E9" }}
@@ -434,40 +382,50 @@ const formatearFecha = (fecha) => {
             <Buscador action={handleModal} />
           </div>
           <div>
-          <table className="table table-striped table-hover border-white" style={{ border: "1px solid black" }} id="myTable">
-          <thead>
-            <tr style={{ backgroundColor: "#c3dce8" }}>
-              <th scope="col">Nombre</th>
-              <th scope="col">Hora</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Peluquero</th>
-              <th scope="col">Servicios</th>
-              <th scope="col">Totalidad</th>
-              <th scope="col">Otros</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservas.map((reserva) => (
-              <tr key={reserva.id}>
-                <td>{reserva.cliente}</td>
-                <td>{formatearHora(reserva.horaInicio, reserva.horaFinalizacion)}</td>
-                <td>{formatearFecha(reserva.fecha)}</td>
-                <td>{reserva.peluquero}</td>
-                <td>
-                  {reserva.servicios.map((servicio) => (
-                    <div key={servicio.id}>
-                      <span>{servicio.tipoServicio}</span>
-                      <span> - </span>
-                      <span>{servicio.monto}</span>
-                    </div>
-                  ))}
-                </td>
-                <td>{reserva.montoTotal}</td>
-                <td>...</td> {/* Agrega aquí los datos adicionales que quieras mostrar */}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            <table
+              className="table table-striped table-hover border-white"
+              style={{ border: "1px solid black" }}
+              id="myTable"
+            >
+              <thead>
+                <tr style={{ backgroundColor: "#c3dce8" }}>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Hora</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Peluquero</th>
+                  <th scope="col">Servicios</th>
+                  <th scope="col">Totalidad</th>
+                  <th scope="col">Otros</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservas.map((reserva) => (
+                  <tr key={reserva.id}>
+                    <td>{reserva.cliente}</td>
+                    <td>
+                      {formatearHora(
+                        reserva.horaInicio,
+                        reserva.horaFinalizacion
+                      )}
+                    </td>
+                    <td>{formatearFecha(reserva.fecha)}</td>
+                    <td>{reserva.peluquero}</td>
+                    <td>
+                      {reserva.selectedServices.map((servicio) => (
+                        <div key={servicio.id}>
+                          <span>{servicio.descripcion}</span>
+                          <span> - </span>
+                          <span>{servicio.monto}</span>
+                        </div>
+                      ))}
+                    </td>
+                    <td>{reserva.montoTotal}</td>
+                    <td>...</td>{" "}
+                    {/* Agrega aquí los datos adicionales que quieras mostrar */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
