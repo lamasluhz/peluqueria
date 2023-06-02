@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-
-const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) => {
+import { Button } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+const ProveedorRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
     const [editing, setEditing] = useState(false);
     const [editedFields, setEditedFields] = useState({
-        nombres: peluquero.nombres,
-        cedula: peluquero.cedula,
-        correo: peluquero.correo,
-        direccion: peluquero.direccion,
-        telefono: peluquero.telefono,
-        id: peluquero.id,
-        apellidos: peluquero.apellidos,
-        eliminado: false,
-        listEspecialidades: []
+        id: cliente.id,
+        nombres: cliente.nombres,
+        apellidos: '',
+        correo: cliente.correo,
+        telefono: cliente.telefono,
+        direccion: cliente.direccion, cedula: cliente.cedula,
+        ruc: cliente.ruc,
+        eliminado: cliente.eliminado
     });
 
     const handleEdit = () => {
@@ -21,17 +21,18 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
     const handleCancelEdit = () => {
         setEditing(false);
         setEditedFields({
-            nombres: peluquero.nombres,
-            cedula: peluquero.cedula,
-            correo: peluquero.correo,
-            direccion: peluquero.direccion,
-            telefono: peluquero.telefono
+            nombres: cliente.nombres,
+            cedula: cliente.cedula,
+            correo: cliente.correo,
+            direccion: cliente.direccion,
+            telefono: cliente.telefono
         });
     };
 
     const handleSaveEdit = () => {
-        handleFieldUpdate(peluquero.id, editedFields);
+        handleFieldUpdate(cliente.id, editedFields);
         setEditing(false);
+
     };
 
     const handleChange = (e, field) => {
@@ -43,7 +44,7 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
     };
 
     return (
-        <tr id={peluquero.id}>
+        <tr id={cliente.id}>
             <td>
                 {editing ? (
                     <input
@@ -52,7 +53,7 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
                         onChange={(e) => handleChange(e, "nombres")}
                     />
                 ) : (
-                    peluquero.nombres
+                    cliente.nombres
                 )}
             </td>
             <td>
@@ -63,7 +64,7 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
                         onChange={(e) => handleChange(e, "cedula")}
                     />
                 ) : (
-                    peluquero.cedula
+                    cliente.cedula
                 )}
             </td>
             <td>
@@ -74,7 +75,7 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
                         onChange={(e) => handleChange(e, "correo")}
                     />
                 ) : (
-                    peluquero.correo
+                    cliente.correo
                 )}
             </td>
             <td>
@@ -85,7 +86,7 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
                         onChange={(e) => handleChange(e, "direccion")}
                     />
                 ) : (
-                    peluquero.direccion
+                    cliente.direccion
                 )}
             </td>
             <td>
@@ -96,11 +97,11 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
                         onChange={(e) => handleChange(e, "telefono")}
                     />
                 ) : (
-                    peluquero.telefono
+                    cliente.telefono
                 )}
             </td>
             <td>
-                <i className="fa-solid fa-arrows-to-eye"></i>
+                <NavLink to='/CompraProveedores'>Comprar</NavLink>
             </td>
             <td>
                 {editing ? (
@@ -117,17 +118,17 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
                 ) : (
                     <i
                         className="fa-solid fa-pen"
-                        style={{ marginRight: "15px" }}
+                        style={{ marginRight: "15px", cursor: 'pointer' }}
                         onClick={handleEdit}
                     ></i>
                 )}
-                <i
+                <i onClick={() => handleDeleteCliente(cliente.id)}
                     className="fa-solid fa-trash"
-                    onClick={() => handleDeletePeluquero(peluquero.id)}
+                    style={{ marginRight: "15px", cursor: 'pointer' }}
                 ></i>
             </td>
-        </tr>
+        </tr >
     );
 };
 
-export default PeluquerosRow;
+export default ProveedorRow;
