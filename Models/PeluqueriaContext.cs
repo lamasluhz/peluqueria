@@ -23,6 +23,8 @@ namespace PeluqueriaWebApi.Models
         public virtual DbSet<DetallesEspecialidade> DetallesEspecialidades { get; set; } = null!;
         public virtual DbSet<DetallesTurno> DetallesTurnos { get; set; } = null!;
         public virtual DbSet<Especialidade> Especialidades { get; set; } = null!;
+        public virtual DbSet<Factura> Facturas { get; set; } = null!;
+        public virtual DbSet<MediosPago> MediosPagos { get; set; } = null!;
         public virtual DbSet<Peluquero> Peluqueros { get; set; } = null!;
         public virtual DbSet<Persona> Personas { get; set; } = null!;
         public virtual DbSet<Producto> Productos { get; set; } = null!;
@@ -31,6 +33,7 @@ namespace PeluqueriaWebApi.Models
         public virtual DbSet<TiposProducto> TiposProductos { get; set; } = null!;
         public virtual DbSet<TiposServicio> TiposServicios { get; set; } = null!;
         public virtual DbSet<Turno> Turnos { get; set; } = null!;
+        public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
         public virtual DbSet<Venta> Ventas { get; set; } = null!;
         public virtual DbSet<VentasDetalle> VentasDetalles { get; set; } = null!;
 
@@ -248,6 +251,54 @@ namespace PeluqueriaWebApi.Models
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("especialidad");
+            });
+
+            modelBuilder.Entity<Factura>(entity =>
+            {
+                entity.ToTable("facturas");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+
+                entity.Property(e => e.FechaEmision)
+                    .HasColumnType("date")
+                    .HasColumnName("fechaEmision");
+
+                entity.Property(e => e.IdMedioPago).HasColumnName("idMedioPago");
+
+                entity.Property(e => e.IdVenta).HasColumnName("idVenta");
+
+                entity.Property(e => e.NumeroFactura)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("numeroFactura");
+
+                entity.HasOne(d => d.IdMedioPagoNavigation)
+                    .WithMany(p => p.Facturas)
+                    .HasForeignKey(d => d.IdMedioPago)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__facturas__idMedi__65370702");
+
+                entity.HasOne(d => d.IdVentaNavigation)
+                    .WithMany(p => p.Facturas)
+                    .HasForeignKey(d => d.IdVenta)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__facturas__idVent__6442E2C9");
+            });
+
+            modelBuilder.Entity<MediosPago>(entity =>
+            {
+                entity.ToTable("mediosPago");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
             });
 
             modelBuilder.Entity<Peluquero>(entity =>
@@ -468,6 +519,40 @@ namespace PeluqueriaWebApi.Models
                     .HasForeignKey(d => d.IdCliente)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__turnos__idClient__59FA5E80");
+            });
+
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.ToTable("usuarios");
+
+                entity.HasIndex(e => e.Correo, "UQ__usuarios__2A586E0BBD6EA6F4")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Clave)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("clave");
+
+                entity.Property(e => e.Conectado).HasColumnName("conectado");
+
+                entity.Property(e => e.Correo)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("correo");
+
+                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.Rol)
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("rol");
             });
 
             modelBuilder.Entity<Venta>(entity =>

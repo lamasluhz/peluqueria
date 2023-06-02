@@ -163,7 +163,7 @@ public async Task<ActionResult<DetallesTurnoResponseDto>> GetDetallesTurno(int i
     var servicios = turno.DetallesTurnos.Select(dt => new ServicioDto
     {
         Id = dt.IdTipoServicioNavigation.Id,
-        TipoServicio = dt.IdTipoServicioNavigation.Tipo,
+        TipoServicio = dt.IdTipoServicioNavigation.Descripcion,
         Monto = dt.DecMonto ?? 0
     }).ToList();
 
@@ -312,6 +312,7 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
         {
             Id = dt.IdTipoServicioNavigation.Id,
             TipoServicio = dt.IdTipoServicioNavigation.Tipo,
+            Descripcion= dt.IdTipoServicioNavigation.Descripcion,
             Monto = dt.DecMonto ?? 0
         }).ToList();
 
