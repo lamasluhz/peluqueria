@@ -18,7 +18,9 @@ import {
   Lavados,
   Reservas,
   VentaProductos,
-  Inicio
+  Inicio,
+  Proveedores,
+  CompraProveedores,
   
 } from "./Componentes";
 
