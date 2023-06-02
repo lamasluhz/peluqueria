@@ -1,0 +1,18 @@
+.carrusel-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+ 
+.img-rize{
+  width: 50%;
+  height: 500px;
+  display: block;
+  margin: 0 auto;
+
+}
+
+.slick-slider:focus {
+  outline: none;
+}

@@ -46,22 +46,21 @@ const Header = (props) => {
 
     return (
         <div>
-<div style={{ background: 'linear-gradient(90deg, #d6f1ff, #d6f1ff, white)' }}>
-                <div>
-                    <img src="./logo-principal.png" className="image-principal" alt="Logo" />
-                </div>
+            <div>
+               
             </div>
             <Navbar expand="lg" style={{ display: "flex", alignItems: 'center', padding: 0 }}>
                 <Navbar.Toggle aria-controls="navbarNavAltMarkup" />
-                <Navbar.Collapse id="navbarNavAltMarkup" style={{ backgroundColor: '#aae0fa', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)' }}>
+                <Navbar.Collapse id="navbarNavAltMarkup" style={{ backgroundColor: '#aae0fa'}}>
                     <Nav className="mr-auto w-100 justify-content-center" style={{ backgroundColor: "#aae0fa", paddingLeft: '30px', fontSize: '20px' }}>
+                        <NavLink className="nav-link" to="/inicio" style={estilo}> <img src='/inicio.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Inicio</NavLink>
                         <NavLink className="nav-link" to="/clientes" style={estilo}> <img src='/clientes.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Clientes </NavLink>
                         <NavLink className="nav-link" to="/peluqueros" style={estilo}> <img src='/peluqueros.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Peluqueros </NavLink>
                         <NavLink className="nav-link" to="/servicios" style={estilo}> <img src='/servicios.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Servicios </NavLink>
                         <NavLink className="nav-link" to="/reservas" style={estilo}> <img src='/reservas.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Reservas </NavLink>
                         <NavLink className="nav-link" to="/stock" style={estilo}> <img src='/compras.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Compras </NavLink>
                         <NavLink className="nav-link" to="" style={estilo}> <img src='/venta.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Venta </NavLink>
-                        <NavLink className="nav-link" to="/facturas" style={estilo}> <img src='/venta.png' style={{ maxHeight: 25, maxWidth: 20 }} />Factura</NavLink>
+                        <NavLink className="nav-link" to="/facturas" style={estilo}> <img src='/factura.png' style={{ maxHeight: 25, maxWidth: 20 }} />Factura</NavLink>
                     </Nav>
                     <div style={{ borderLeft: '1px solid blue', paddingLeft: '20px' }}>
                         <img src="./usuario.png" alt="Logo" />
