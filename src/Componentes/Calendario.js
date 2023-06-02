@@ -411,9 +411,9 @@ const Calendar = () => {
                     <td>{formatearFecha(reserva.fecha)}</td>
                     <td>{reserva.peluquero}</td>
                     <td>
-                      {reserva.selectedServices.map((servicio) => (
+                      {reserva.servicios.map((servicio) => (
                         <div key={servicio.id}>
-                          <span>{servicio.descripcion}</span>
+                          <span>{servicio.tipoServicio}</span>
                           <span> - </span>
                           <span>{servicio.monto}</span>
                         </div>
