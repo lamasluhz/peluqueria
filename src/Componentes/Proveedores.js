@@ -5,6 +5,7 @@ import Buscador from "./Buscador";
 import { Modal, Form, Button } from 'react-bootstrap';
 import ClienteRow from "./ClientesRow";
 import ProveedorRow from "./ProveedorRow";
+import { NavLink } from "react-router-dom";
 const url = 'https://localhost:7137/api/Cliente/getCliente';
 
 
@@ -161,16 +162,48 @@ const Proveedores = () => {
                     <thead>
                         <tr style={{ backgroundColor: '#B4D8E9' }}>
                             <th scope="col">Nombre</th>
-                            <th scope="col">C.I.</th>
+                      
                             <th scope="col">Correo</th>
                             <th scope="col">Direccion</th>
                             <th scope="col">Telefono</th>
-                            <th scope="col">Historial</th>
+
                             <th scope="col">Otros</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {renderClientes()}
+                        <tr>
+                       <td>AlfaParf</td>
+                       <td>atencion@alfaparf.com</td>
+                       <td>Asuncion</td>
+                       <td>0985434443</td>
+                       <td><div>
+                       <NavLink to='/CompraProveedores'>Comprar</NavLink>
+                       <i
+                        className="fa-solid fa-pen"
+                        style={{ marginRight: "15px", cursor: 'pointer' }}
+                        
+                    ></i>
+                       <i   className="fa-solid fa-trash"
+                    style={{ marginRight: "15px", cursor: 'pointer' }}
+                ></i></div></td>
+                </tr>
+
+                <tr>
+                       <td>Clubman Pinaud</td>
+                       <td>atencion@Pinaud.com</td>
+                       <td>Encarnacion</td>
+                       <td>0983333333</td>
+                       <td><div>
+                       <NavLink to='/CompraProveedores'>Comprar</NavLink>
+                       <i
+                        className="fa-solid fa-pen"
+                        style={{ marginRight: "15px", cursor: 'pointer' }}
+                        
+                    ></i>
+                       <i   className="fa-solid fa-trash"
+                    style={{ marginRight: "15px", cursor: 'pointer' }}
+                ></i></div></td>
+                </tr>
                     </tbody>
                 </table>
             </div>

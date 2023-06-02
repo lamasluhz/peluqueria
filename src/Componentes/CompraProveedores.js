@@ -25,9 +25,30 @@ const CompraProveedores = () => {
                             <th>Categoria</th>
                             <th>Costo</th>
                             <th>Cantidad</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td>Plusbelle</td>
+                            <td>1 Litro de manzana </td>
+                            <td>Cabello</td>
+                            <td>10000</td>
+                            <td>
+                                - 3 + 
+                            </td>
+                            <td><button>Comprar</button></td>
+                        </tr>
+                        <tr>
+                            <td>Sedal</td>
+                            <td>1 Litro Rizos </td>
+                            <td>Cabello</td>
+                            <td>12000</td>
+                            <td>
+                                - 0 + 
+                            </td>
+                            <td><button>Comprar</button></td>
+                        </tr>
                         {/* Aca va a ir un map de los productos */}
                     </tbody>
                 </Table>
@@ -47,14 +68,24 @@ const CompraProveedores = () => {
                             </tr>
                         </thead>
                         <tbody>
+                        <tr>
+                            <td>Plusbelle</td>
+                            <td>1 Litro de manzana </td>
+                            <td>Cabello</td>
+                            <td>10000</td>
+                            <td>
+                                3
+                            </td>
+                            <td>5%</td>
+                        </tr>
                             {/* Aca se mapea todo y se pone un basurerito */}
                         </tbody>
-                        <tfoot>
+                        <tfooter>
                             <tr>
                                 <td colSpan="5">Total</td>
                                 <td>50.000</td>
                             </tr>
-                        </tfoot>
+                        </tfooter>
                     </Table>
                 </Col>
             </Row>
