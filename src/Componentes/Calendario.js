@@ -8,6 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Select from "react-select";
 import { IoEyeSharp } from 'react-icons/io5';
 import { BiPencil } from 'react-icons/bi';
+import Stock from "./Stock";
 
 
 
@@ -66,7 +67,7 @@ const Calendar = () => {
     setShowModal(!showModal);
   };
 
-  const [selectedCliente, setSelectedCliente] = useState("");
+  const [selectedCliente, setSelectedCliente] = useState([]);
 
   const [selectedPeluqueros, setSelectedPeluqueros] = useState([]);
   const [reservas, setReservas] = useState([]);
@@ -313,17 +314,17 @@ const Calendar = () => {
           </Modal.Header>
           <Modal.Body>
             <div className="form-group">
-              <label htmlFor="nombre_cliente">Cliente</label>
+              <label htmlFor="cliente">Cliente</label>
               <select
                 className="form-control"
-                id="nombre_cliente"
+                id="cliente"
                 value={selectedCliente}
                 onChange={(e) => setSelectedCliente(e.target.value)}>
-                <option value="">Seleccionar cliente</option>
-                {clientes.map((cliente) => (
-                  <option key={cliente.id} value={cliente.id}>
-                    {cliente.nombres} {cliente.apellidos}
-                  </option>
+               <option value="">Seleccionar Cliente</option>
+                  {clientes.map((cliente) => (
+                    <option key={cliente.id} value={cliente.id}>
+                      {cliente.nombres}
+                    </option>
                 ))}
               </select>
             </div>
@@ -427,6 +428,7 @@ const Calendar = () => {
                   <th scope="col">Peluquero</th>
                   <th scope="col">Servicios</th>
                   <th scope="col">Totalidad</th>
+                  <th scope="col">Estado</th>
                   <th scope="col">Otros</th>
                 </tr>
               </thead>
@@ -454,6 +456,7 @@ const Calendar = () => {
                       ))}
                     </td>
                     <td>{reserva.montoTotal}</td>
+                    <td>{reserva.estado}</td>
                     <td> <IoEyeSharp
     size={20}
     onClick={() => handleShowModal1(index)}
@@ -532,3 +535,4 @@ const Calendar = () => {
 };
 
 export default Calendar;
+
