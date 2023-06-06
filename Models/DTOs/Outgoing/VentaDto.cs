@@ -9,6 +9,7 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
     {
         public int IdCliente { get; set; }
         public int IdDeposito { get; set; }
-        public List<DetalleVentaDto> DetalleVentaDto { get; set; }
+        public int? IdTurno { get; set; }
+        public List<DetalleVentaDto>? DetalleVentaDto { get; set; }
     }
 }

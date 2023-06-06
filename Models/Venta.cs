@@ -19,9 +19,11 @@ namespace PeluqueriaWebApi.Models
         public DateTime? Fecha { get; set; }
         public decimal Iva { get; set; }
         public bool? Eliminado { get; set; }
+        public int? IdTurno { get; set; }
 
         public virtual Cliente IdClienteNavigation { get; set; } = null!;
         public virtual Deposito IdDepositoNavigation { get; set; } = null!;
+        public virtual Turno? IdTurnoNavigation { get; set; }
         public virtual ICollection<Factura> Facturas { get; set; }
         public virtual ICollection<VentasDetalle> VentasDetalles { get; set; }
     }
