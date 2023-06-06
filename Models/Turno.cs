@@ -17,7 +17,7 @@ namespace PeluqueriaWebApi.Models
         public TimeSpan HoraInicio { get; set; }
         public TimeSpan HoraFinalizacion { get; set; }
         public bool? Eliminado { get; set; }
-        public string Estado { get; set; } = null!;
+        public string? Estado { get; set; }
 
         public virtual Cliente IdClienteNavigation { get; set; } = null!;
         public virtual ICollection<DetallesTurno> DetallesTurnos { get; set; }
