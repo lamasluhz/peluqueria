@@ -32,15 +32,13 @@ const Calendar = () => {
     console.log(data)
     // Realiza la solicitud POST utilizando Axios
     axios
-      .post("https://localhost:7137/api/DetallesTurno", data)
-      .then((response) => {
-        // Aquí puedes realizar cualquier acción adicional después de guardar los datos
-        console.log("Datos guardados exitosamente:", response.data);
-      })
-      .catch((error) => {
-        // Manejo de errores en caso de que la solicitud falle
-        console.error("Error al guardar los datos:", error);
-      });
+    .post("https://localhost:7137/api/DetallesTurno", data)
+    .then((response) => {
+      console.log("Datos guardados exitosamente:", response.data);
+    })
+    .catch((error) => {
+      console.error("Error al guardar los datos:", error);
+    });
 
     // Cierra el modal después de guardar los datos
     handleCloseModal();
@@ -75,7 +73,7 @@ const Calendar = () => {
   ///Array 1
   const monthNames = [
     "Enero",
-    "Febrero",
+    "Febrero",//02
     "Marzo",
     "Abril",
     "Mayo",
@@ -483,17 +481,15 @@ const Calendar = () => {
     <p>Cliente: {selectedReserva.cliente}</p>
     <p>
       Servicio:
-      {selectedReserva.servicio && selectedReserva.servicio.length > 0 ? (
-        <ul>
-          {selectedReserva.servicio.map((servicio) => (
-            <li key={servicio.id}>
-              {servicio.tipoServicio} - {servicio.descripcion} - {servicio.monto}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <span>...</span>
-      )}
+      {selectedReserva.servicios.map((servicio) => (
+                        <div key={servicio.id}>
+                          <span>{servicio.tipoServicio}</span>
+                          <span> </span>
+                          <span>{servicio.descripcion}</span>
+                          <span> - </span>
+                          <span>{servicio.monto}</span>
+                        </div>
+                      ))}
     </p>
     <p>Peluquero: {selectedReserva.peluquero}</p>
     <p>Hora de inicio: {selectedReserva.horaInicio}</p>
