@@ -9,4 +9,5 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
     public decimal TotalVenta { get; set; }
 }
 
+   
 }

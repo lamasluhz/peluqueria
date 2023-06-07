@@ -15,8 +15,7 @@ namespace PeluqueriaWebApi.Controllers
     public class VentaController : Controller
     {
         private readonly ILogger<VentaController> _logger;
-
-        private PeluqueriaContext _context;
+        private readonly PeluqueriaContext _context;
 
         public VentaController(ILogger<VentaController> logger, PeluqueriaContext context)
         {
@@ -25,51 +24,181 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Venta>> Get()
+        public async Task<ActionResult<List<Venta>>> Get()
         {
-            var ventas = _context.Ventas.ToListAsync();
+            var ventas = await _context.Ventas.ToListAsync();
             return Ok(ventas);
         }
 
         [HttpGet("{id}", Name = "GetVenta")]
         public async Task<ActionResult<Venta>> GetById(int id)
         {
-            var venta = _context.Ventas.FindAsync(id);
-            if (venta == null) return NotFound();
+            var venta = await _context.Ventas.FindAsync(id);
+            if (venta == null)
+                return NotFound();
 
             return Ok(venta);
         }
 
-        /*[HttpPost]
-        public async Task<ActionResult<Venta>> Post([FromBody] VentaDto ventaDto){
-            var nuevaVenta = new Venta{
-                IdCliente = ventaDto.IdCliente,
-                IdDeposito = ventaDto.IdDeposito,
-                Total = 0,
-                NotasAdicionales = "Ventas Realizadas",
-                Iva = 0,
-                Eliminado = false
-            };
-             _context.Ventas.Add(nuevaVenta);
-             _context.SaveChanges();
+        [HttpPost("/ProductosyServicios")]
+        public async Task<ActionResult<Venta>> PostProductosyServicios([FromBody] VentaDto ventaDto)
+        {
+            try
+            {
+                var nuevaVenta = new Venta
+                {
+                    IdCliente = ventaDto.IdCliente,
+                    IdDeposito = ventaDto.IdDeposito,
+                    IdTurno = ventaDto.IdTurno,
+                    Total = 0,
+                    NotasAdicionales = "Ventas Realizadas",
+                    Iva = 0,
+                    Eliminado = false
+                };
 
-            foreach(var detalle in ventaDto.DetalleVentaDto){
-                var totalProducto = (detalle.PrecioUnitario * detalle.Cantidad);
-                //var totalTurno = _context.DetallesTurnos
-                                //.Where(d => d.IdTurno == detalle.IdTurno)
-                                //.Sum(d=> )
-                var nuevoDetalle = new VentasDetalle{
+                _context.Ventas.Add(nuevaVenta);
+                await _context.SaveChangesAsync();
+
+                var totalServicio = await CalcularTotalServicio(nuevaVenta);
+                var totalProducto = await CalcularTotalProducto(nuevaVenta, ventaDto.DetalleVentaDto);
+
+                nuevaVenta.Total = totalServicio + totalProducto;
+                await _context.SaveChangesAsync();
+
+                return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en la operación");
+                return StatusCode(500, "Error en la operación");
+            }
+        }
+
+        private async Task<decimal> CalcularTotalServicio(Venta nuevaVenta)
+        {
+            var turnos = await _context.Turnos.FindAsync(nuevaVenta.IdTurno);
+            turnos.Estado = "Completo";
+            await _context.SaveChangesAsync();
+
+            var detallesTurnos = await _context.DetallesTurnos
+                .Where(d => d.IdTurno == nuevaVenta.IdTurno)
+                .ToListAsync();
+
+            decimal totalServicio = 0M;
+            foreach (var turno in detallesTurnos)
+            {
+                var idServicio = turno.IdTipoServicio;
+                var servicio = await _context.TiposServicios.FindAsync(idServicio);
+                totalServicio += (decimal)servicio.DecMonto;
+                Console.WriteLine("Total del servicio: " + totalServicio);
+            }
+
+            return totalServicio;
+        }
+
+        private async Task<decimal> CalcularTotalProducto(Venta nuevaVenta, List<DetalleVentaDto> detalleVentaDto)
+        {
+            decimal totalProducto = 0;
+            decimal totalIvaProducto = 0;
+
+            foreach (var detalle in detalleVentaDto)
+            {
+                var subTotalProducto = detalle.PrecioUnitario * detalle.Cantidad;
+                var ivaProducto = detalle.Iva / 100;
+
+                var nuevoDetalle = new VentasDetalle
+                {
                     IdVenta = nuevaVenta.Id,
                     IdProducto = detalle.IdProducto,
-                    IdTurno = detalle.IdTurno,
                     Cantidad = detalle.Cantidad,
                     PrecioUnitario = detalle.PrecioUnitario,
-                    //SubTotal = 
+                    SubTotal = subTotalProducto,
+                    Iva = ivaProducto,
+                    Eliminado = false
                 };
+
+                _context.VentasDetalles.Add(nuevoDetalle);
+                await _context.SaveChangesAsync();
+
+                totalProducto += subTotalProducto;
+                totalIvaProducto += ivaProducto;
             }
-            return null;
-        }*/
 
+            nuevaVenta.Iva = totalIvaProducto;
+            await _context.SaveChangesAsync();
 
+            Console.WriteLine("Total del Producto: " + totalProducto);
+            Console.WriteLine("Total del Iva: " + totalIvaProducto);
+
+            return totalProducto;
+        }
+
+        [HttpPost("/Productos")] 
+        public async Task<ActionResult<Venta>> PostProductos([FromBody] VentaDto ventaDto)
+        {
+            try
+            {
+                var nuevaVenta = new Venta
+                {
+                    IdCliente = ventaDto.IdCliente,
+                    IdDeposito = ventaDto.IdDeposito,
+                    IdTurno = null,
+                    Total = 0,
+                    NotasAdicionales = "Ventas Realizadas",
+                    Iva = 0,
+                    Eliminado = false
+                };
+
+                _context.Ventas.Add(nuevaVenta);
+                await _context.SaveChangesAsync();
+
+                var totalProducto = await CalcularTotalProducto(nuevaVenta, ventaDto.DetalleVentaDto);
+
+                nuevaVenta.Total = totalProducto;
+                nuevaVenta.Iva = totalProducto;
+
+                await _context.SaveChangesAsync();
+
+                return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en la operación");
+                return StatusCode(500, "Error en la operación");
+            }
+        }
+
+        [HttpPost("/Servicios")]
+        public async Task<ActionResult<Venta>> PostServicios([FromBody] VentaDto ventaDto)
+        {
+            try
+            {
+                var nuevaVenta = new Venta
+                {
+                    IdCliente = ventaDto.IdCliente,
+                    IdDeposito = ventaDto.IdDeposito,
+                    IdTurno = ventaDto.IdTurno,
+                    Total = 0,
+                    NotasAdicionales = "Ventas Realizadas",
+                    Iva = 0,
+                    Eliminado = false
+                };
+
+                _context.Ventas.Add(nuevaVenta);
+                await _context.SaveChangesAsync();
+
+                var totalServicio = await CalcularTotalServicio(nuevaVenta);
+
+                nuevaVenta.Total = totalServicio;
+                await _context.SaveChangesAsync();
+
+                return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en la operación");
+                return StatusCode(500, "Error en la operación");
+            }
+        }
     }
 }

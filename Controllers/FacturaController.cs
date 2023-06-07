@@ -49,26 +49,26 @@ public async Task<ActionResult<List<FacturaDto>>> GetFacturas()
     return facturaDtos;
 }
 
-// DELETE: api/Factura/{id}
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteFactura(int id)
-{
-    // Buscar la factura por su ID
-    var factura = await _context.Facturas.FindAsync(id);
+        // DELETE: api/Factura/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFactura(int id)
+        {
+            // Buscar la factura por su ID
+            var factura = await _context.Facturas.FindAsync(id);
 
-    if (factura == null)
-    {
-        return NotFound();
-    }
+            if (factura == null)
+            {
+                return NotFound();
+            }
 
-    // Cambiar el estado de eliminado a true
-    factura.Eliminado = true;
+            // Cambiar el estado de eliminado a true
+            factura.Eliminado = true;
 
-    // Guardar los cambios en la base de datos
-    await _context.SaveChangesAsync();
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
 
-    return NoContent();
-}
+            return NoContent();
+        }
 
 
 
