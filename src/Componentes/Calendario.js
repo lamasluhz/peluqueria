@@ -489,7 +489,7 @@ const Calendar = () => {
                           <span> - </span>
                           <span>{servicio.monto}</span>
                         </div>
-                      ))}
+                         ))}
     </p>
     <p>Peluquero: {selectedReserva.peluquero}</p>
     <p>Hora de inicio: {selectedReserva.horaInicio}</p>
