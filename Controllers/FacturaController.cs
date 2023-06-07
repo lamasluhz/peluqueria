@@ -24,102 +24,29 @@ namespace PeluqueriaWebApi.Controllers
             _context = context;
         }
      
-
-[HttpGet("{id}", Name = "GetFactura")]
-        public async Task<ActionResult<FacturaDto>> GetFactura(int id)
-        {
-            var venta = await _context.Ventas.FindAsync(id);
-
-            if (venta == null)
-            {
-                return NotFound();
-            }
-
-            var detallesVenta = await _context.VentasDetalles
-                .Where(detalle => detalle.IdVenta == venta.Id)
-                .Include(detalle => detalle.IdProductoNavigation)
-                .ToListAsync();
-
-            var productosServicios = detallesVenta.Select(detalle => new ProductoServicioDto
-            {
-                Id = detalle.IdProducto,
-                Nombre = detalle.IdProductoNavigation?.Nombre,
-                Cantidad = detalle.Cantidad,
-                Subtotal = detalle.SubTotal
-            }).ToList();
-
-            var factura = new FacturaDto
-            {
-                IdVenta = venta.Id,
-                FechaEmision = venta.Fecha,
-                Total = venta.Total,
-                ProductosServicios = productosServicios
-            };
-
-            return factura;
-        }
-
-
-
-
-/////verificar luego con ventas
-
-[HttpPost]
-public async Task<ActionResult<FacturaDto>> CreateFactura(FacturaDto facturaDto)
+/////
+[HttpGet("GetFacturas")]
+public async Task<ActionResult<List<FacturaDto>>> GetFacturas()
 {
-    // Crear una nueva instancia de Factura
-    var factura = new Factura
+    var facturas = await _context.Facturas
+        .Include(f => f.IdVentaNavigation)
+            .ThenInclude(v => v.IdClienteNavigation)
+                .ThenInclude(c => c.IdPersonaNavigation)
+        .Include(f => f.IdVentaNavigation.VentasDetalles)
+            .ThenInclude(d => d.IdProductoNavigation)
+        .ToListAsync();
+
+    var facturaDtos = facturas.Select(factura => new FacturaDto
     {
-        IdVenta = facturaDto.IdVenta,
-        IdMedioPago = facturaDto.IdMedioPago,
-        FechaEmision = DateTime.Now,
-        NumeroFactura = facturaDto.NumeroFactura,
-        Eliminado = false
-    };
+        NombreCliente = factura.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Nombres,
+        ApellidoCliente = factura.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Apellidos,
+        FechaFactura = factura.FechaEmision,
+        Estado = factura.Estado,
+        TotalVenta = factura.IdVentaNavigation.VentasDetalles.Sum(d => d.SubTotal)
+    }).ToList();
 
-    // Guardar la nueva factura en la base de datos
-    _context.Facturas.Add(factura);
-    await _context.SaveChangesAsync();
 
-    // Crear el objeto FacturaDto de respuesta
-    var facturaResponse = new FacturaDto
-    {
-        Id = factura.Id,
-        IdVenta = factura.IdVenta,
-        IdMedioPago = factura.IdMedioPago,
-        FechaEmision = factura.FechaEmision,
-        NumeroFactura = factura.NumeroFactura
-    };
-
-    return CreatedAtAction(nameof(GetFactura), new { id = factura.Id }, facturaResponse);
-}
-
-// PUT: api/Factura/{id}
-[HttpPut("{id}")]
-public async Task<IActionResult> UpdateFactura(int id, FacturaDto facturaDto)
-{
-    if (id != facturaDto.Id)
-    {
-        return BadRequest();
-    }
-
-    // Buscar la factura por su ID
-    var factura = await _context.Facturas.FindAsync(id);
-
-    if (factura == null)
-    {
-        return NotFound();
-    }
-
-    // Actualizar los datos de la factura
-    factura.IdVenta = facturaDto.IdVenta;
-    factura.IdMedioPago = facturaDto.IdMedioPago;
-    factura.NumeroFactura = facturaDto.NumeroFactura;
-
-    // Guardar los cambios en la base de datos
-    await _context.SaveChangesAsync();
-
-    return NoContent();
+    return facturaDtos;
 }
 
 // DELETE: api/Factura/{id}

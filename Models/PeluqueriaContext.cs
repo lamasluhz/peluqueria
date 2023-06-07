@@ -261,6 +261,11 @@ namespace PeluqueriaWebApi.Models
 
                 entity.Property(e => e.Eliminado).HasColumnName("eliminado");
 
+                entity.Property(e => e.Estado)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("estado");
+
                 entity.Property(e => e.FechaEmision)
                     .HasColumnType("date")
                     .HasColumnName("fechaEmision");
@@ -278,13 +283,13 @@ namespace PeluqueriaWebApi.Models
                     .WithMany(p => p.Facturas)
                     .HasForeignKey(d => d.IdMedioPago)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__facturas__idMedi__65370702");
+                    .HasConstraintName("FK__facturas__idMedi__251C81ED");
 
                 entity.HasOne(d => d.IdVentaNavigation)
                     .WithMany(p => p.Facturas)
                     .HasForeignKey(d => d.IdVenta)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__facturas__idVent__6442E2C9");
+                    .HasConstraintName("FK__facturas__idVent__24285DB4");
             });
 
             modelBuilder.Entity<MediosPago>(entity =>
@@ -572,6 +577,8 @@ namespace PeluqueriaWebApi.Models
 
                 entity.Property(e => e.IdDeposito).HasColumnName("idDeposito");
 
+                entity.Property(e => e.IdTurno).HasColumnName("idTurno");
+
                 entity.Property(e => e.Iva)
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("iva");
@@ -589,13 +596,18 @@ namespace PeluqueriaWebApi.Models
                     .WithMany(p => p.Venta)
                     .HasForeignKey(d => d.IdCliente)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ventas__idClient__3C34F16F");
+                    .HasConstraintName("FK__ventas__idClient__15DA3E5D");
 
                 entity.HasOne(d => d.IdDepositoNavigation)
                     .WithMany(p => p.Venta)
                     .HasForeignKey(d => d.IdDeposito)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ventas__idDeposi__3D2915A8");
+                    .HasConstraintName("FK__ventas__idDeposi__16CE6296");
+
+                entity.HasOne(d => d.IdTurnoNavigation)
+                    .WithMany(p => p.Venta)
+                    .HasForeignKey(d => d.IdTurno)
+                    .HasConstraintName("FK__ventas__idTurno__18B6AB08");
             });
 
             modelBuilder.Entity<VentasDetalle>(entity =>
@@ -609,8 +621,6 @@ namespace PeluqueriaWebApi.Models
                 entity.Property(e => e.Eliminado).HasColumnName("eliminado");
 
                 entity.Property(e => e.IdProducto).HasColumnName("idProducto");
-
-                entity.Property(e => e.IdTurno).HasColumnName("idTurno");
 
                 entity.Property(e => e.IdVenta).HasColumnName("idVenta");
 
@@ -629,18 +639,13 @@ namespace PeluqueriaWebApi.Models
                 entity.HasOne(d => d.IdProductoNavigation)
                     .WithMany(p => p.VentasDetalles)
                     .HasForeignKey(d => d.IdProducto)
-                    .HasConstraintName("FK__ventasDet__idPro__41EDCAC5");
-
-                entity.HasOne(d => d.IdTurnoNavigation)
-                    .WithMany(p => p.VentasDetalles)
-                    .HasForeignKey(d => d.IdTurno)
-                    .HasConstraintName("FK__ventasDet__idTur__42E1EEFE");
+                    .HasConstraintName("FK__ventasDet__idPro__1C873BEC");
 
                 entity.HasOne(d => d.IdVentaNavigation)
                     .WithMany(p => p.VentasDetalles)
                     .HasForeignKey(d => d.IdVenta)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ventasDet__idVen__40F9A68C");
+                    .HasConstraintName("FK__ventasDet__idVen__1B9317B3");
             });
 
             OnModelCreatingPartial(modelBuilder);
