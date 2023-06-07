@@ -47,6 +47,7 @@ namespace PeluqueriaWebApi.Controllers
                              {
 
                                  Id = stock.Id,
+                                 IdProducto = prod.Id,
                                  Nombre = prod.Nombre,
                                  Proveedor = pvdr.NombreEmpresa,
                                  PrecioUnitario = prod.PrecioUnitario,

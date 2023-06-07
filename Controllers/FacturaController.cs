@@ -23,9 +23,9 @@ namespace PeluqueriaWebApi.Controllers
             _logger = logger;
             _context = context;
         }
-     
 
-[HttpGet("{id}", Name = "GetFactura")]
+
+        [HttpGet("{id}", Name = "GetFactura")]
         public async Task<ActionResult<FacturaDto>> GetFactura(int id)
         {
             var venta = await _context.Ventas.FindAsync(id);
@@ -62,86 +62,86 @@ namespace PeluqueriaWebApi.Controllers
 
 
 
-/////verificar luego con ventas
+        /////verificar luego con ventas
 
-[HttpPost]
-public async Task<ActionResult<FacturaDto>> CreateFactura(FacturaDto facturaDto)
-{
-    // Crear una nueva instancia de Factura
-    var factura = new Factura
-    {
-        IdVenta = facturaDto.IdVenta,
-        IdMedioPago = facturaDto.IdMedioPago,
-        FechaEmision = DateTime.Now,
-        NumeroFactura = facturaDto.NumeroFactura,
-        Eliminado = false
-    };
+        [HttpPost]
+        public async Task<ActionResult<FacturaDto>> CreateFactura(FacturaDto facturaDto)
+        {
+            // Crear una nueva instancia de Factura
+            var factura = new Factura
+            {
+                IdVenta = facturaDto.IdVenta,
+                IdMedioPago = facturaDto.IdMedioPago,
+                FechaEmision = DateTime.Now,
+                NumeroFactura = facturaDto.NumeroFactura,
+                Eliminado = false
+            };
 
-    // Guardar la nueva factura en la base de datos
-    _context.Facturas.Add(factura);
-    await _context.SaveChangesAsync();
+            // Guardar la nueva factura en la base de datos
+            _context.Facturas.Add(factura);
+            await _context.SaveChangesAsync();
 
-    // Crear el objeto FacturaDto de respuesta
-    var facturaResponse = new FacturaDto
-    {
-        Id = factura.Id,
-        IdVenta = factura.IdVenta,
-        IdMedioPago = factura.IdMedioPago,
-        FechaEmision = factura.FechaEmision,
-        NumeroFactura = factura.NumeroFactura
-    };
+            // Crear el objeto FacturaDto de respuesta
+            var facturaResponse = new FacturaDto
+            {
+                Id = factura.Id,
+                IdVenta = factura.IdVenta,
+                IdMedioPago = factura.IdMedioPago,
+                FechaEmision = factura.FechaEmision,
+                NumeroFactura = factura.NumeroFactura
+            };
 
-    return CreatedAtAction(nameof(GetFactura), new { id = factura.Id }, facturaResponse);
-}
+            return CreatedAtAction(nameof(GetFactura), new { id = factura.Id }, facturaResponse);
+        }
 
-// PUT: api/Factura/{id}
-[HttpPut("{id}")]
-public async Task<IActionResult> UpdateFactura(int id, FacturaDto facturaDto)
-{
-    if (id != facturaDto.Id)
-    {
-        return BadRequest();
-    }
+        // PUT: api/Factura/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateFactura(int id, FacturaDto facturaDto)
+        {
+            if (id != facturaDto.Id)
+            {
+                return BadRequest();
+            }
 
-    // Buscar la factura por su ID
-    var factura = await _context.Facturas.FindAsync(id);
+            // Buscar la factura por su ID
+            var factura = await _context.Facturas.FindAsync(id);
 
-    if (factura == null)
-    {
-        return NotFound();
-    }
+            if (factura == null)
+            {
+                return NotFound();
+            }
 
-    // Actualizar los datos de la factura
-    factura.IdVenta = facturaDto.IdVenta;
-    factura.IdMedioPago = facturaDto.IdMedioPago;
-    factura.NumeroFactura = facturaDto.NumeroFactura;
+            // Actualizar los datos de la factura
+            factura.IdVenta = facturaDto.IdVenta;
+            factura.IdMedioPago = facturaDto.IdMedioPago;
+            factura.NumeroFactura = facturaDto.NumeroFactura;
 
-    // Guardar los cambios en la base de datos
-    await _context.SaveChangesAsync();
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
 
-    return NoContent();
-}
+            return NoContent();
+        }
 
-// DELETE: api/Factura/{id}
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteFactura(int id)
-{
-    // Buscar la factura por su ID
-    var factura = await _context.Facturas.FindAsync(id);
+        // DELETE: api/Factura/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFactura(int id)
+        {
+            // Buscar la factura por su ID
+            var factura = await _context.Facturas.FindAsync(id);
 
-    if (factura == null)
-    {
-        return NotFound();
-    }
+            if (factura == null)
+            {
+                return NotFound();
+            }
 
-    // Cambiar el estado de eliminado a true
-    factura.Eliminado = true;
+            // Cambiar el estado de eliminado a true
+            factura.Eliminado = true;
 
-    // Guardar los cambios en la base de datos
-    await _context.SaveChangesAsync();
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
 
-    return NoContent();
-}
+            return NoContent();
+        }
 
 
 

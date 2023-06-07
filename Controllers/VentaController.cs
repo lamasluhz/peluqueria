@@ -59,8 +59,6 @@ namespace PeluqueriaWebApi.Controllers
                 _context.Ventas.Add(nuevaVenta);
                 await _context.SaveChangesAsync();
 
-                Console.WriteLine("ID TURNO: " + nuevaVenta.IdTurno);
-
                 var totalServicio = await CalcularTotalServicio(nuevaVenta);
                 var totalProducto = await CalcularTotalProducto(nuevaVenta, ventaDto.DetalleVentaDto);
 
@@ -78,6 +76,10 @@ namespace PeluqueriaWebApi.Controllers
 
         private async Task<decimal> CalcularTotalServicio(Venta nuevaVenta)
         {
+            var turnos = await _context.Turnos.FindAsync(nuevaVenta.IdTurno);
+            turnos.Estado = "Completo";
+            await _context.SaveChangesAsync();
+
             var detallesTurnos = await _context.DetallesTurnos
                 .Where(d => d.IdTurno == nuevaVenta.IdTurno)
                 .ToListAsync();
@@ -90,7 +92,6 @@ namespace PeluqueriaWebApi.Controllers
                 totalServicio += (decimal)servicio.DecMonto;
                 Console.WriteLine("Total del servicio: " + totalServicio);
             }
-
 
             return totalServicio;
         }
