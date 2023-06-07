@@ -134,6 +134,80 @@ public IActionResult ActualizarMedioPagoFactura([FromBody] ActualizarMedioPagoDt
         return StatusCode(500, ex.Message); // Error interno del servidor
     }
 }
+////// get mas generales 
+[HttpGet("facturas/{id}")]
+public IActionResult ObtenerFactura(int id)
+{
+    try
+    {
+        var factura = _context.Facturas
+            .Include(f => f.IdVentaNavigation)
+                .ThenInclude(v => v.IdClienteNavigation)
+                    .ThenInclude(c => c.IdPersonaNavigation)
+            .Include(f => f.IdVentaNavigation.VentasDetalles)
+                .ThenInclude(d => d.IdProductoNavigation)
+            .Include(f => f.IdVentaNavigation.IdTurnoNavigation)
+                .ThenInclude(t => t.DetallesTurnos)
+                    .ThenInclude(dt => dt.IdTipoServicioNavigation)
+            .FirstOrDefault(f => f.Id == id);
+
+        if (factura == null)
+        {
+            return NotFound(); // Factura no encontrada
+        }
+
+        var cliente = factura.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation;
+        
+        var productos = factura.IdVentaNavigation.VentasDetalles.Select(d => new
+        {
+            d.IdProductoNavigation.Nombre,
+            d.Cantidad,
+            d.PrecioUnitario,
+            total= d.PrecioUnitario*d.Cantidad
+        });
+
+        var servicios = factura.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos.Select(dt => new
+        {
+            dt.IdTipoServicioNavigation.Tipo,
+            dt.IdTipoServicioNavigation.Descripcion,
+            dt.IdTipoServicioNavigation.DecMonto
+        });
+var ventas = factura.IdVentaNavigation;
+        var respuesta = new
+        {
+            Factura = new
+            {
+                factura.Id,
+                factura.FechaEmision,
+                factura.Estado
+                
+            },
+            Cliente = new
+            {
+                cliente.Nombres,
+                cliente.Apellidos,
+//cliente.,
+                cliente.Telefono,
+                cliente.Cedula,
+                cliente.Direccion,
+                cliente.Correo
+            },
+            Ventas = new
+            {
+                ventas.Total
+                },
+            Productos = productos,
+            Servicios = servicios,
+           
+        };
+
+        return Ok(respuesta); // Respuesta exitosa con los datos de la factura y sus detalles
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
 
 
 
