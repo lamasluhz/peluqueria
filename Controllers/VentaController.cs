@@ -111,7 +111,7 @@ namespace PeluqueriaWebApi.Controllers
                     IdVenta = nuevaVenta.Id,
                     IdProducto = detalle.IdProducto,
                     Cantidad = detalle.Cantidad,
-                    PrecioUnitario = detalle.PrecioUnitario,
+                    PrecioUnitario = (decimal)detalle.PrecioUnitario,
                     SubTotal = subTotalProducto,
                     Iva = ivaProducto,
                     Eliminado = false
