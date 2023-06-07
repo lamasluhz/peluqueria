@@ -283,21 +283,13 @@ namespace PeluqueriaWebApi.Models
                     .WithMany(p => p.Facturas)
                     .HasForeignKey(d => d.IdMedioPago)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-<<<<<<< HEAD
                     .HasConstraintName("FK__facturas__idMedi__251C81ED");
-=======
-                    .HasConstraintName("FK__facturas__idMedi__0B91BA14");
->>>>>>> 08561fd9207d897eb768ed9958b8c580f5c0e49f
 
                 entity.HasOne(d => d.IdVentaNavigation)
                     .WithMany(p => p.Facturas)
                     .HasForeignKey(d => d.IdVenta)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-<<<<<<< HEAD
                     .HasConstraintName("FK__facturas__idVent__24285DB4");
-=======
-                    .HasConstraintName("FK__facturas__idVent__0A9D95DB");
->>>>>>> 08561fd9207d897eb768ed9958b8c580f5c0e49f
             });
 
             modelBuilder.Entity<MediosPago>(entity =>
@@ -604,30 +596,18 @@ namespace PeluqueriaWebApi.Models
                     .WithMany(p => p.Venta)
                     .HasForeignKey(d => d.IdCliente)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-<<<<<<< HEAD
                     .HasConstraintName("FK__ventas__idClient__15DA3E5D");
-=======
-                    .HasConstraintName("FK__ventas__idClient__74AE54BC");
->>>>>>> 08561fd9207d897eb768ed9958b8c580f5c0e49f
 
                 entity.HasOne(d => d.IdDepositoNavigation)
                     .WithMany(p => p.Venta)
                     .HasForeignKey(d => d.IdDeposito)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-<<<<<<< HEAD
                     .HasConstraintName("FK__ventas__idDeposi__16CE6296");
-=======
-                    .HasConstraintName("FK__ventas__idDeposi__75A278F5");
->>>>>>> 08561fd9207d897eb768ed9958b8c580f5c0e49f
 
                 entity.HasOne(d => d.IdTurnoNavigation)
                     .WithMany(p => p.Venta)
                     .HasForeignKey(d => d.IdTurno)
-<<<<<<< HEAD
                     .HasConstraintName("FK__ventas__idTurno__18B6AB08");
-=======
-                    .HasConstraintName("FK__ventas__idTurno__07C12930");
->>>>>>> 08561fd9207d897eb768ed9958b8c580f5c0e49f
             });
 
             modelBuilder.Entity<VentasDetalle>(entity =>
@@ -659,21 +639,13 @@ namespace PeluqueriaWebApi.Models
                 entity.HasOne(d => d.IdProductoNavigation)
                     .WithMany(p => p.VentasDetalles)
                     .HasForeignKey(d => d.IdProducto)
-<<<<<<< HEAD
                     .HasConstraintName("FK__ventasDet__idPro__1C873BEC");
-=======
-                    .HasConstraintName("FK__ventasDet__idPro__7B5B524B");
->>>>>>> 08561fd9207d897eb768ed9958b8c580f5c0e49f
 
                 entity.HasOne(d => d.IdVentaNavigation)
                     .WithMany(p => p.VentasDetalles)
                     .HasForeignKey(d => d.IdVenta)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-<<<<<<< HEAD
                     .HasConstraintName("FK__ventasDet__idVen__1B9317B3");
-=======
-                    .HasConstraintName("FK__ventasDet__idVen__7A672E12");
->>>>>>> 08561fd9207d897eb768ed9958b8c580f5c0e49f
             });
 
             OnModelCreatingPartial(modelBuilder);
