@@ -5,13 +5,10 @@ const ProveedorRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
     const [editing, setEditing] = useState(false);
     const [editedFields, setEditedFields] = useState({
         id: cliente.id,
-        nombres: cliente.nombres,
-        apellidos: '',
-        correo: cliente.correo,
+        cedula: cliente.cedula,
+        nombreEmpresa: cliente.nombreEmpresa,
         telefono: cliente.telefono,
-        direccion: cliente.direccion, cedula: cliente.cedula,
-        ruc: cliente.ruc,
-        eliminado: cliente.eliminado
+        direccion: cliente.direccion,
     });
 
     const handleEdit = () => {
@@ -24,8 +21,8 @@ const ProveedorRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
             nombres: cliente.nombres,
             cedula: cliente.cedula,
             correo: cliente.correo,
-            direccion: cliente.direccion,
-            telefono: cliente.telefono
+
+
         });
     };
 
@@ -46,26 +43,10 @@ const ProveedorRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
     return (
         <tr id={cliente.id}>
             <td>
-                {editing ? (
-                    <input
-                        type="text"
-                        value={editedFields.nombres}
-                        onChange={(e) => handleChange(e, "nombres")}
-                    />
-                ) : (
-                    cliente.nombres
-                )}
+                {cliente.nombreEmpresa}
             </td>
             <td>
-                {editing ? (
-                    <input
-                        type="text"
-                        value={editedFields.cedula}
-                        onChange={(e) => handleChange(e, "cedula")}
-                    />
-                ) : (
-                    cliente.cedula
-                )}
+                {cliente.cedula}
             </td>
             <td>
                 {editing ? (
@@ -101,7 +82,7 @@ const ProveedorRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
                 )}
             </td>
             <td>
-                <NavLink to='/CompraProveedores'>Comprar</NavLink>
+                <NavLink to='/compra-proveedores' state={{ idProveedor: cliente.id }}>Comprar</NavLink>
             </td>
             <td>
                 {editing ? (
