@@ -49,6 +49,8 @@ const App = () => {
         <Route path="/lavados" element={<Lavados />} />
         <Route path="/facturas" element={<Facturas />} />
         <Route path="/ventaProductos" element={<VentaProductos />} />
+        <Route path="/proveedores" element={<Proveedores />} />
+        <Route path="/compra-proveedores" element={<CompraProveedores />} />
         
       </Routes>: null}
     </Router> 
