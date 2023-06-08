@@ -5,7 +5,7 @@ import Buscador from "./Buscador";
 import { Modal, Form, Button } from 'react-bootstrap';
 import ClienteRow from "./ClientesRow";
 import ProveedorRow from "./ProveedorRow";
-const url = 'https://localhost:7137/api/Cliente/getCliente';
+const url = 'https://localhost:7137/Proveedor/GetProveedores';
 
 
 const Proveedores = () => {
@@ -95,9 +95,7 @@ const Proveedores = () => {
     };
 
     const renderClientes = () => {
-        const filteredClientes = clientes.filter(cliente =>
-            cliente.nombres.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        const filteredClientes = clientes;
 
         return filteredClientes.map((cliente, i) => {
             if (cliente.eliminado) {

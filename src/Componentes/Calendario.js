@@ -6,6 +6,12 @@ import Buscador from "./Buscador";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Select from "react-select";
+import { IoEyeSharp } from 'react-icons/io5';
+import { BiPencil } from 'react-icons/bi';
+import Stock from "./Stock";
+
+
+
 
 const Calendar = () => {
   //// segundo post en modal
@@ -26,15 +32,13 @@ const Calendar = () => {
     console.log(data)
     // Realiza la solicitud POST utilizando Axios
     axios
-      .post("https://localhost:7137/api/DetallesTurno", data)
-      .then((response) => {
-        // Aquí puedes realizar cualquier acción adicional después de guardar los datos
-        console.log("Datos guardados exitosamente:", response.data);
-      })
-      .catch((error) => {
-        // Manejo de errores en caso de que la solicitud falle
-        console.error("Error al guardar los datos:", error);
-      });
+    .post("https://localhost:7137/api/DetallesTurno", data)
+    .then((response) => {
+      console.log("Datos guardados exitosamente:", response.data);
+    })
+    .catch((error) => {
+      console.error("Error al guardar los datos:", error);
+    });
 
     // Cierra el modal después de guardar los datos
     handleCloseModal();
@@ -45,18 +49,23 @@ const Calendar = () => {
   // para el servicio
   const [selectedServices, setSelectedServices] = useState([]);
   const [servicios, setServicios] = useState([]);
+  const [selectedReserva, setSelectedReserva] = useState(null);
 
   //Utilizo hook useState de react
   const [date, setDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showModal1, setShowModal1] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+  
+
 
   const handleModal = () => {
     console.log(showModal);
     setShowModal(!showModal);
   };
 
-  const [selectedCliente, setSelectedCliente] = useState("");
+  const [selectedCliente, setSelectedCliente] = useState([]);
 
   const [selectedPeluqueros, setSelectedPeluqueros] = useState([]);
   const [reservas, setReservas] = useState([]);
@@ -64,7 +73,7 @@ const Calendar = () => {
   ///Array 1
   const monthNames = [
     "Enero",
-    "Febrero",
+    "Febrero",//02
     "Marzo",
     "Abril",
     "Mayo",
@@ -110,6 +119,27 @@ const Calendar = () => {
     setSelectedCliente("");
     setSelectedPeluqueros("");
   };
+  const handleShowModal1 = (index) => {
+    setSelectedReserva(reservas[index]);
+    setShowModal1(true);
+  };
+  
+  
+  const handleCloseModal1 = () => {
+    setShowModal1(false);
+  };
+  
+  const handleShowModal2 = () => {
+    setShowModal2(true);
+  };
+  
+  const handleCloseModal2 = () => {
+    setShowModal2(false);
+  };
+  
+  
+
+
   //renderHeader renderiza la cabecera del calendario, que incluye botones para navegar entre meses
   // y muestra el mes y año actual.
   const renderHeader = () => {
@@ -121,7 +151,7 @@ const Calendar = () => {
           {/* Aqui hice cambios para modificar en el front  */}
           <button
             className="btn btn-primary"
-            style={{ backgroundColor: "#FF8E8C", borderColor: "#FF8E8C" }}
+            style={{ backgroundColor: "#0532FB", borderColor: "#0532FB" }}
             onClick={prevMonth}
           >
             &lt;
@@ -131,7 +161,7 @@ const Calendar = () => {
           </div>
           <button
             className="btn btn-primary"
-            style={{ backgroundColor: "#FF8E8C", borderColor: "#FF8E8C" }}
+            style={{ backgroundColor: "#0532FB", borderColor: "#0532FB" }}
             onClick={nextMonth}
           >
             &gt;
@@ -159,7 +189,7 @@ const Calendar = () => {
           className={`day ${isSelected ? "selected" : ""}`}
           key={i}
           onClick={() => handleDayClick(i)}
-          style={{ backgroundColor: "#FFB38C" }}
+          style={{ backgroundColor: "#75D2F3" }}
         >
           {i}
         </div>
@@ -268,7 +298,7 @@ const Calendar = () => {
             className="btn btn-primary create-button"
             onClick={handleCreateClick}
             disabled={!selectedDay}
-            style={{ backgroundColor: "#FF8E8C", borderColor: "#FF8E8C" }}
+            style={{ backgroundColor: "#0532FB", borderColor: "#0532FB" }}
           >
             Create
           </button>
@@ -282,17 +312,17 @@ const Calendar = () => {
           </Modal.Header>
           <Modal.Body>
             <div className="form-group">
-              <label htmlFor="nombre_cliente">Cliente</label>
+              <label htmlFor="cliente">Cliente</label>
               <select
                 className="form-control"
-                id="nombre_cliente"
+                id="cliente"
                 value={selectedCliente}
                 onChange={(e) => setSelectedCliente(e.target.value)}>
-                <option value="">Seleccionar cliente</option>
-                {clientes.map((cliente) => (
-                  <option key={cliente.id} value={cliente.id}>
-                    {cliente.nombres} {cliente.apellidos}
-                  </option>
+               <option value="">Seleccionar Cliente</option>
+                  {clientes.map((cliente) => (
+                    <option key={cliente.id} value={cliente.id}>
+                      {cliente.nombres} {cliente.apellidos}
+                    </option>
                 ))}
               </select>
             </div>
@@ -362,6 +392,7 @@ const Calendar = () => {
 
       {/* Tabla de reservas */}
       <div>
+      
         <div>
           <hr
             style={{ marginBottom: "-15px", borderTop: "2px solid #B4D8E9" }}
@@ -395,11 +426,12 @@ const Calendar = () => {
                   <th scope="col">Peluquero</th>
                   <th scope="col">Servicios</th>
                   <th scope="col">Totalidad</th>
+                  <th scope="col">Estado</th>
                   <th scope="col">Otros</th>
                 </tr>
               </thead>
               <tbody>
-                {reservas.map((reserva) => (
+                {reservas.map((reserva, index) => (
                   <tr key={reserva.id}>
                     <td>{reserva.cliente}</td>
                     <td>
@@ -414,13 +446,23 @@ const Calendar = () => {
                       {reserva.servicios.map((servicio) => (
                         <div key={servicio.id}>
                           <span>{servicio.tipoServicio}</span>
+                          <span> </span>
+                          <span>{servicio.descripcion}</span>
                           <span> - </span>
                           <span>{servicio.monto}</span>
                         </div>
                       ))}
                     </td>
                     <td>{reserva.montoTotal}</td>
-                    <td>...</td>{" "}
+                    <td>{reserva.estado}</td>
+                    <td> <IoEyeSharp
+    size={20}
+    onClick={() => handleShowModal1(index)}
+    style={{ cursor: 'pointer' }}
+  />  
+                    <BiPencil size={20} onClick={handleShowModal2} style={{ cursor: 'pointer' }} />
+                    </td>{" "}
+                    
                     {/* Agrega aquí los datos adicionales que quieras mostrar */}
                   </tr>
                 ))}
@@ -428,6 +470,61 @@ const Calendar = () => {
             </table>
           </div>
         </div>
+       <Modal show={showModal1} onHide={handleCloseModal1}>
+  <Modal.Header closeButton>
+    <Modal.Title>Facturar</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+  {selectedReserva && (
+  <div>
+    <p>Fecha: {selectedReserva.fecha.split('T')[0]}</p>
+    <p>Cliente: {selectedReserva.cliente}</p>
+    <p>
+      Servicio:
+      {selectedReserva.servicios.map((servicio) => (
+                        <div key={servicio.id}>
+                          <span>{servicio.tipoServicio}</span>
+                          <span> </span>
+                          <span>{servicio.descripcion}</span>
+                          <span> - </span>
+                          <span>{servicio.monto}</span>
+                        </div>
+                      ))}
+    </p>
+    <p>Peluquero: {selectedReserva.peluquero}</p>
+    <p>Hora de inicio: {selectedReserva.horaInicio}</p>
+    <p>Hora de finalización: {selectedReserva.horaFinalizacion}</p>
+    <p>Totalidad: {selectedReserva.montoTotal}</p>
+    {/* Agrega aquí los demás detalles que quieras mostrar */}
+  </div>
+)}
+
+
+
+
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleCloseModal1}>
+      Facturar
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+
+<Modal show={showModal2} onHide={handleCloseModal2}>
+  <Modal.Header closeButton>
+    <Modal.Title>Descripción 2</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    Aquí puedes agregar la descripción correspondiente al botón 2.
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleCloseModal2}>
+      Cerrar
+    </Button>
+  </Modal.Footer>
+</Modal>
+
       </div>
     </div>
   );
