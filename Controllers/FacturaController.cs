@@ -23,61 +23,61 @@ namespace PeluqueriaWebApi.Controllers
             _logger = logger;
             _context = context;
         }
-     
-/////
-[HttpGet]
-public IActionResult GetFacturas()
-{
-    var facturas = _context.Facturas
-        .Include(f => f.IdVentaNavigation)
-            .ThenInclude(v => v.IdClienteNavigation)
-                .ThenInclude(c => c.IdPersonaNavigation)
-        .Include(f => f.IdVentaNavigation.VentasDetalles)
-            .ThenInclude(d => d.IdProductoNavigation)
-        .Select(f => new FacturaDTO
+
+        /////
+        [HttpGet]
+        public IActionResult GetFacturas()
         {
-            Id = f.Id,
-            FechaEmision = f.FechaEmision,
-            Estado = f.Estado,
-            TotalVenta = f.IdVentaNavigation.Total,
-            NombreCliente = f.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Nombres,
-            ApellidoCliente = f.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Apellidos
-        })
-        .ToList();
+            var facturas = _context.Facturas
+                .Include(f => f.IdVentaNavigation)
+                    .ThenInclude(v => v.IdClienteNavigation)
+                        .ThenInclude(c => c.IdPersonaNavigation)
+                .Include(f => f.IdVentaNavigation.VentasDetalles)
+                    .ThenInclude(d => d.IdProductoNavigation)
+                .Select(f => new FacturaDTO
+                {
+                    Id = f.Id,
+                    FechaEmision = f.FechaEmision,
+                    Estado = f.Estado,
+                    TotalVenta = f.IdVentaNavigation.Total,
+                    NombreCliente = f.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Nombres,
+                    ApellidoCliente = f.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Apellidos
+                })
+                .ToList();
 
-    return Ok(facturas);
-}
-
-//post 
-[HttpPost]
-public IActionResult AgregarIdVentaAFactura([FromBody] IdVentaDto idVentaDto)
-{
-    if (ModelState.IsValid)
-    {
-        var venta = _context.Ventas.FirstOrDefault(v => v.Id == idVentaDto.IdVenta);
-
-        if (venta == null)
-        {
-            return NotFound(); // La venta no existe, devolver un código de respuesta 404
+            return Ok(facturas);
         }
 
-        var factura = new Factura
+        //post 
+        [HttpPost]
+        public IActionResult AgregarIdVentaAFactura([FromBody] IdVentaDto idVentaDto)
         {
-            IdVenta = idVentaDto.IdVenta,
-            FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
-            IdMedioPago= 1,
-            Estado = "Pendiente", // Establece el estado inicial de la factura
-            NumeroFactura = "5753345" // Genera el número de factura (debes implementar tu propia lógica para esto)
-        };
+            if (ModelState.IsValid)
+            {
+                var venta = _context.Ventas.FirstOrDefault(v => v.Id == idVentaDto.IdVenta);
 
-        _context.Facturas.Add(factura);
-        _context.SaveChanges();
+                if (venta == null)
+                {
+                    return NotFound(); // La venta no existe, devolver un código de respuesta 404
+                }
 
-        return Ok(factura.Id); // Devuelve el ID de la factura creada
-    }
+                var factura = new Factura
+                {
+                    IdVenta = idVentaDto.IdVenta,
+                    FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
+                    IdMedioPago = 1,
+                    Estado = "Pendiente", // Establece el estado inicial de la factura
+                    NumeroFactura = "5753345" // Genera el número de factura (debes implementar tu propia lógica para esto)
+                };
 
-    return BadRequest(ModelState);
-}
+                _context.Facturas.Add(factura);
+                _context.SaveChanges();
+
+                return Ok(factura.Id); // Devuelve el ID de la factura creada
+            }
+
+            return BadRequest(ModelState);
+        }
 
 
 
@@ -103,37 +103,38 @@ public IActionResult AgregarIdVentaAFactura([FromBody] IdVentaDto idVentaDto)
         }
 
 
-/// put medio de pago 
-[HttpPut("facturas")]
-public IActionResult ActualizarMedioPagoFactura([FromBody] ActualizarMedioPagoDto dto)
-{
-    try
-    {
-        // Verificar si existe la factura
-        var factura = _context.Facturas.FirstOrDefault(f => f.Id == dto.IdFactura);
-        if (factura == null)
+        /// put medio de pago 
+        [HttpPut("facturas")]
+        public IActionResult ActualizarMedioPagoFactura([FromBody] ActualizarMedioPagoDto dto)
         {
-            return NotFound(); // Factura no encontrada
+            try
+            {
+                // Verificar si existe la factura
+                var factura = _context.Facturas.FirstOrDefault(f => f.Id == dto.IdFactura);
+                if (factura == null)
+                {
+                    return NotFound(); // Factura no encontrada
+                }
+
+                // Verificar si existe el medio de pago
+                var medioPago = _context.MediosPagos.FirstOrDefault(mp => mp.Id == dto.IdMedioPago);
+                if (medioPago == null)
+                {
+                    return NotFound(); // Medio de pago no encontrado
+                }
+
+                // Actualizar el medio de pago de la factura y el estado 
+                factura.Estado = "Facturado";
+                factura.IdMedioPago = dto.IdMedioPago;
+                _context.SaveChanges();
+
+                return Ok(); // Actualización exitosa
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); // Error interno del servidor
+            }
         }
-
-        // Verificar si existe el medio de pago
-        var medioPago = _context.MediosPagos.FirstOrDefault(mp => mp.Id == dto.IdMedioPago);
-        if (medioPago == null)
-        {
-            return NotFound(); // Medio de pago no encontrado
-        }
-
-        // Actualizar el medio de pago de la factura
-        factura.IdMedioPago = dto.IdMedioPago;
-        _context.SaveChanges();
-
-        return Ok(); // Actualización exitosa
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message); // Error interno del servidor
-    }
-}
 
 
 
