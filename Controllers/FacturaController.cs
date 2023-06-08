@@ -67,7 +67,8 @@ namespace PeluqueriaWebApi.Controllers
                     FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
                     IdMedioPago = 1,
                     Estado = "Pendiente", // Establece el estado inicial de la factura
-                    NumeroFactura = "5753345" // Genera el número de factura (debes implementar tu propia lógica para esto)
+                                          // NumeroFactura = "0000-0000-00"+idVentaDto.ToString // Genera el número de factura (debes implementar tu propia lógica para esto)
+                                          //NumeroFactura=
                 };
 
                 _context.Facturas.Add(factura);
@@ -78,7 +79,6 @@ namespace PeluqueriaWebApi.Controllers
 
             return BadRequest(ModelState);
         }
-
 
 
         // DELETE: api/Factura/{id}
@@ -134,81 +134,83 @@ namespace PeluqueriaWebApi.Controllers
             {
                 return StatusCode(500, ex.Message); // Error interno del servidor
             }
-}
-////// get mas generales 
-[HttpGet("facturas/{id}")]
-public IActionResult ObtenerFactura(int id)
-{
-    try
-    {
-        var factura = _context.Facturas
-            .Include(f => f.IdVentaNavigation)
-                .ThenInclude(v => v.IdClienteNavigation)
-                    .ThenInclude(c => c.IdPersonaNavigation)
-            .Include(f => f.IdVentaNavigation.VentasDetalles)
-                .ThenInclude(d => d.IdProductoNavigation)
-            .Include(f => f.IdVentaNavigation.IdTurnoNavigation)
-                .ThenInclude(t => t.DetallesTurnos)
-                    .ThenInclude(dt => dt.IdTipoServicioNavigation)
-            .FirstOrDefault(f => f.Id == id);
-
-        if (factura == null)
-        {
-            return NotFound(); // Factura no encontrada
         }
-
-        var cliente = factura.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation;
-        
-        var productos = factura.IdVentaNavigation.VentasDetalles.Select(d => new
+        ////// get mas generales 
+        [HttpGet("facturas/{id}")]
+        public IActionResult ObtenerFactura(int id)
         {
-            d.IdProductoNavigation.Nombre,
-            d.Cantidad,
-            d.PrecioUnitario,
-            total= d.PrecioUnitario*d.Cantidad
-        });
+            try
+            {
+                var factura = _context.Facturas
+             .Include(f => f.IdVentaNavigation)
+                 .ThenInclude(v => v.IdClienteNavigation)
+                     .ThenInclude(c => c.IdPersonaNavigation)
+             .Include(f => f.IdVentaNavigation.VentasDetalles)
+                 .ThenInclude(d => d.IdProductoNavigation)
+             .Include(f => f.IdVentaNavigation.IdTurnoNavigation)
+                 .ThenInclude(t => t.DetallesTurnos)
+                     .ThenInclude(dt => dt.IdTipoServicioNavigation)
+             .Include(f => f.IdMedioPagoNavigation) // Incluir medio de pago
+             .FirstOrDefault(f => f.Id == id);
 
-        var servicios = factura.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos.Select(dt => new
-        {
-            dt.IdTipoServicioNavigation.Tipo,
-            dt.IdTipoServicioNavigation.Descripcion,
-            dt.IdTipoServicioNavigation.DecMonto
-        });
-var ventas = factura.IdVentaNavigation;
-        var respuesta = new
-        {
-            Factura = new
-            {
-                factura.Id,
-                factura.FechaEmision,
-                factura.Estado
-                
-            },
-            Cliente = new
-            {
-                cliente.Nombres,
-                cliente.Apellidos,
-//cliente.,
-                cliente.Telefono,
-                cliente.Cedula,
-                cliente.Direccion,
-                cliente.Correo
-            },
-            Ventas = new
-            {
-                ventas.Total
-                },
-            Productos = productos,
-            Servicios = servicios,
-           
-        };
+                if (factura == null)
+                {
+                    return NotFound(); // Factura no encontrada
+                }
 
-        return Ok(respuesta); // Respuesta exitosa con los datos de la factura y sus detalles
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message); // Error interno del servidor
-    }
-}
+                var cliente = factura.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation;
+
+                var productos = factura.IdVentaNavigation.VentasDetalles.Select(d => new
+                {
+                    d.IdProductoNavigation.Nombre,
+                    d.Cantidad,
+                    d.PrecioUnitario,
+                    total = d.PrecioUnitario * d.Cantidad,
+                    d.IdProductoNavigation.Iva
+                });
+
+                var servicios = factura.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos.Select(dt => new
+                {
+                    dt.IdTipoServicioNavigation.Tipo,
+                    dt.IdTipoServicioNavigation.Descripcion,
+                    dt.IdTipoServicioNavigation.DecMonto
+                });
+                var ventas = factura.IdVentaNavigation;
+                var respuesta = new
+                {
+                    Factura = new
+                    {
+                        factura.Id,
+                        factura.FechaEmision,
+                        factura.Estado,
+                        MedioPago = factura.IdMedioPagoNavigation.Descripcion, // Incluir medio de pago
+                        factura.NumeroFactura
+                    },
+                    Cliente = new
+                    {
+                        cliente.Nombres,
+                        cliente.Apellidos,
+                        cliente.Telefono,
+                        cliente.Cedula,
+                        cliente.Direccion,
+                        cliente.Correo
+                    },
+                    Ventas = new
+                    {
+                        ventas.Total,
+                        // IvaProductos = productos.Sum(p => p.total * (p..Iva ?? 0)), // Calcular el IVA de los productos
+                    },
+                    Productos = productos,
+                    Servicios = servicios,
+                };
+
+                return Ok(respuesta); // Respuesta exitosa con los datos de la factura y sus detalles
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); // Error interno del servidor
+            }
+        }
 
 
 
