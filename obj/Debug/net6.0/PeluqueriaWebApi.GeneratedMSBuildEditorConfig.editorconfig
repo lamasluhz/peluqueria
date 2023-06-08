@@ -8,17 +8,9 @@ build_property.PlatformNeutralAssembly =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PeluqueriaWebApi
 build_property.RootNamespace = PeluqueriaWebApi
-<<<<<<< HEAD
-build_property.ProjectDir = C:\Users\jorge\OneDrive\Escritorio\Peluqueria-Backend\PeluqueriaWebApi\
-build_property.RazorLangVersion = 6.0
-build_property.SupportLocalizedComponentNames = 
-build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\jorge\OneDrive\Escritorio\Peluqueria-Backend\PeluqueriaWebApi
-=======
 build_property.ProjectDir = C:\Users\luzla\OneDrive\Escritorio\peluqueria-Backend\peluqueria-Backend\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
 build_property.MSBuildProjectDirectory = C:\Users\luzla\OneDrive\Escritorio\peluqueria-Backend\peluqueria-Backend
->>>>>>> 58874be56ed97f1be30c2f9ed06918e984c4391f
 build_property._RazorSourceGeneratorDebug = 

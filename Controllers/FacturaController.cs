@@ -67,7 +67,8 @@ public IActionResult AgregarIdVentaAFactura([FromBody] IdVentaDto idVentaDto)
             FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
             IdMedioPago= 1,
             Estado = "Pendiente", // Establece el estado inicial de la factura
-            NumeroFactura = "5753345" // Genera el número de factura (debes implementar tu propia lógica para esto)
+           // NumeroFactura = "0000-0000-00"+idVentaDto.ToString // Genera el número de factura (debes implementar tu propia lógica para esto)
+          //NumeroFactura=
         };
 
         _context.Facturas.Add(factura);
@@ -123,9 +124,10 @@ public IActionResult ActualizarMedioPagoFactura([FromBody] ActualizarMedioPagoDt
             return NotFound(); // Medio de pago no encontrado
         }
 
-        // Actualizar el medio de pago de la factura
-        factura.IdMedioPago = dto.IdMedioPago;
-        _context.SaveChanges();
+         // Actualizar el medio de pago de la factura y el estado 
+                factura.Estado = "Facturado";
+                factura.IdMedioPago = dto.IdMedioPago;
+                _context.SaveChanges();
 
         return Ok(); // Actualización exitosa
     }
@@ -140,16 +142,17 @@ public IActionResult ObtenerFactura(int id)
 {
     try
     {
-        var factura = _context.Facturas
-            .Include(f => f.IdVentaNavigation)
-                .ThenInclude(v => v.IdClienteNavigation)
-                    .ThenInclude(c => c.IdPersonaNavigation)
-            .Include(f => f.IdVentaNavigation.VentasDetalles)
-                .ThenInclude(d => d.IdProductoNavigation)
-            .Include(f => f.IdVentaNavigation.IdTurnoNavigation)
-                .ThenInclude(t => t.DetallesTurnos)
-                    .ThenInclude(dt => dt.IdTipoServicioNavigation)
-            .FirstOrDefault(f => f.Id == id);
+       var factura = _context.Facturas
+    .Include(f => f.IdVentaNavigation)
+        .ThenInclude(v => v.IdClienteNavigation)
+            .ThenInclude(c => c.IdPersonaNavigation)
+    .Include(f => f.IdVentaNavigation.VentasDetalles)
+        .ThenInclude(d => d.IdProductoNavigation)
+    .Include(f => f.IdVentaNavigation.IdTurnoNavigation)
+        .ThenInclude(t => t.DetallesTurnos)
+            .ThenInclude(dt => dt.IdTipoServicioNavigation)
+    .Include(f => f.IdMedioPagoNavigation) // Incluir medio de pago
+    .FirstOrDefault(f => f.Id == id);
 
         if (factura == null)
         {
@@ -163,7 +166,8 @@ public IActionResult ObtenerFactura(int id)
             d.IdProductoNavigation.Nombre,
             d.Cantidad,
             d.PrecioUnitario,
-            total= d.PrecioUnitario*d.Cantidad
+            total= d.PrecioUnitario*d.Cantidad,
+            d.IdProductoNavigation.Iva
         });
 
         var servicios = factura.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos.Select(dt => new
@@ -174,32 +178,32 @@ public IActionResult ObtenerFactura(int id)
         });
 var ventas = factura.IdVentaNavigation;
         var respuesta = new
-        {
-            Factura = new
-            {
-                factura.Id,
-                factura.FechaEmision,
-                factura.Estado
-                
-            },
-            Cliente = new
-            {
-                cliente.Nombres,
-                cliente.Apellidos,
-//cliente.,
-                cliente.Telefono,
-                cliente.Cedula,
-                cliente.Direccion,
-                cliente.Correo
-            },
-            Ventas = new
-            {
-                ventas.Total
-                },
-            Productos = productos,
-            Servicios = servicios,
-           
-        };
+{
+    Factura = new
+    {
+        factura.Id,
+        factura.FechaEmision,
+        factura.Estado,
+        MedioPago = factura.IdMedioPagoNavigation.Descripcion, // Incluir medio de pago
+       factura.NumeroFactura
+    },
+    Cliente = new
+    {
+        cliente.Nombres,
+        cliente.Apellidos,
+        cliente.Telefono,
+        cliente.Cedula,
+        cliente.Direccion,
+        cliente.Correo
+    },
+    Ventas = new
+    {
+        ventas.Total,
+       // IvaProductos = productos.Sum(p => p.total * (p..Iva ?? 0)), // Calcular el IVA de los productos
+    },
+    Productos = productos,
+    Servicios = servicios,
+};
 
         return Ok(respuesta); // Respuesta exitosa con los datos de la factura y sus detalles
     }
