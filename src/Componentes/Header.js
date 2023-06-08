@@ -60,7 +60,8 @@ const Header = (props) => {
                         <NavLink className="nav-link" to="/reservas" style={estilo}> <img src='/reservas.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Reservas </NavLink>
                         <NavLink className="nav-link" to="/stock" style={estilo}> <img src='/compras.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Compras </NavLink>
                         <NavLink className="nav-link" to="/ventaProductos" style={estilo}> <img src='/venta.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Venta </NavLink>
-                        <NavLink className="nav-link" to="/facturas" style={estilo}> <img src='/factura.png' style={{ maxHeight: 25, maxWidth: 20 }} />Factura</NavLink>
+                        <NavLink className="nav-link" to="/facturacion" style={estilo}> <img src='/factura.png' style={{ maxHeight: 25, maxWidth: 20 }} />Facturas</NavLink>
+
                     </Nav>
                     <div style={{ borderLeft: '1px solid blue', paddingLeft: '20px' }}>
                         <img src="./usuario.png" alt="Logo" />

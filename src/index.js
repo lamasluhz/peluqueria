@@ -18,7 +18,8 @@ import {
   Lavados,
   Reservas,
   VentaProductos,
-  Inicio
+  Inicio,
+  Facturacion
   
 } from "./Componentes";
 
@@ -45,9 +46,8 @@ const App = () => {
         <Route path="/tinturas" element={<Tinturas />} />
         <Route path="/servicios" element={<Servicios />} />
         <Route path="/lavados" element={<Lavados />} />
-        <Route path="/facturas" element={<Facturas />} />
         <Route path="/ventaProductos" element={<VentaProductos />} />
-        
+        <Route path="/facturacion" element={<Facturacion />} />
       </Routes>: null}
     </Router> 
   );
