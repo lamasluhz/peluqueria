@@ -151,7 +151,7 @@ const Calendar = () => {
           {/* Aqui hice cambios para modificar en el front  */}
           <button
             className="btn btn-primary"
-            style={{ backgroundColor: "#FF8E8C", borderColor: "#FF8E8C" }}
+            style={{ backgroundColor: "#0532FB", borderColor: "#0532FB" }}
             onClick={prevMonth}
           >
             &lt;
@@ -161,7 +161,7 @@ const Calendar = () => {
           </div>
           <button
             className="btn btn-primary"
-            style={{ backgroundColor: "#FF8E8C", borderColor: "#FF8E8C" }}
+            style={{ backgroundColor: "#0532FB", borderColor: "#0532FB" }}
             onClick={nextMonth}
           >
             &gt;
@@ -189,7 +189,7 @@ const Calendar = () => {
           className={`day ${isSelected ? "selected" : ""}`}
           key={i}
           onClick={() => handleDayClick(i)}
-          style={{ backgroundColor: "#FFB38C" }}
+          style={{ backgroundColor: "#75D2F3" }}
         >
           {i}
         </div>
@@ -298,7 +298,7 @@ const Calendar = () => {
             className="btn btn-primary create-button"
             onClick={handleCreateClick}
             disabled={!selectedDay}
-            style={{ backgroundColor: "#FF8E8C", borderColor: "#FF8E8C" }}
+            style={{ backgroundColor: "#0532FB", borderColor: "#0532FB" }}
           >
             Create
           </button>
@@ -321,7 +321,7 @@ const Calendar = () => {
                <option value="">Seleccionar Cliente</option>
                   {clientes.map((cliente) => (
                     <option key={cliente.id} value={cliente.id}>
-                      {cliente.nombres}
+                      {cliente.nombres} {cliente.apellidos}
                     </option>
                 ))}
               </select>
@@ -489,7 +489,7 @@ const Calendar = () => {
                           <span> - </span>
                           <span>{servicio.monto}</span>
                         </div>
-                         ))}
+                      ))}
     </p>
     <p>Peluquero: {selectedReserva.peluquero}</p>
     <p>Hora de inicio: {selectedReserva.horaInicio}</p>
@@ -531,4 +531,3 @@ const Calendar = () => {
 };
 
 export default Calendar;
-
