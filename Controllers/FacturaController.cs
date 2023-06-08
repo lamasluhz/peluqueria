@@ -81,6 +81,7 @@ namespace PeluqueriaWebApi.Controllers
         }
 
 
+
         // DELETE: api/Factura/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFactura(int id)
@@ -160,21 +161,25 @@ namespace PeluqueriaWebApi.Controllers
 
                 var cliente = factura.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation;
 
-                var productos = factura.IdVentaNavigation.VentasDetalles.Select(d => new
-                {
-                    d.IdProductoNavigation.Nombre,
-                    d.Cantidad,
-                    d.PrecioUnitario,
-                    total = d.PrecioUnitario * d.Cantidad,
-                    d.IdProductoNavigation.Iva
-                });
+                var productos = factura.IdVentaNavigation.VentasDetalles
+             .Where(d => d.IdProductoNavigation != null) // Filtrar los detalles de venta con productos no nulos
+             .Select(d => new
+             {
+                 d.IdProductoNavigation.Nombre,
+                 d.Cantidad,
+                 d.PrecioUnitario,
+                 total = d.PrecioUnitario * d.Cantidad,
+                 d.IdProductoNavigation.Iva
+             });
 
-                var servicios = factura.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos.Select(dt => new
-                {
-                    dt.IdTipoServicioNavigation.Tipo,
-                    dt.IdTipoServicioNavigation.Descripcion,
-                    dt.IdTipoServicioNavigation.DecMonto
-                });
+                var servicios = factura.IdVentaNavigation.IdTurnoNavigation?.DetallesTurnos
+                    .Where(dt => dt.IdTipoServicioNavigation != null) // Filtrar los detalles de turno con servicios no nulos
+                    .Select(dt => new
+                    {
+                        dt.IdTipoServicioNavigation.Tipo,
+                        dt.IdTipoServicioNavigation.Descripcion,
+                        dt.IdTipoServicioNavigation.DecMonto
+                    });
                 var ventas = factura.IdVentaNavigation;
                 var respuesta = new
                 {
