@@ -107,3 +107,7 @@ p{
     border: 1px solid #c3dce8;
     border-radius: 5px;
 }
+
+.texto-negritas {
+    font-weight: bold;
+  }

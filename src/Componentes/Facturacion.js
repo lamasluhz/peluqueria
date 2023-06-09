@@ -161,14 +161,6 @@ const Facturacion = () => {
         <Modal.Body>
           <Facturas facturaId={idFactura} />
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-          <Button variant="primary" onClick={handleCloseModal}>
-            Imprimir
-          </Button>
-        </Modal.Footer>
       </Modal>
 
       <Modal show={showModalPago} onHide={handleCloseModalPago}>
