@@ -23,7 +23,7 @@ const Facturacion = () => {
   const handleCloseModalPago = () => {
     setShowModalPago(false);
     if (idMedioPago != null) {
-      setShowModal(false); // Corregir el cierre del modal principal aquí
+      setShowModal(true); // Corregir el cierre del modal principal aquí
     }
   };
 
@@ -80,8 +80,10 @@ const Facturacion = () => {
 
   const putFactura = () => {
     // Realizar la solicitud PUT
+    {console.log(idFactura)}
+    {console.log(idMedioPago)}
     axios
-      .put(`https://localhost:7137/api/Factura/facturas/${idFactura}`, facturaActualizado) // Corregir la URL para incluir el ID de la factura
+      .put(`https://localhost:7137/api/Factura/facturas`, facturaActualizado) // Corregir la URL para incluir el ID de la factura
       .then((response) => {
         console.log("Factura actualizada");
         // Realiza las acciones adicionales necesarias después de la actualización
@@ -138,7 +140,7 @@ const Facturacion = () => {
                       Facturar
                     </Button>
                   ) : (
-                    <Button variant="contained" color="primary" onClick={() => {
+                    <Button variant="contained" color="primary" onClick={() => {                    
                       setIdFactura(factura.id);
                       handleShowModal();
                     }} style={{ color: "green" }}>

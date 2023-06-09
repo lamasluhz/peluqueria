@@ -44,9 +44,8 @@
 #div4 {
     border: 1px solid #c3dce8;
     border-radius: 5px;
-    height: 600px;
     margin-top: 1%;
-    margin-bottom: 5%;
+    margin-bottom: 1%;
 }
 
 .image-button {
@@ -102,4 +101,9 @@
 
 p{
     margin: 0;
+}
+
+#div5{
+    border: 1px solid #c3dce8;
+    border-radius: 5px;
 }

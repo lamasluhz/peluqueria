@@ -6,6 +6,9 @@ import ConvertirFecha from "./ConvertirFecha";
 
 const Facturas = (props) => {
     const [factura, setFactura] = useState(null);
+    const [totalVenta, setTotalVenta] = useState(0);
+    const [totalIvaCinco, setTotalIvaCinco] = useState(0);
+    const [totalIvaDiez, setTotalIvaDiez] = useState(0);
 
     useEffect(() => {
         const fetchFactura = async () => {
@@ -21,6 +24,29 @@ const Facturas = (props) => {
 
         fetchFactura();
     }, [props.facturaId]);
+
+    useEffect(() => {
+        if (factura) {
+            let total = 0;
+            let totalCinco = 0;
+            let totalDiez = 0;
+            factura.productos?.forEach((producto) => {
+                total += producto.total;
+                if (producto.iva == 5) {
+                    totalCinco += producto.total * 0.05;
+                } else {
+                    totalDiez += producto.total * 0.1;
+                }
+            });
+            factura.servicios?.forEach((servicio) => {
+                total += servicio.decMonto;
+            });
+            //total += (totalCinco + totalDiez);
+            setTotalVenta(total);
+            setTotalIvaCinco(totalCinco);
+            setTotalIvaDiez(totalDiez);
+        }
+    }, [factura]);
 
     if (!factura) {
         return <p>Cargando factura...</p>;
@@ -46,26 +72,26 @@ const Facturas = (props) => {
                     <h5>RUC: 90000000-5</h5>
                     <p>N° de Timbrado: 2323232</p>
                     <p>FACTURA ELECTRONICA N°</p>
-                    <p>001-001-001-0001477</p>
+                    <p>{factura.factura.numeroFactura}</p>
                 </div>
             </div>
 
             <div id="div3">
                 <div id="contenedor-datos-cliente">
                     <div id="contenedor-cliente-hijo-2">
-                        <p>Fecha: <ConvertirFecha fecha = {factura.factura.fechaEmision}/> </p>
+                        <p>Fecha: <ConvertirFecha fecha={factura.factura.fechaEmision} /> </p>
                         <p>Ruc o Cédula de Identidad: {factura.cliente.cedula}</p>
                         <p>Nombre o Razón Social:  {factura.cliente.nombres} {factura.cliente.apellido}</p>
                         <p>Telefono: {factura.cliente.telefono}</p>
                         <p>Correo Electrónico: {factura.cliente.correo}</p>
                     </div>
                     <div id="contenedor-cliente-hijo-1">
-                        <p>Cond. de Venta: {factura.cliente.telefono}</p>
+                        <p>Cond. de Venta: {factura.factura.medioPago}</p>
                     </div>
                 </div>
             </div>
             <div id="div4">
-                <table class="table table-striped">
+                <table className="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">Cantidad</th>
@@ -76,19 +102,35 @@ const Facturas = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>3</td>
-                            <td>Shampoo</td>
-                            <td>10.000</td>
-                            <td>5</td>
-                            <td>30.000</td>
-                        </tr>
+                        {factura.productos?.map((producto, index) => (
+                            <tr key={`producto-${index}`}>
+                                <td>{producto.cantidad}</td>
+                                <td>{producto.nombre}</td>
+                                <td>{producto.precioUnitario}</td>
+                                <td>{producto.iva}%</td>
+                                <td>{producto.total} </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                    <tbody>
+                        {factura.servicios?.map((servicio, index) => (
+                            <tr key={`servicio-${index}`}>
+                                <td>1</td>
+                                <td>{servicio.tipo}</td>
+                                <td>{servicio.decMonto}</td>
+                                <td>0</td>
+                                <td>{servicio.decMonto} </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
-                <p>TOTAL A PAGAR</p>
-                <p>LIQUIDACIONES DEL IVA</p>
-            </div>
 
+            </div>
+            <div id="div5">
+                <span>TOTAL A PAGAR: </span> <span style={{marginLeft:'62%'}}> {totalVenta}</span> 
+                <hr />
+                <span>LIQUIDACIONES DEL IVA: </span> <span style={{marginLeft:'15%'}}> 5% {totalIvaCinco}</span> <span style={{marginLeft:'15%'}}> 10% {totalIvaDiez}</span>
+            </div>
         </div>
     );
 }
