@@ -6,39 +6,37 @@ import Buscador from "./Buscador";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Select from "react-select";
-import { IoEyeSharp } from 'react-icons/io5';
-import { BiPencil } from 'react-icons/bi';
+import { IoEyeSharp } from "react-icons/io5";
+import { BiPencil } from "react-icons/bi";
 import Stock from "./Stock";
-
-
-
 
 const Calendar = () => {
   //// segundo post en modal
 
   const handleFormSubmit = () => {
     // Construye el objeto de datos a enviar en la solicitud POST
-    const valores = selectedServices.map(objeto => objeto.value);
+    const valores = selectedServices.map((objeto) => objeto.value);
     const data = {
       idsTipoServicio: valores,
       idCliente: selectedCliente,
       idPeluquero: selectedPeluqueros,
-      fecha: new Date().toISOString(),
+      //////////////////////////////////////////////////////////////////////////
+      fecha: selectedDate,
       eliminado: true,
       horaInicio: document.getElementById("horaInicio").value,
       horaFinalizacion: document.getElementById("horaFinalizacion").value,
-      estado: "pendiente"
+      estado: "pendiente",
     };
-    console.log(data)
+    console.log(data);
     // Realiza la solicitud POST utilizando Axios
     axios
-    .post("https://localhost:7137/api/DetallesTurno", data)
-    .then((response) => {
-      console.log("Datos guardados exitosamente:", response.data);
-    })
-    .catch((error) => {
-      console.error("Error al guardar los datos:", error);
-    });
+      .post("https://localhost:7137/api/DetallesTurno", data)
+      .then((response) => {
+        console.log("Datos guardados exitosamente:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error al guardar los datos:", error);
+      });
 
     // Cierra el modal después de guardar los datos
     handleCloseModal();
@@ -57,8 +55,6 @@ const Calendar = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModal1, setShowModal1] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
-  
-
 
   const handleModal = () => {
     console.log(showModal);
@@ -70,10 +66,15 @@ const Calendar = () => {
   const [selectedPeluqueros, setSelectedPeluqueros] = useState([]);
   const [reservas, setReservas] = useState([]);
 
+  const [selectedDate, setSelectedDate] = useState('');
+
+ 
+const [loading, setLoading] = useState(false);
+
   ///Array 1
   const monthNames = [
     "Enero",
-    "Febrero",//02
+    "Febrero", //02
     "Marzo",
     "Abril",
     "Mayo",
@@ -123,22 +124,18 @@ const Calendar = () => {
     setSelectedReserva(reservas[index]);
     setShowModal1(true);
   };
-  
-  
+
   const handleCloseModal1 = () => {
     setShowModal1(false);
   };
-  
+
   const handleShowModal2 = () => {
     setShowModal2(true);
   };
-  
+
   const handleCloseModal2 = () => {
     setShowModal2(false);
   };
-  
-  
-
 
   //renderHeader renderiza la cabecera del calendario, que incluye botones para navegar entre meses
   // y muestra el mes y año actual.
@@ -293,14 +290,14 @@ const Calendar = () => {
         </div>
         {renderDays()}
 
-        <div className="button-container" style={{ marginBottom: "20px" }}>
+        <div className="button-container" style={{ marginBottom: "30px" }}>
           <button
             className="btn btn-primary create-button"
             onClick={handleCreateClick}
             disabled={!selectedDay}
             style={{ backgroundColor: "#0532FB", borderColor: "#0532FB" }}
           >
-            Create
+            Nueva reserva
           </button>
         </div>
 
@@ -317,12 +314,13 @@ const Calendar = () => {
                 className="form-control"
                 id="cliente"
                 value={selectedCliente}
-                onChange={(e) => setSelectedCliente(e.target.value)}>
-               <option value="">Seleccionar Cliente</option>
-                  {clientes.map((cliente) => (
-                    <option key={cliente.id} value={cliente.id}>
-                      {cliente.nombres} {cliente.apellidos}
-                    </option>
+                onChange={(e) => setSelectedCliente(e.target.value)}
+              >
+                <option value="">Seleccionar Cliente</option>
+                {clientes.map((cliente) => (
+                  <option key={cliente.id} value={cliente.id}>
+                    {cliente.nombres} {cliente.apellidos}
+                  </option>
                 ))}
               </select>
             </div>
@@ -332,11 +330,11 @@ const Calendar = () => {
                 id="servicios"
                 options={serviciosOptions}
                 value={selectedServices}
-                isMulti 
+                isMulti
                 onChange={handleSelectChange}
               />
 
-                    {/* no funciona */}
+              {/* no funciona */}
               {Servicios.map((servicios) => (
                 <option key={servicios.id} value={servicios.id}>
                   {servicios.descripcion} {servicios.decMonto}
@@ -351,7 +349,8 @@ const Calendar = () => {
                   className="form-control"
                   id="peluquero"
                   value={selectedPeluqueros}
-                  onChange={(e) => setSelectedPeluqueros(e.target.value)}>
+                  onChange={(e) => setSelectedPeluqueros(e.target.value)}
+                >
                   <option value="">Seleccionar peluquero</option>
                   {peluqueros.map((peluquero) => (
                     <option key={peluquero.id} value={peluquero.id}>
@@ -361,6 +360,18 @@ const Calendar = () => {
                 </select>
               </div>
             </div>
+            <div className="form-group">
+  <label htmlFor="fecha">Fecha</label>
+  <input
+    type="date"
+    className="form-control"
+    id="fecha"
+    value={selectedDate}
+    onChange={(e) => setSelectedDate(e.target.value)}
+  />
+</div>
+
+
             <div className="form-group">
               <div className="row">
                 <div className="col-sm-6">
@@ -379,7 +390,6 @@ const Calendar = () => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-        
             <button className="btn btn-secondary" onClick={handleCloseModal}>
               Cerrar
             </button>
@@ -392,7 +402,6 @@ const Calendar = () => {
 
       {/* Tabla de reservas */}
       <div>
-      
         <div>
           <hr
             style={{ marginBottom: "-15px", borderTop: "2px solid #B4D8E9" }}
@@ -455,14 +464,19 @@ const Calendar = () => {
                     </td>
                     <td>{reserva.montoTotal}</td>
                     <td>{reserva.estado}</td>
-                    <td> <IoEyeSharp
-    size={20}
-    onClick={() => handleShowModal1(index)}
-    style={{ cursor: 'pointer' }}
-  />  
-                    <BiPencil size={20} onClick={handleShowModal2} style={{ cursor: 'pointer' }} />
+                    <td>
+                      {" "}
+                      <IoEyeSharp
+                        size={20}
+                        onClick={() => handleShowModal1(index)}
+                        style={{ cursor: "pointer" }}
+                      />
+                      <BiPencil
+                        size={20}
+                        onClick={handleShowModal2}
+                        style={{ cursor: "pointer" }}
+                      />
                     </td>{" "}
-                    
                     {/* Agrega aquí los datos adicionales que quieras mostrar */}
                   </tr>
                 ))}
@@ -470,61 +484,55 @@ const Calendar = () => {
             </table>
           </div>
         </div>
-       <Modal show={showModal1} onHide={handleCloseModal1}>
-  <Modal.Header closeButton>
-    <Modal.Title>Facturar</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-  {selectedReserva && (
-  <div>
-    <p>Fecha: {selectedReserva.fecha.split('T')[0]}</p>
-    <p>Cliente: {selectedReserva.cliente}</p>
-    <p>
-      Servicio:
-      {selectedReserva.servicios.map((servicio) => (
-                        <div key={servicio.id}>
-                          <span>{servicio.tipoServicio}</span>
-                          <span> </span>
-                          <span>{servicio.descripcion}</span>
-                          <span> - </span>
-                          <span>{servicio.monto}</span>
-                        </div>
-                      ))}
-    </p>
-    <p>Peluquero: {selectedReserva.peluquero}</p>
-    <p>Hora de inicio: {selectedReserva.horaInicio}</p>
-    <p>Hora de finalización: {selectedReserva.horaFinalizacion}</p>
-    <p>Totalidad: {selectedReserva.montoTotal}</p>
-    {/* Agrega aquí los demás detalles que quieras mostrar */}
-  </div>
-)}
+        <Modal show={showModal1} onHide={handleCloseModal1}>
+          <Modal.Header closeButton>
+            <Modal.Title>Facturar</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedReserva && (
+              <div>
+                <p>Fecha: {selectedReserva.fecha.split("T")[0]}</p>
+                <p>Cliente: {selectedReserva.cliente}</p>
+                <p>
+                  Servicio:
+                  {selectedReserva.servicios.map((servicio) => (
+                    <div key={servicio.id}>
+                      <span>{servicio.tipoServicio}</span>
+                      <span> </span>
+                      <span>{servicio.descripcion}</span>
+                      <span> - </span>
+                      <span>{servicio.monto}</span>
+                    </div>
+                  ))}
+                </p>
+                <p>Peluquero: {selectedReserva.peluquero}</p>
+                <p>Hora de inicio: {selectedReserva.horaInicio}</p>
+                <p>Hora de finalización: {selectedReserva.horaFinalizacion}</p>
+                <p>Totalidad: {selectedReserva.montoTotal}</p>
+                {/* Agrega aquí los demás detalles que quieras mostrar */}
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal1}>
+              Facturar
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
-
-
-
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseModal1}>
-      Facturar
-    </Button>
-  </Modal.Footer>
-</Modal>
-
-
-<Modal show={showModal2} onHide={handleCloseModal2}>
-  <Modal.Header closeButton>
-    <Modal.Title>Descripción 2</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    Aquí puedes agregar la descripción correspondiente al botón 2.
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseModal2}>
-      Cerrar
-    </Button>
-  </Modal.Footer>
-</Modal>
-
+        <Modal show={showModal2} onHide={handleCloseModal2}>
+          <Modal.Header closeButton>
+            <Modal.Title>Descripción 2</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Aquí puedes agregar la descripción correspondiente al botón 2.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal2}>
+              Cerrar
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );
