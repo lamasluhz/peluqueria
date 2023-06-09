@@ -95,15 +95,7 @@ const CompraModal = ({ showModal, handleClose }) => {
                             onChange={handleInputChange}
                         />
                     </Form.Group>
-                    <Form.Group controlId="Iva">
-                        <Form.Label> Tipo Producto</Form.Label>
-                        <Select
-                            isMulti
-                            options={options}
-                            value={selectedOptions}
-                            onChange={handleSelectChange}
-                        />
-                    </Form.Group>
+
 
 
 
