@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Navbar, Nav, Form, FormControl, Button, Table, Row, Col } from 'react-bootstrap';
+import "../css/Reportes.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Reportes = () => {
   const [fechaInicio, setFechaInicio] = useState('');
@@ -15,58 +17,65 @@ const Reportes = () => {
 
   return (
     <div>
+     
+      <div className="titulo">
+        <h1>Reportes</h1>
+      </div>
+
       {/* Navbar con las fechas y el selector */}
-      <Navbar bg="light" expand="lg">
-        <Navbar.Toggle aria-controls="navbar" />
-        <Navbar.Collapse id="navbar">
-          <Nav className="mr-auto">
-            <Form inline onSubmit={handleSubmit}>
-              <Row className="align-items-center">
-                <Col>
-                  {/* Fecha inicio */}
-                  <Form.Group controlId="formFechaInicio">
-                    <Form.Label>Fecha inicio:</Form.Label>
-                    <FormControl
-                      type="date"
-                      value={fechaInicio}
-                      onChange={(e) => setFechaInicio(e.target.value)}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  {/* Fecha fin */}
-                  <Form.Group controlId="formFechaFin">
-                    <Form.Label>Fecha fin:</Form.Label>
-                    <FormControl
-                      type="date"
-                      value={fechaFin}
-                      onChange={(e) => setFechaFin(e.target.value)}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  {/* Selector de tipo de reporte */}
-                  <Form.Group controlId="formTipoReporte">
-                    <Form.Label>Tipo de reporte:</Form.Label>
-                    <Form.Control
-                      as="select"
-                      value={tipoReporte}
-                      onChange={(e) => setTipoReporte(e.target.value)}
-                    >
-                      <option value="entrada">Entrada</option>
-                      <option value="salida">Salida</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-                <Col>
-                  {/* Botón para generar el reporte */}
-                  <Button type="submit" variant="primary">Generar Reporte</Button>
-                </Col>
-              </Row>
-            </Form>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
+      <Navbar style={{ backgroundColor: '#AEF4FA' }}expand="lg">
+
+  <Navbar.Toggle aria-controls="navbar" />
+  <Navbar.Collapse id="navbar">
+    <Nav className="mr-auto">
+      <Form inline onSubmit={handleSubmit}>
+        <Row className="align-items-center">
+          <Col>
+            {/* Fecha inicio */}
+            <Form.Group controlId="formFechaInicio">
+              <Form.Label style={{ marginRight: '10px', marginLeft: '20px' }}>Fecha inicio:</Form.Label>
+              <FormControl style={{ marginRight: '10px', marginLeft: '20px' }}
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            {/* Fecha fin */}
+            <Form.Group controlId="formFechaFin" style={{ marginRight: '900px' }}>
+              <Form.Label style={{ marginRight: '10px', marginLeft: '20px' }}>Fecha fin:</Form.Label>
+              <FormControl style={{ marginRight: '10px', marginLeft: '20px' }}
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            {/* Selector de tipo de reporte */}
+            <Form.Group controlId="formTipoReporte">
+              <Form.Label>Tipo de reporte:</Form.Label>
+              <Form.Control
+                as="select"
+                value={tipoReporte}
+                onChange={(e) => setTipoReporte(e.target.value)}
+              >
+                <option value="entrada">Entrada</option>
+                <option value="salida">Salida</option>
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col>
+            {/* Botón para generar el reporte */}
+            <Button type="submit" variant="light" style={{ marginRight: '100px' }}>Filtrar</Button>
+          </Col>
+        </Row>
+      </Form>
+    </Nav>
+  </Navbar.Collapse>
+</Navbar>
+
 
       {/* Tabla de reportes */}
       <Table striped bordered>
