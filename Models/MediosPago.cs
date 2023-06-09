@@ -7,6 +7,7 @@ namespace PeluqueriaWebApi.Models
     {
         public MediosPago()
         {
+            FacturaProveedores = new HashSet<FacturaProveedore>();
             Facturas = new HashSet<Factura>();
         }
 
@@ -14,6 +15,7 @@ namespace PeluqueriaWebApi.Models
         public string Descripcion { get; set; } = null!;
         public bool? Eliminado { get; set; }
 
+        public virtual ICollection<FacturaProveedore> FacturaProveedores { get; set; }
         public virtual ICollection<Factura> Facturas { get; set; }
     }
 }

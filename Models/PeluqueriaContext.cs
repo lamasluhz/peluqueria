@@ -24,6 +24,7 @@ namespace PeluqueriaWebApi.Models
         public virtual DbSet<DetallesTurno> DetallesTurnos { get; set; } = null!;
         public virtual DbSet<Especialidade> Especialidades { get; set; } = null!;
         public virtual DbSet<Factura> Facturas { get; set; } = null!;
+        public virtual DbSet<FacturaProveedore> FacturaProveedores { get; set; } = null!;
         public virtual DbSet<MediosPago> MediosPagos { get; set; } = null!;
         public virtual DbSet<Peluquero> Peluqueros { get; set; } = null!;
         public virtual DbSet<Persona> Personas { get; set; } = null!;
@@ -291,6 +292,41 @@ namespace PeluqueriaWebApi.Models
                     .HasForeignKey(d => d.IdVenta)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__facturas__idVent__24285DB4");
+            });
+
+            modelBuilder.Entity<FacturaProveedore>(entity =>
+            {
+                entity.ToTable("facturaProveedores");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+
+                entity.Property(e => e.FechaEmision)
+                    .HasColumnType("date")
+                    .HasColumnName("fechaEmision");
+
+                entity.Property(e => e.IdMedioPago).HasColumnName("idMedioPago");
+
+                entity.Property(e => e.IdStockProductos).HasColumnName("idStockProductos");
+
+                entity.Property(e => e.NumeroFactura)
+                    .HasMaxLength(51)
+                    .IsUnicode(false)
+                    .HasColumnName("numeroFactura")
+                    .HasComputedColumnSql("(''+right('000-000-000-0'+CONVERT([varchar](50),[id]),(50)))", true);
+
+                entity.HasOne(d => d.IdMedioPagoNavigation)
+                    .WithMany(p => p.FacturaProveedores)
+                    .HasForeignKey(d => d.IdMedioPago)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__facturaPr__idMed__42ACE4D4");
+
+                entity.HasOne(d => d.IdStockProductosNavigation)
+                    .WithMany(p => p.FacturaProveedores)
+                    .HasForeignKey(d => d.IdStockProductos)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__facturaPr__idSto__41B8C09B");
             });
 
             modelBuilder.Entity<MediosPago>(entity =>
