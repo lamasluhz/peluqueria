@@ -140,6 +140,7 @@ const [loading, setLoading] = useState(false);
   //renderHeader renderiza la cabecera del calendario, que incluye botones para navegar entre meses
   // y muestra el mes y año actual.
   const renderHeader = () => {
+    
     return (
       <div>
         {" "}
@@ -440,7 +441,13 @@ const [loading, setLoading] = useState(false);
                 </tr>
               </thead>
               <tbody>
-                {reservas.map((reserva, index) => (
+                
+                {reservas.map((reserva, index) => {
+                     const reservaMes = new Date(reserva.fecha).getMonth();
+                     if (reservaMes !== date.getMonth()) {
+                       return null; // Omitir la reserva si no es del mes actual
+                     }
+                     return (
                   <tr key={reserva.id}>
                     <td>{reserva.cliente}</td>
                     <td>
@@ -476,10 +483,11 @@ const [loading, setLoading] = useState(false);
                         onClick={handleShowModal2}
                         style={{ cursor: "pointer" }}
                       />
-                    </td>{" "}
+                    </td>
                     {/* Agrega aquí los datos adicionales que quieras mostrar */}
                   </tr>
-                ))}
+                     );
+                      })}
               </tbody>
             </table>
           </div>
