@@ -5,6 +5,11 @@ namespace PeluqueriaWebApi.Models
 {
     public partial class StockProducto
     {
+        public StockProducto()
+        {
+            FacturaProveedores = new HashSet<FacturaProveedore>();
+        }
+
         public int Id { get; set; }
         public int IdProducto { get; set; }
         public int IdDeposito { get; set; }
@@ -15,5 +20,6 @@ namespace PeluqueriaWebApi.Models
         public virtual Deposito IdDepositoNavigation { get; set; } = null!;
         public virtual Producto IdProductoNavigation { get; set; } = null!;
         public virtual Proveedore IdProveedorNavigation { get; set; } = null!;
+        public virtual ICollection<FacturaProveedore> FacturaProveedores { get; set; }
     }
 }
