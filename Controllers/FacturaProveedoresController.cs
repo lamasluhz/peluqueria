@@ -23,176 +23,176 @@ namespace PeluqueriaWebApi.Controllers
             _logger = logger;
             _context = context;
         }
-     
-////////////
 
-[HttpGet("facturaProveedores")]
-public IActionResult ObtenerFacturasProveedor()
-{
-    try
-    {
-        var facturasProveedor = _context.FacturaProveedores
-            .Include(fp => fp.IdCompraNavigation)
-                .ThenInclude(c => c.IdProveedorNavigation)
-            .ToList();
+        ////////////
 
-        var respuesta = facturasProveedor.Select(facturaProveedor => new
+        [HttpGet("facturaProveedores")]
+        public IActionResult ObtenerFacturasProveedor()
         {
-            FacturaProveedor = new
+            try
             {
-                facturaProveedor.Id,
-                FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
-                Estado = facturaProveedor.Estado
-            },
-            Proveedor = new
+                var facturasProveedor = _context.FacturaProveedores
+                    .Include(fp => fp.IdCompraNavigation)
+                        .ThenInclude(c => c.IdProveedorNavigation)
+                    .ToList();
+
+                var respuesta = facturasProveedor.Select(facturaProveedor => new
+                {
+                    FacturaProveedor = new
+                    {
+                        facturaProveedor.Id,
+                        FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
+                        Estado = facturaProveedor.Estado
+                    },
+                    Proveedor = new
+                    {
+                        facturaProveedor.IdCompraNavigation.IdProveedorNavigation.NombreEmpresa
+                    },
+                    TotalProductos = facturaProveedor.IdCompraNavigation.Total
+                });
+
+                return Ok(respuesta); // Respuesta exitosa con todas las facturas de proveedores
+            }
+            catch (Exception ex)
             {
-                facturaProveedor.IdCompraNavigation.IdProveedorNavigation.NombreEmpresa
-            },
-            TotalProductos = facturaProveedor.IdCompraNavigation.Total
-        });
-
-        return Ok(respuesta); // Respuesta exitosa con todas las facturas de proveedores
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message); // Error interno del servidor
-    }
-}
-
-///////////
-//post 
-[HttpPost]
-public IActionResult AgregarIdCompraFactura([FromBody] IdCompraDto idCompraDto)
-{
-    if (ModelState.IsValid)
-    {
-        var compra = _context.Compras.FirstOrDefault(v => v.Id == idCompraDto.IdCompra);
-
-        if (compra == null)
-        {
-            return NotFound(); // La venta no existe, devolver un código de respuesta 404
+                return StatusCode(500, ex.Message); // Error interno del servidor
+            }
         }
 
-        var factura = new FacturaProveedore
+        ///////////
+        //post 
+        [HttpPost]
+        public IActionResult AgregarIdCompraFactura([FromBody] IdCompraDto idCompraDto)
         {
-            IdCompra = idCompraDto.IdCompra,
-            FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
-            IdMedioPago= 1,
-            Estado = "Pendiente", // Establece el estado inicial de la factura
-        };
+            if (ModelState.IsValid)
+            {
+                var compra = _context.Compras.FirstOrDefault(v => v.Id == idCompraDto.IdCompra);
 
-        _context.FacturaProveedores.Add(factura);
-        _context.SaveChanges();
+                if (compra == null)
+                {
+                    return NotFound(); // La venta no existe, devolver un código de respuesta 404
+                }
 
-        return Ok(factura.Id); // Devuelve el ID de la factura creada
-    }
+                var factura = new FacturaProveedore
+                {
+                    IdCompra = idCompraDto.IdCompra,
+                    FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
+                    IdMedioPago = 1,
+                    Estado = "Pendiente", // Establece el estado inicial de la factura
+                };
 
-    return BadRequest(ModelState);
-}
-////////// put 
-/// put medio de pago 
-[HttpPut("FacturaProveedores")]
-public IActionResult ActualizarMedioPagoFactura([FromBody] ActualizarMedioPagoDto dto)
-{
-    try
-    {
-        // Verificar si existe la factura
-        var factura = _context.FacturaProveedores.FirstOrDefault(f => f.Id == dto.IdFactura);
-        if (factura == null)
-        {
-            return NotFound(); // Factura no encontrada
+                _context.FacturaProveedores.Add(factura);
+                _context.SaveChanges();
+
+                return Ok(factura.Id); // Devuelve el ID de la factura creada
+            }
+
+            return BadRequest(ModelState);
         }
-
-        // Verificar si existe el medio de pago
-        var medioPago = _context.MediosPagos.FirstOrDefault(mp => mp.Id == dto.IdMedioPago);
-        if (medioPago == null)
+        ////////// put 
+        /// put medio de pago 
+        [HttpPut("FacturaProveedores")]
+        public IActionResult ActualizarMedioPagoFactura([FromBody] ActualizarMedioPagoDto dto)
         {
-            return NotFound(); // Medio de pago no encontrado
-        }
+            try
+            {
+                // Verificar si existe la factura
+                var factura = _context.FacturaProveedores.FirstOrDefault(f => f.Id == dto.IdFactura);
+                if (factura == null)
+                {
+                    return NotFound(); // Factura no encontrada
+                }
 
-         // Actualizar el medio de pago de la factura y el estado 
+                // Verificar si existe el medio de pago
+                var medioPago = _context.MediosPagos.FirstOrDefault(mp => mp.Id == dto.IdMedioPago);
+                if (medioPago == null)
+                {
+                    return NotFound(); // Medio de pago no encontrado
+                }
+
+                // Actualizar el medio de pago de la factura y el estado 
                 factura.Estado = "Facturado";
                 factura.IdMedioPago = dto.IdMedioPago;
                 _context.SaveChanges();
 
-        return Ok(); // Actualización exitosa
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message); // Error interno del servidor
-    }
-}
-
-//////get completo para factura detalle 
-
-[HttpGet("facturaProveedoresGeneral/{id}")]
-public IActionResult ObtenerFacturaProveedorGeneral(int id)
-{
-    try
-    {
-        var facturaProveedor = _context.FacturaProveedores
-            .Include(fp => fp.IdCompraNavigation)
-                .ThenInclude(c => c.IdProveedorNavigation)
-            .Include(fp => fp.IdCompraNavigation)
-                .ThenInclude(c => c.DetallesCompras)
-                .ThenInclude(dc => dc.IdProductoNavigation)
-                .Include(fp => fp.IdMedioPagoNavigation) 
-            .FirstOrDefault(fp => fp.Id == id);
-
-        if (facturaProveedor == null)
-        {
-            return NotFound(); // Factura de proveedores no encontrada
+                return Ok(); // Actualización exitosa
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); // Error interno del servidor
+            }
         }
 
-        var proveedor = facturaProveedor.IdCompraNavigation.IdProveedorNavigation;
-        var compra = facturaProveedor.IdCompraNavigation;
-        var detallesCompras = facturaProveedor.IdCompraNavigation.DetallesCompras;
+        //////get completo para factura detalle 
 
-        decimal cantidadTotal = detallesCompras.Sum(dc => dc.Cantidad);
-        decimal totalProductos = detallesCompras.Sum(dc => dc.SubTotal);
-        
-        var productos = detallesCompras.Select(dc => new
+        [HttpGet("facturaProveedoresGeneral/{id}")]
+        public IActionResult ObtenerFacturaProveedorGeneral(int id)
         {
-            Producto = dc.IdProductoNavigation.Nombre,
-            Cantidad = dc.Cantidad,
-            Precio=dc.PrecioUnitario,
-            total=dc.Cantidad * dc.PrecioUnitario,
-            Iva = dc.IdProductoNavigation.Iva
-        });
-
-        var respuesta = new
-        {
-            FacturaProveedor = new
+            try
             {
-                facturaProveedor.Id,
-                FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
-              MedioPago = facturaProveedor.IdMedioPagoNavigation.Descripcion,
-                facturaProveedor.NumeroFactura,
-                Estado = facturaProveedor.Estado
-            },
-            Proveedor = new
-            {
-                proveedor.NombreEmpresa,
-                proveedor.IdPersonaNavigation.Nombres,
-                proveedor.IdPersonaNavigation.Apellidos,
-                proveedor.IdPersonaNavigation.Cedula,
-                proveedor.IdPersonaNavigation.Correo,
-                proveedor.IdPersonaNavigation.Direccion,
-                proveedor.IdPersonaNavigation.Telefono,
-                proveedor.Ruc
-            },
-            TotalProductos = totalProductos,
-            CantidadTotal = cantidadTotal,
-            Productos = productos
-        };
+                var facturaProveedor = _context.FacturaProveedores
+                    .Include(fp => fp.IdCompraNavigation)
+                        .ThenInclude(c => c.IdProveedorNavigation)
+                    .Include(fp => fp.IdCompraNavigation)
+                        .ThenInclude(c => c.DetallesCompras)
+                        .ThenInclude(dc => dc.IdProductoNavigation)
+                        .Include(fp => fp.IdMedioPagoNavigation)
+                    .FirstOrDefault(fp => fp.Id == id);
 
-        return Ok(respuesta); // Respuesta exitosa con los detalles de la factura de proveedores
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message); // Error interno del servidor
-    }
-}
+                if (facturaProveedor == null)
+                {
+                    return NotFound(); // Factura de proveedores no encontrada
+                }
+
+                var proveedor = facturaProveedor.IdCompraNavigation.IdProveedorNavigation;
+                var compra = facturaProveedor.IdCompraNavigation;
+                var detallesCompras = facturaProveedor.IdCompraNavigation.DetallesCompras;
+
+                decimal cantidadTotal = detallesCompras.Sum(dc => dc.Cantidad);
+                decimal totalProductos = detallesCompras.Sum(dc => dc.SubTotal);
+
+                var productos = detallesCompras.Select(dc => new
+                {
+                    Producto = dc.IdProductoNavigation.Nombre,
+                    Cantidad = dc.Cantidad,
+                    Precio = dc.PrecioUnitario,
+                    total = dc.Cantidad * dc.PrecioUnitario,
+                    Iva = dc.IdProductoNavigation.Iva
+                });
+
+                var respuesta = new
+                {
+                    FacturaProveedor = new
+                    {
+                        facturaProveedor.Id,
+                        FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
+                        MedioPago = facturaProveedor.IdMedioPagoNavigation.Descripcion,
+                        facturaProveedor.NumeroFactura,
+                        Estado = facturaProveedor.Estado
+                    },
+                    Proveedor = new
+                    {
+                        proveedor.NombreEmpresa,
+                        proveedor.IdPersonaNavigation.Nombres,
+                        proveedor.IdPersonaNavigation.Apellidos,
+                        proveedor.IdPersonaNavigation.Cedula,
+                        proveedor.IdPersonaNavigation.Correo,
+                        proveedor.IdPersonaNavigation.Direccion,
+                        proveedor.IdPersonaNavigation.Telefono,
+                        proveedor.Ruc
+                    },
+                    TotalProductos = totalProductos,
+                    CantidadTotal = cantidadTotal,
+                    Productos = productos
+                };
+
+                return Ok(respuesta); // Respuesta exitosa con los detalles de la factura de proveedores
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); // Error interno del servidor
+            }
+        }
 
 
 
