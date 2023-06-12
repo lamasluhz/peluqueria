@@ -400,7 +400,7 @@ namespace PeluqueriaWebApi.Models
             modelBuilder.Entity<MovimientosCaja>(entity =>
             {
                 entity.HasKey(e => e.IdMovimiento)
-                    .HasName("PK__movimien__628521737BE2E870");
+                    .HasName("PK__movimien__628521735E5CBB4A");
 
                 entity.ToTable("movimientosCaja");
 
@@ -431,19 +431,17 @@ namespace PeluqueriaWebApi.Models
                     .WithMany(p => p.MovimientosCajas)
                     .HasForeignKey(d => d.IdCaja)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__movimient__idCaj__6BAEFA67");
+                    .HasConstraintName("FK__movimient__idCaj__7073AF84");
 
                 entity.HasOne(d => d.IdFacturaNavigation)
                     .WithMany(p => p.MovimientosCajas)
                     .HasForeignKey(d => d.IdFactura)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__movimient__idFac__6CA31EA0");
+                    .HasConstraintName("FK__movimient__idFac__7167D3BD");
 
                 entity.HasOne(d => d.IdFacturaProveedorNavigation)
                     .WithMany(p => p.MovimientosCajas)
                     .HasForeignKey(d => d.IdFacturaProveedor)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__movimient__idFac__6D9742D9");
+                    .HasConstraintName("FK__movimient__idFac__725BF7F6");
             });
 
             modelBuilder.Entity<Peluquero>(entity =>

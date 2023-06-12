@@ -9,7 +9,7 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
 {
      public int IdCaja { get; set; }
     public decimal Monto { get; set; }
-    public int? IdFactura { get; set; }
+
     public int IdFacturaProveedor { get; set; }
 }
 }
