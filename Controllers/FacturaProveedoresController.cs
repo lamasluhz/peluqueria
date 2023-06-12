@@ -173,6 +173,12 @@ public IActionResult ObtenerFacturaProveedorGeneral(int id)
             Proveedor = new
             {
                 proveedor.NombreEmpresa,
+                proveedor.IdPersonaNavigation.Nombres,
+                proveedor.IdPersonaNavigation.Apellidos,
+                proveedor.IdPersonaNavigation.Cedula,
+                proveedor.IdPersonaNavigation.Correo,
+                proveedor.IdPersonaNavigation.Direccion,
+                proveedor.IdPersonaNavigation.Telefono,
                 proveedor.Ruc
             },
             TotalProductos = totalProductos,
