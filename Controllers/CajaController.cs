@@ -49,7 +49,7 @@ public IActionResult AgregarCaja([FromBody] CajaAgregarDto cajaAgregarDto)
             HoraFinal = DateTime.Now.TimeOfDay,
             FechaCierre = DateTime.Now,
             FechaApertura = DateTime.Now,
-            MontoApertura = cajaAgregarDto.MontoApertura,
+            MontoApertura = 0,
             MontoCierre= 0,
             Estado="Cerrado",
             Eliminado = false
@@ -66,7 +66,6 @@ public IActionResult AgregarCaja([FromBody] CajaAgregarDto cajaAgregarDto)
         return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
 }
-
 [HttpPost("VerificarUsuario")]
 public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuarioDto usuarioDto)
 {
@@ -91,6 +90,7 @@ public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuario
         if (passwordMatches)
         {
             user.Estado = "Abierta";
+            user.MontoApertura = usuarioDto.MontoApertura; // Agregar el nuevo monto
             await _context.SaveChangesAsync();
 
             return Ok("Caja abierta"); // Mensaje de caja abierta
@@ -105,6 +105,7 @@ public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuario
         return BadRequest(e);
     }
 }
+
 
 
 
