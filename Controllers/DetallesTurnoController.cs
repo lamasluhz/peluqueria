@@ -403,6 +403,60 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
     return detallesTurnoResponses;
 }
 
+[HttpGet("GetDetallesTurnoByPeluquero(id)")]
+public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurnoByPeluquero(int idPeluquero)
+{
+    var turnos = await _context.Turnos
+        .Include(t => t.DetallesTurnos)
+            .ThenInclude(dt => dt.IdTipoServicioNavigation)
+        .Include(t => t.IdClienteNavigation)
+            .ThenInclude(c => c.IdPersonaNavigation) // Cargar la entidad Persona del Cliente
+        .Include(t => t.DetallesTurnos)
+            .ThenInclude(dt => dt.IdPeluqueroNavigation)
+        .Where(t => t.DetallesTurnos.Any(dt => dt.IdPeluquero == idPeluquero))
+        .ToListAsync();
+
+    var detallesTurnoResponses = new List<DetallesTurnoResponseDto>();
+
+    foreach (var turno in turnos)
+    {
+        var servicios = turno.DetallesTurnos.Select(dt => new ServicioDto
+        {
+            Id = dt.IdTipoServicioNavigation.Id,
+            TipoServicio = dt.IdTipoServicioNavigation.Tipo,
+            Descripcion = dt.IdTipoServicioNavigation.Descripcion,
+            Monto = dt.DecMonto ?? 0
+        }).ToList();
+
+        var montoTotal = servicios.Sum(s => s.Monto);
+
+        var peluquero = _context.Peluqueros
+            .Where(p => p.Id == idPeluquero)
+            .Join(_context.Personas,
+                p => p.IdPersona,
+                pe => pe.Id,
+                (p, pe) => new { p, pe })
+            .Select(x => $"{x.pe.Nombres} {x.pe.Apellidos}")
+            .FirstOrDefault();
+
+        var detallesTurnoResponse = new DetallesTurnoResponseDto
+        {
+            Id = turno.Id,
+            Cliente = turno.IdClienteNavigation?.IdPersonaNavigation != null ? $"{turno.IdClienteNavigation.IdPersonaNavigation.Nombres} {turno.IdClienteNavigation.IdPersonaNavigation.Apellidos}" : string.Empty,
+            Peluquero = peluquero ?? string.Empty,
+            Servicios = servicios,
+            MontoTotal = montoTotal,
+            Fecha = turno.Fecha,
+            HoraInicio = turno.HoraInicio,
+            HoraFinalizacion = turno.HoraFinalizacion,
+            Estado = turno.Estado
+        };
+
+        detallesTurnoResponses.Add(detallesTurnoResponse);
+    }
+
+    return detallesTurnoResponses;
+}
 
 
     }

@@ -132,6 +132,8 @@ public IActionResult ObtenerCajas()
                 HoraInicio =c.HoraInicial.ToString("hh\\:mm"),
                 Horafinal =c.HoraFinal.ToString("hh\\:mm"),
                 Estado = c.Estado,
+                MontoApertura=c.MontoApertura,
+                  
                // Eliminado = c.Eliminado
             })
             .ToList();
