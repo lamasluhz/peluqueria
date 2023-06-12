@@ -73,28 +73,34 @@ namespace PeluqueriaWebApi.Controllers
                 return StatusCode(500, "Error en la operación");
             }
         }
+private async Task<decimal> CalcularTotalServicio(Venta nuevaVenta)
+{
+    var turnos = await _context.Turnos.FindAsync(nuevaVenta.IdTurno);
+    turnos.Estado = "Completo";
+    await _context.SaveChangesAsync();
 
-        private async Task<decimal> CalcularTotalServicio(Venta nuevaVenta)
+    var detallesTurnos = await _context.DetallesTurnos
+        .Where(d => d.IdTurno == nuevaVenta.IdTurno)
+        .ToListAsync();
+
+    decimal totalServicio = 0;
+
+    foreach (var turno in detallesTurnos)
+    {
+        var idServicio = turno.IdTipoServicio;
+        var servicio = await _context.TiposServicios.FindAsync(idServicio);
+
+        if (servicio != null)
         {
-            var turnos = await _context.Turnos.FindAsync(nuevaVenta.IdTurno);
-            turnos.Estado = "Completo";
-            await _context.SaveChangesAsync();
-
-            var detallesTurnos = await _context.DetallesTurnos
-                .Where(d => d.IdTurno == nuevaVenta.IdTurno)
-                .ToListAsync();
-
-            decimal totalServicio = 0M;
-            foreach (var turno in detallesTurnos)
-            {
-                var idServicio = turno.IdTipoServicio;
-                var servicio = await _context.TiposServicios.FindAsync(idServicio);
-                totalServicio += (decimal)servicio.DecMonto;
-                Console.WriteLine("Total del servicio: " + totalServicio);
-            }
-
-            return totalServicio;
+             totalServicio = detallesTurnos.Sum(dt => dt.IdTipoServicioNavigation?.DecMonto ?? 0);
         }
+    }
+
+    Console.WriteLine("Total del servicio: " + totalServicio);
+
+    return totalServicio;
+}
+
 
         private async Task<decimal> CalcularTotalProducto(Venta nuevaVenta, List<DetalleVentaDto> detalleVentaDto)
         {
