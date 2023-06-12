@@ -133,10 +133,11 @@ public IActionResult ObtenerFacturaProveedorGeneral(int id)
         var facturaProveedor = _context.FacturaProveedores
             .Include(fp => fp.IdCompraNavigation)
                 .ThenInclude(c => c.IdProveedorNavigation)
+                    .ThenInclude(p => p.IdPersonaNavigation)
             .Include(fp => fp.IdCompraNavigation)
                 .ThenInclude(c => c.DetallesCompras)
-                .ThenInclude(dc => dc.IdProductoNavigation)
-                .Include(fp => fp.IdMedioPagoNavigation) 
+                    .ThenInclude(dc => dc.IdProductoNavigation)
+            .Include(fp => fp.IdMedioPagoNavigation)
             .FirstOrDefault(fp => fp.Id == id);
 
         if (facturaProveedor == null)
@@ -145,18 +146,19 @@ public IActionResult ObtenerFacturaProveedorGeneral(int id)
         }
 
         var proveedor = facturaProveedor.IdCompraNavigation.IdProveedorNavigation;
+        var persona = proveedor.IdPersonaNavigation;
         var compra = facturaProveedor.IdCompraNavigation;
-        var detallesCompras = facturaProveedor.IdCompraNavigation.DetallesCompras;
+        var detallesCompras = compra.DetallesCompras;
 
         decimal cantidadTotal = detallesCompras.Sum(dc => dc.Cantidad);
         decimal totalProductos = detallesCompras.Sum(dc => dc.SubTotal);
-        
+
         var productos = detallesCompras.Select(dc => new
         {
             Producto = dc.IdProductoNavigation.Nombre,
             Cantidad = dc.Cantidad,
-            Precio=dc.PrecioUnitario,
-            total=dc.Cantidad * dc.PrecioUnitario,
+            Precio = dc.PrecioUnitario,
+            Total = dc.Cantidad * dc.PrecioUnitario,
             Iva = dc.IdProductoNavigation.Iva
         });
 
@@ -166,20 +168,23 @@ public IActionResult ObtenerFacturaProveedorGeneral(int id)
             {
                 facturaProveedor.Id,
                 FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
-              MedioPago = facturaProveedor.IdMedioPagoNavigation.Descripcion,
+                MedioPago = facturaProveedor.IdMedioPagoNavigation.Descripcion,
                 facturaProveedor.NumeroFactura,
                 Estado = facturaProveedor.Estado
             },
             Proveedor = new
             {
-                proveedor.NombreEmpresa,
-                proveedor.IdPersonaNavigation.Nombres,
-                proveedor.IdPersonaNavigation.Apellidos,
-                proveedor.IdPersonaNavigation.Cedula,
-                proveedor.IdPersonaNavigation.Correo,
-                proveedor.IdPersonaNavigation.Direccion,
-                proveedor.IdPersonaNavigation.Telefono,
-                proveedor.Ruc
+                proveedor?.NombreEmpresa,
+                Persona = new
+                {
+                    persona?.Nombres,
+                    persona?.Apellidos,
+                    persona?.Cedula,
+                    persona?.Correo,
+                    persona?.Direccion,
+                    persona?.Telefono
+                },
+                proveedor?.Ruc
             },
             TotalProductos = totalProductos,
             CantidadTotal = cantidadTotal,
@@ -193,7 +198,6 @@ public IActionResult ObtenerFacturaProveedorGeneral(int id)
         return StatusCode(500, ex.Message); // Error interno del servidor
     }
 }
-
 
 
 
