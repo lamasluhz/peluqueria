@@ -183,6 +183,39 @@ public async Task<ActionResult> Delete(int id)
         return BadRequest(e);
     }
 }
+//////
+[HttpGet("obtener{cedula}")] // Obtener un cliente por número de cédula
+public async Task<ActionResult<Cliente>> GetCedula(string cedula)
+
+{
+
+    if (string.IsNullOrEmpty(cedula))
+    {
+        return BadRequest("La cédula no puede ser nula o vacía.");
+    }
+     var cliente = await _context.Clientes
+        .Include(c => c.IdPersonaNavigation)
+        .FirstOrDefaultAsync(c => c.IdPersonaNavigation.Cedula == cedula);
+
+    if (cliente == null)
+    {
+        return NotFound();
+    }
+
+    var clienteDto = new ClienteDto
+    {
+        Id=cliente.Id,
+        Nombres = cliente.IdPersonaNavigation.Nombres,
+        Apellidos = cliente.IdPersonaNavigation.Apellidos,
+        Cedula = cliente.IdPersonaNavigation.Cedula,
+        Correo = cliente.IdPersonaNavigation.Correo,
+        Telefono = cliente.IdPersonaNavigation.Telefono,
+        Direccion = cliente.IdPersonaNavigation.Direccion,
+        Ruc = cliente.Ruc
+    };
+
+    return Ok(clienteDto);
+}
 
 
      

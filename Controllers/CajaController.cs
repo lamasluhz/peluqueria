@@ -109,6 +109,7 @@ public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuario
 
 
 //////////////
+
 [HttpGet("cajas")]
 public IActionResult ObtenerCajas()
 {
@@ -119,8 +120,8 @@ public IActionResult ObtenerCajas()
             {
                 Nombre = c.Nombre,
                 FechaApertura = c.FechaApertura,
-                HoraInicio =c.HoraInicial.ToString("hh\\:mm"),
-                Horafinal =c.HoraFinal.ToString("hh\\:mm"),
+              //  HoraInicio =c.HoraInicial.ToString("hh\\:mm"),
+                //Horafinal =c.HoraFinal.ToString("hh\\:mm"),
                 Estado = c.Estado,
                 MontoApertura=c.MontoApertura,
                   

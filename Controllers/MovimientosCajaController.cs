@@ -25,9 +25,62 @@ namespace PeluqueriaWebApi.Controllers
         }
      
 ////////////
+/*
+ // POST: api/MovimientosCaja/entrada
+    [HttpPost("entrada")]
+    public IActionResult AgregarMovimientoEntrada([FromBody] MovimientoEntradaDto movimientoEntradaDto)
+    {
+        try
+        {
+            var nuevoMovimiento = new MovimientosCaja
+            {
+                IdCaja = movimientoEntradaDto.IdCaja,
+                TipoMovimiento = "Entrada",
+                Monto = movimientoEntradaDto.Monto,
+                IdFactura = null,
+                IdFacturaProveedor = null,
+                FechaMovimiento = DateTime.Now,
+                Eliminado = false
+            };
 
+            _context.MovimientosCaja.Add(nuevoMovimiento);
+            _context.SaveChanges();
 
+            return Ok(nuevoMovimiento.IdMovimiento);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+        }
+    }
 
+    // POST: api/MovimientosCaja/salida
+    [HttpPost("salida")]
+    public IActionResult AgregarMovimientoSalida([FromBody] MovimientoSalidaDto movimientoSalidaDto)
+    {
+        try
+        {
+            var nuevoMovimiento = new MovimientosCaja
+            {
+                IdCaja = movimientoSalidaDto.IdCaja,
+                TipoMovimiento = "Salida",
+                Monto = movimientoSalidaDto.Monto,
+                IdFactura = null,
+                IdFacturaProveedor = movimientoSalidaDto.IdFacturaProveedor,
+                FechaMovimiento = DateTime.Now,
+                Eliminado = false
+            };
+
+            _context.MovimientosCaja.Add(nuevoMovimiento);
+            _context.SaveChanges();
+
+            return Ok(nuevoMovimiento.IdMovimiento);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+        }
+*/
 
     }
 }

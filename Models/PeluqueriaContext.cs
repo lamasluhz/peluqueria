@@ -400,7 +400,7 @@ namespace PeluqueriaWebApi.Models
             modelBuilder.Entity<MovimientosCaja>(entity =>
             {
                 entity.HasKey(e => e.IdMovimiento)
-                    .HasName("PK__movimien__6285217333FBC47E");
+                    .HasName("PK__movimien__628521737BE2E870");
 
                 entity.ToTable("movimientosCaja");
 
@@ -414,9 +414,9 @@ namespace PeluqueriaWebApi.Models
 
                 entity.Property(e => e.IdCaja).HasColumnName("idCaja");
 
-                entity.Property(e => e.IdCompra).HasColumnName("idCompra");
+                entity.Property(e => e.IdFactura).HasColumnName("idFactura");
 
-                entity.Property(e => e.IdVenta).HasColumnName("idVenta");
+                entity.Property(e => e.IdFacturaProveedor).HasColumnName("idFacturaProveedor");
 
                 entity.Property(e => e.Monto)
                     .HasColumnType("decimal(19, 5)")
@@ -431,19 +431,19 @@ namespace PeluqueriaWebApi.Models
                     .WithMany(p => p.MovimientosCajas)
                     .HasForeignKey(d => d.IdCaja)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__movimient__idCaj__5A846E65");
+                    .HasConstraintName("FK__movimient__idCaj__6BAEFA67");
 
-                entity.HasOne(d => d.IdCompraNavigation)
+                entity.HasOne(d => d.IdFacturaNavigation)
                     .WithMany(p => p.MovimientosCajas)
-                    .HasForeignKey(d => d.IdCompra)
+                    .HasForeignKey(d => d.IdFactura)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__movimient__idCom__5C6CB6D7");
+                    .HasConstraintName("FK__movimient__idFac__6CA31EA0");
 
-                entity.HasOne(d => d.IdVentaNavigation)
+                entity.HasOne(d => d.IdFacturaProveedorNavigation)
                     .WithMany(p => p.MovimientosCajas)
-                    .HasForeignKey(d => d.IdVenta)
+                    .HasForeignKey(d => d.IdFacturaProveedor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__movimient__idVen__5B78929E");
+                    .HasConstraintName("FK__movimient__idFac__6D9742D9");
             });
 
             modelBuilder.Entity<Peluquero>(entity =>
