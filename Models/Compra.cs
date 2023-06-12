@@ -8,6 +8,7 @@ namespace PeluqueriaWebApi.Models
         public Compra()
         {
             DetallesCompras = new HashSet<DetallesCompra>();
+            FacturaProveedores = new HashSet<FacturaProveedore>();
         }
 
         public int Id { get; set; }
@@ -22,5 +23,6 @@ namespace PeluqueriaWebApi.Models
         public virtual Deposito IdDepositoNavigation { get; set; } = null!;
         public virtual Proveedore IdProveedorNavigation { get; set; } = null!;
         public virtual ICollection<DetallesCompra> DetallesCompras { get; set; }
+        public virtual ICollection<FacturaProveedore> FacturaProveedores { get; set; }
     }
 }
