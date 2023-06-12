@@ -115,85 +115,89 @@ namespace PeluqueriaWebApi.Controllers
                 factura.IdMedioPago = dto.IdMedioPago;
                 _context.SaveChanges();
 
-                return Ok(); // Actualización exitosa
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message); // Error interno del servidor
-            }
-        }
+        return Ok(); // Actualización exitosa
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
 
-        //////get completo para factura detalle 
+//////get completo para factura detalle 
 
-        [HttpGet("facturaProveedoresGeneral/{id}")]
-        public IActionResult ObtenerFacturaProveedorGeneral(int id)
+[HttpGet("facturaProveedoresGeneral/{id}")]
+public IActionResult ObtenerFacturaProveedorGeneral(int id)
+{
+    try
+    {
+        var facturaProveedor = _context.FacturaProveedores
+            .Include(fp => fp.IdCompraNavigation)
+                .ThenInclude(c => c.IdProveedorNavigation)
+                    .ThenInclude(p => p.IdPersonaNavigation)
+            .Include(fp => fp.IdCompraNavigation)
+                .ThenInclude(c => c.DetallesCompras)
+                    .ThenInclude(dc => dc.IdProductoNavigation)
+            .Include(fp => fp.IdMedioPagoNavigation)
+            .FirstOrDefault(fp => fp.Id == id);
+
+        if (facturaProveedor == null)
         {
-            try
-            {
-                var facturaProveedor = _context.FacturaProveedores
-                    .Include(fp => fp.IdCompraNavigation)
-                        .ThenInclude(c => c.IdProveedorNavigation)
-                    .Include(fp => fp.IdCompraNavigation)
-                        .ThenInclude(c => c.DetallesCompras)
-                        .ThenInclude(dc => dc.IdProductoNavigation)
-                        .Include(fp => fp.IdMedioPagoNavigation)
-                    .FirstOrDefault(fp => fp.Id == id);
-
-                if (facturaProveedor == null)
-                {
-                    return NotFound(); // Factura de proveedores no encontrada
-                }
-
-                var proveedor = facturaProveedor.IdCompraNavigation.IdProveedorNavigation;
-                var compra = facturaProveedor.IdCompraNavigation;
-                var detallesCompras = facturaProveedor.IdCompraNavigation.DetallesCompras;
-
-                decimal cantidadTotal = detallesCompras.Sum(dc => dc.Cantidad);
-                decimal totalProductos = detallesCompras.Sum(dc => dc.SubTotal);
-
-                var productos = detallesCompras.Select(dc => new
-                {
-                    Producto = dc.IdProductoNavigation.Nombre,
-                    Cantidad = dc.Cantidad,
-                    Precio = dc.PrecioUnitario,
-                    total = dc.Cantidad * dc.PrecioUnitario,
-                    Iva = dc.IdProductoNavigation.Iva
-                });
-
-                var respuesta = new
-                {
-                    FacturaProveedor = new
-                    {
-                        facturaProveedor.Id,
-                        FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
-                        MedioPago = facturaProveedor.IdMedioPagoNavigation.Descripcion,
-                        facturaProveedor.NumeroFactura,
-                        Estado = facturaProveedor.Estado
-                    },
-                    Proveedor = new
-                    {
-                        proveedor.NombreEmpresa,
-                        proveedor.IdPersonaNavigation.Nombres,
-                        proveedor.IdPersonaNavigation.Apellidos,
-                        proveedor.IdPersonaNavigation.Cedula,
-                        proveedor.IdPersonaNavigation.Correo,
-                        proveedor.IdPersonaNavigation.Direccion,
-                        proveedor.IdPersonaNavigation.Telefono,
-                        proveedor.Ruc
-                    },
-                    TotalProductos = totalProductos,
-                    CantidadTotal = cantidadTotal,
-                    Productos = productos
-                };
-
-                return Ok(respuesta); // Respuesta exitosa con los detalles de la factura de proveedores
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message); // Error interno del servidor
-            }
+            return NotFound(); // Factura de proveedores no encontrada
         }
 
+        var proveedor = facturaProveedor.IdCompraNavigation.IdProveedorNavigation;
+        var persona = proveedor.IdPersonaNavigation;
+        var compra = facturaProveedor.IdCompraNavigation;
+        var detallesCompras = compra.DetallesCompras;
+
+        decimal cantidadTotal = detallesCompras.Sum(dc => dc.Cantidad);
+        decimal totalProductos = detallesCompras.Sum(dc => dc.SubTotal);
+
+        var productos = detallesCompras.Select(dc => new
+        {
+            Producto = dc.IdProductoNavigation.Nombre,
+            Cantidad = dc.Cantidad,
+            Precio = dc.PrecioUnitario,
+            Total = dc.Cantidad * dc.PrecioUnitario,
+            Iva = dc.IdProductoNavigation.Iva
+        });
+
+        var respuesta = new
+        {
+            FacturaProveedor = new
+            {
+                facturaProveedor.Id,
+                FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
+                MedioPago = facturaProveedor.IdMedioPagoNavigation.Descripcion,
+                facturaProveedor.NumeroFactura,
+                Estado = facturaProveedor.Estado
+            },
+            Proveedor = new
+            {
+                proveedor?.NombreEmpresa,
+                Persona = new
+                {
+                    persona?.Nombres,
+                    persona?.Apellidos,
+                    persona?.Cedula,
+                    persona?.Correo,
+                    persona?.Direccion,
+                    persona?.Telefono
+                },
+                proveedor?.Ruc
+            },
+            TotalProductos = totalProductos,
+            CantidadTotal = cantidadTotal,
+            Productos = productos
+        };
+
+        return Ok(respuesta); // Respuesta exitosa con los detalles de la factura de proveedores
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
 
 
 
