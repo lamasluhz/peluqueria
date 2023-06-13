@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Table, Button } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Form } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import BuscadorCompraProductos from './BuscadorVentaProductos';
+
 
 const VentaProductos = () => {
   const url = 'https://localhost:7137/StockProducto/GetStockProductos';
@@ -13,12 +14,13 @@ const VentaProductos = () => {
   const [productosSeleccionados, setProductoSeleccionados] = useState([]);
   const [cantidadProducto, setCantidadProducto] = useState({});
   const [productosFiltrados, setProductosFiltrados] = useState([]);
+  const [cliente, setCliente] = useState({});
+  const [cedulaCliente, setCedulaCliente] = useState('');
 
   const { state } = location;
 
   const obtenerProveedor = async () => {
     if (!state || !state.idProveedor) {
-      // State or idProveedor is not defined, return early
       return;
     }
 
@@ -26,6 +28,19 @@ const VentaProductos = () => {
     setProveedor(response.data);
   };
 
+  const getCliente = async (cedula) => {
+    try {
+      const response = await axios.get(`https://localhost:7137/api/Cliente/obtener${cedula}`);
+      if (response.data) {
+        setCliente(response.data);
+      } else {
+        setCliente({});
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  
   const obtenerProductos = async () => {
     const response = await axios.get(url);
     const updatedProductos = response.data.map((producto) => ({
@@ -42,6 +57,10 @@ const VentaProductos = () => {
   useEffect(() => {
     obtenerProveedor();
   }, [state]); // Depend on state so the effect runs whenever state changes
+  
+  useEffect(() => {
+    console.log(cliente);
+  }, [cliente]);
 
   const handleSearch = (searchValue) => {
     if (searchValue.trim() === '') {
@@ -64,18 +83,34 @@ const VentaProductos = () => {
     setShowModal(false);
   };
 
+  const handleCedulaChange = (event) => {
+    setCedulaCliente(event.target.value);
+  };
+
+  const handleKeyDown = async (event) => {
+    if (event.key === 'Enter') {
+      try {
+        await getCliente(cedulaCliente);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    }
+  };
+
   const agregarAlCarrito = (productoAgregado) => {
     let productoYaEnCarrito = productosSeleccionados.find((producto) => producto.id === productoAgregado.id);
-
+  
     if (productoYaEnCarrito) {
       // Si el producto ya está en el carrito, aumenta su cantidad
       setCantidadProducto({
         ...cantidadProducto,
-        [productoAgregado.id]: cantidadProducto[productoAgregado.id] - 1,
+        [productoAgregado.id]: cantidadProducto[productoAgregado.id] + 1,
       });
     } else {
       // Si el producto no está en el carrito, añádelo
-      setProductoSeleccionados([...productosSeleccionados, productoAgregado]);
+      const precioActualizado = productoAgregado.precioUnitario;
+      setProductoSeleccionados([...productosSeleccionados, { ...productoAgregado, precioUnitario: precioActualizado, cantidad: 1 }]);
       setCantidadProducto({ ...cantidadProducto, [productoAgregado.id]: 1 });
     }
   };
@@ -104,15 +139,65 @@ const VentaProductos = () => {
     0
   );
 
+
+  const confirmarVenta= async () => {
+    const postUrl = 'https://localhost:7137/Productos'; // Use your API URL
+
+    // Collect all the product details into an array
+    let detalleVentaDtos = productosSeleccionados.map(producto => {
+        return {
+            idProducto: producto.id,
+            cantidad: cantidadProducto[producto.id],
+            precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
+            iva: 0.10 // Assuming a 5% tax rate
+        };
+    });
+
+    // Prepare the data to be sent in the POST request
+    const data = {
+        idCliente: cliente.id,
+        idDeposito: 1,
+        idTurno: null,
+        detalleVentaDtos: detalleVentaDtos
+    };
+
+    try {
+        // Perform a single Axios POST request
+        await axios.post(postUrl, data);
+
+        // Show success modal after completing the request
+    } catch (error) {
+        console.error('Error during POST request:', error);
+    }
+};
+
+
   return (
     <Container className="w-75 mt-4">
       <Row className="mb-4">
+      <h2>Cliente</h2>
         <Col>
-          <h2>Proveedor: {(proveedor && proveedor.nombreEmpresa) || null}</h2>
+          <div className='column is-one-third'>
+            <label htmlFor="cedula">Nro Documento</label>
+            <input
+              className="input is-primary"
+              type="text"
+              name="cedula"
+              onChange={handleCedulaChange}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+          <div className='column is-one-third'>
+            <label htmlFor="str_nombre">Nombre</label>
+            <input
+              className="input is-primary"
+              type="text"
+              name="str_nombre"
+              readOnly
+              value={`${cliente?.nombres || ''} ${cliente?.apellidos || ''}`}
+            />
+          </div>
         </Col>
-      </Row>
-      <Row>
-        {/* Resto del código */}
       </Row>
       <Row className="mb-4">
         <Row>
@@ -195,7 +280,7 @@ const VentaProductos = () => {
       </Row>
       <Row>
         <Col style={{ justifyContent: 'center', display: 'flex' }}>
-          <Button variant="success">Confirmar Venta</Button>
+          <Button variant="success" onClick={confirmarVenta}>Confirmar Venta</Button>
         </Col>
       </Row>
     </Container>
@@ -203,4 +288,3 @@ const VentaProductos = () => {
 };
 
 export default VentaProductos;
-

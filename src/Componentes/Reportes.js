@@ -1,11 +1,22 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { Navbar, Nav, Form, FormControl, Button, Table, Row, Col } from 'react-bootstrap';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import {
+  Navbar,
+  Nav,
+  Form,
+  FormControl,
+  Button,
+  Table,
+  Row,
+  Col,
+} from "react-bootstrap";
+import "../css/Reportes.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Reportes = () => {
-  const [fechaInicio, setFechaInicio] = useState('');
-  const [fechaFin, setFechaFin] = useState('');
-  const [tipoReporte, setTipoReporte] = useState('entrada');
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+  const [tipoReporte, setTipoReporte] = useState("entrada");
 
   // Función para manejar el envío del formulario
   const handleSubmit = (e) => {
@@ -15,8 +26,12 @@ const Reportes = () => {
 
   return (
     <div>
+      <div className="titulo">
+        <h1>Reportes</h1>
+      </div>
+
       {/* Navbar con las fechas y el selector */}
-      <Navbar bg="light" expand="lg">
+      <Navbar style={{ backgroundColor: "#AEF4FA" }} expand="lg">
         <Navbar.Toggle aria-controls="navbar" />
         <Navbar.Collapse id="navbar">
           <Nav className="mr-auto">
@@ -25,8 +40,13 @@ const Reportes = () => {
                 <Col>
                   {/* Fecha inicio */}
                   <Form.Group controlId="formFechaInicio">
-                    <Form.Label>Fecha inicio:</Form.Label>
+                    <Form.Label
+                      style={{ marginRight: "10px", marginLeft: "20px" }}
+                    >
+                      Fecha inicio:
+                    </Form.Label>
                     <FormControl
+                      style={{ marginRight: "10px", marginLeft: "20px" }}
                       type="date"
                       value={fechaInicio}
                       onChange={(e) => setFechaInicio(e.target.value)}
@@ -35,9 +55,17 @@ const Reportes = () => {
                 </Col>
                 <Col>
                   {/* Fecha fin */}
-                  <Form.Group controlId="formFechaFin">
-                    <Form.Label>Fecha fin:</Form.Label>
+                  <Form.Group
+                    controlId="formFechaFin"
+                    style={{ marginRight: "900px" }}
+                  >
+                    <Form.Label
+                      style={{ marginRight: "10px", marginLeft: "20px" }}
+                    >
+                      Fecha fin:
+                    </Form.Label>
                     <FormControl
+                      style={{ marginRight: "10px", marginLeft: "20px" }}
                       type="date"
                       value={fechaFin}
                       onChange={(e) => setFechaFin(e.target.value)}
@@ -60,7 +88,17 @@ const Reportes = () => {
                 </Col>
                 <Col>
                   {/* Botón para generar el reporte */}
-                  <Button type="submit" variant="primary">Generar Reporte</Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    style={{
+                      marginRight: "100px",
+                      backgroundColor: "blue",
+                      borderColor: "blue",
+                    }}
+                  >
+                    Filtrar
+                  </Button>
                 </Col>
               </Row>
             </Form>
@@ -79,9 +117,7 @@ const Reportes = () => {
             <th>Fecha</th>
           </tr>
         </thead>
-        <tbody>
-          {/* Aquí puedes renderizar las filas de la tabla */}
-        </tbody>
+        <tbody>{/* Aquí puedes renderizar las filas de la tabla */}</tbody>
       </Table>
     </div>
   );
