@@ -137,6 +137,37 @@ public IActionResult ObtenerCajas()
         return StatusCode(500, ex.Message); // Error interno del servidor
     }
 }
+[HttpGet("cajas/{id}")]
+public IActionResult ObtenerCajaPorId(int id)
+{
+    try
+    {
+        var caja = _context.Cajas
+            .Where(c => c.IdCaja == id)
+            .Select(c => new CajaDto
+            {
+                Nombre = c.Nombre,
+                FechaApertura = c.FechaApertura,
+                // HoraInicio =c.HoraInicial.ToString("hh\\:mm"),
+                // Horafinal =c.HoraFinal.ToString("hh\\:mm"),
+                Estado = c.Estado,
+                MontoApertura = c.MontoApertura,
+                // Eliminado = c.Eliminado
+            })
+            .FirstOrDefault();
+
+        if (caja == null)
+        {
+            return NotFound(); // Caja no encontrada
+        }
+
+        return Ok(caja); // Respuesta exitosa con la caja encontrada
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
 
 
 
