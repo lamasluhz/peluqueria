@@ -5,6 +5,11 @@ namespace PeluqueriaWebApi.Models
 {
     public partial class Factura
     {
+        public Factura()
+        {
+            MovimientosCajas = new HashSet<MovimientosCaja>();
+        }
+
         public int Id { get; set; }
         public int IdVenta { get; set; }
         public int IdMedioPago { get; set; }
@@ -15,5 +20,6 @@ namespace PeluqueriaWebApi.Models
 
         public virtual MediosPago IdMedioPagoNavigation { get; set; } = null!;
         public virtual Venta IdVentaNavigation { get; set; } = null!;
+        public virtual ICollection<MovimientosCaja> MovimientosCajas { get; set; }
     }
 }

@@ -24,10 +24,132 @@ namespace PeluqueriaWebApi.Controllers
             _context = context;
         }
      
-////////////
+        // POST: api/MovimientosCaja/entrada
+        [HttpPost("entrada")]
+        public IActionResult AgregarMovimientoEntrada([FromBody] MovimientoEntradaDto movimientoEntradaDto)
+        {
+            try
+            {
+                var nuevoMovimiento = new MovimientosCaja
+                {
+                    IdCaja = movimientoEntradaDto.IdCaja,
+                    TipoMovimiento = "Entrada",
+                    Monto = movimientoEntradaDto.Monto,
+                    IdFactura = movimientoEntradaDto.IdFactura,
+                    //IdFacturaProveedor = null,
+                    FechaMovimiento = DateTime.Now,
+                    Eliminado = false
+                };
+
+                _context.MovimientosCajas.Add(nuevoMovimiento);
+                _context.SaveChanges();
+
+                return Ok(nuevoMovimiento.IdMovimiento);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        // POST: api/MovimientosCaja/salida
+        [HttpPost("salida")]
+        public IActionResult AgregarMovimientoSalida([FromBody] MovimientoSalidaDto movimientoSalidaDto)
+        {
+            try
+            {
+                var nuevoMovimiento = new MovimientosCaja
+                {
+                    IdCaja = movimientoSalidaDto.IdCaja,
+                    TipoMovimiento = "Salida",
+                    Monto = movimientoSalidaDto.Monto,
+                    //IdFactura = null,
+                    IdFacturaProveedor = movimientoSalidaDto.IdFacturaProveedor,
+                    FechaMovimiento = DateTime.Now,
+                    Eliminado = false
+                };
+
+                _context.MovimientosCajas.Add(nuevoMovimiento);
+                _context.SaveChanges();
+
+                return Ok(nuevoMovimiento.IdMovimiento);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+            }
+        }
 
 
 
+/////get de suma entradas
+// GET: api/MovimientosCaja/entrada/total?fecha=yyyy-MM-dd
+[HttpGet("entrada/total")]
+public IActionResult ObtenerTotalMovimientosEntrada(DateTime fecha)
+{
+    try
+    {
+        decimal total = _context.MovimientosCajas
+            .Where(m => m.TipoMovimiento == "Entrada" && m.FechaMovimiento.Date == fecha.Date)
+            .Sum(m => m.Monto);
+
+        return Ok(total);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
+
+// GET: api/MovimientosCaja/salida/total?fecha=yyyy-MM-dd
+[HttpGet("salida/total")]
+public IActionResult ObtenerTotalMovimientosSalida(DateTime fecha)
+{
+    try
+    {
+        decimal total = _context.MovimientosCajas
+            .Where(m => m.TipoMovimiento == "Salida" && m.FechaMovimiento.Date == fecha.Date)
+            .Sum(m => m.Monto);
+
+        return Ok(total);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
+// GET: api/MovimientosCaja
+[HttpGet]
+public IActionResult ObtenerTodosLosMovimientos()
+{
+    try
+    {
+        var movimientos = _context.MovimientosCajas.ToList();
+        return Ok(movimientos);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
+
+// GET: api/MovimientosCaja/fecha/{fecha}
+[HttpGet("fecha/{fecha}")]
+public IActionResult ObtenerMovimientosPorFecha(DateTime fecha)
+{
+    try
+    {
+        var movimientos = _context.MovimientosCajas
+            .Where(m => m.FechaMovimiento.Date == fecha.Date)
+            .ToList();
+
+        return Ok(movimientos);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
 
     }
 }

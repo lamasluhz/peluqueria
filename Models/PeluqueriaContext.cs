@@ -27,6 +27,7 @@ namespace PeluqueriaWebApi.Models
         public virtual DbSet<Factura> Facturas { get; set; } = null!;
         public virtual DbSet<FacturaProveedore> FacturaProveedores { get; set; } = null!;
         public virtual DbSet<MediosPago> MediosPagos { get; set; } = null!;
+        public virtual DbSet<MovimientosCaja> MovimientosCajas { get; set; } = null!;
         public virtual DbSet<Peluquero> Peluqueros { get; set; } = null!;
         public virtual DbSet<Persona> Personas { get; set; } = null!;
         public virtual DbSet<Producto> Productos { get; set; } = null!;
@@ -394,6 +395,55 @@ namespace PeluqueriaWebApi.Models
                     .HasColumnName("descripcion");
 
                 entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+            });
+
+            modelBuilder.Entity<MovimientosCaja>(entity =>
+            {
+                entity.HasKey(e => e.IdMovimiento)
+                    .HasName("PK__movimien__62852173370EFB7C");
+
+                entity.ToTable("movimientosCaja");
+
+                entity.Property(e => e.IdMovimiento).HasColumnName("idMovimiento");
+
+                entity.Property(e => e.Eliminado).HasColumnName("eliminado");
+
+                entity.Property(e => e.FechaMovimiento)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fechaMovimiento");
+
+                entity.Property(e => e.IdCaja).HasColumnName("idCaja");
+
+                entity.Property(e => e.IdFactura).HasColumnName("idFactura");
+
+                entity.Property(e => e.IdFacturaProveedor).HasColumnName("idFacturaProveedor");
+
+                entity.Property(e => e.Monto)
+                    .HasColumnType("decimal(19, 5)")
+                    .HasColumnName("monto");
+
+                entity.Property(e => e.TipoMovimiento)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("tipoMovimiento");
+
+                entity.HasOne(d => d.IdCajaNavigation)
+                    .WithMany(p => p.MovimientosCajas)
+                    .HasForeignKey(d => d.IdCaja)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__movimient__idCaj__29221CFB");
+
+                entity.HasOne(d => d.IdFacturaNavigation)
+                    .WithMany(p => p.MovimientosCajas)
+                    .HasForeignKey(d => d.IdFactura)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__movimient__idFac__2A164134");
+
+                entity.HasOne(d => d.IdFacturaProveedorNavigation)
+                    .WithMany(p => p.MovimientosCajas)
+                    .HasForeignKey(d => d.IdFacturaProveedor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__movimient__idFac__2B0A656D");
             });
 
             modelBuilder.Entity<Peluquero>(entity =>

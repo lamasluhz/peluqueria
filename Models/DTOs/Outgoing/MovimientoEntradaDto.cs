@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace PeluqueriaWebApi.Models.DTOs.Outgoing
 {
-public class CajaAgregarDto
+public class MovimientoEntradaDto
 {
-    public string Nombre { get; set; }
-    public string Clave { get; set; }
-   
+      public int IdCaja { get; set; }
+    public decimal Monto { get; set; }
+    public int IdFactura { get; set; }
 }
 }

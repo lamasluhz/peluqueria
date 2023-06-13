@@ -9,5 +9,6 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
     {
         public string Nombre { get; set; } = null!;
         public string  Clave { get; set; } = null!;
+         public decimal MontoApertura { get; set; }
     }
 }
