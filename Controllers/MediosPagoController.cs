@@ -26,98 +26,98 @@ namespace PeluqueriaWebApi.Controllers
 
         }
 
-      // GET: api/MediosPagos
-[HttpGet]
-public async Task<ActionResult<IEnumerable<MedioPagoDto>>> GetMediosPagos()
-{
-    var mediosPagos = await _context.MediosPagos.ToListAsync();
+        // GET: api/MediosPagos
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MedioPagoDto>>> GetMediosPagos()
+        {
+            var mediosPagos = await _context.MediosPagos.ToListAsync();
 
-    var mediosPagosDto = mediosPagos.Select(medioPago => new MedioPagoDto
-    {
-        Id = medioPago.Id,
-        Nombre = medioPago.Descripcion,
-        Eliminado = medioPago.Eliminado
-    }).ToList();
+            var mediosPagosDto = mediosPagos.Select(medioPago => new MedioPagoDto
+            {
+                Id = medioPago.Id,
+                Nombre = medioPago.Descripcion,
+                Eliminado = medioPago.Eliminado
+            }).ToList();
 
-    return Ok(mediosPagosDto);
-}
+            return Ok(mediosPagosDto);
+        }
 
-// GET: api/MediosPagos/5
-[HttpGet("{id}")]
-public async Task<ActionResult<MedioPagoDto>> GetMedioPago(int id)
-{
-    var medioPago = await _context.MediosPagos.FindAsync(id);
+        // GET: api/MediosPagos/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MedioPagoDto>> GetMedioPago(int id)
+        {
+            var medioPago = await _context.MediosPagos.FindAsync(id);
 
-    if (medioPago == null)
-    {
-        return NotFound();
-    }
+            if (medioPago == null)
+            {
+                return NotFound();
+            }
 
-    var medioPagoDto = new MedioPagoDto
-    {
-        Id = medioPago.Id,
-        Nombre = medioPago.Descripcion,
-        Eliminado = medioPago.Eliminado
-    };
+            var medioPagoDto = new MedioPagoDto
+            {
+                Id = medioPago.Id,
+                Nombre = medioPago.Descripcion,
+                Eliminado = medioPago.Eliminado
+            };
 
-    return Ok(medioPagoDto);
-}
+            return Ok(medioPagoDto);
+        }
 
-// POST: api/MediosPagos
-[HttpPost]
-public async Task<ActionResult<MedioPagoDto>> CreateMedioPago(MedioPagoDto medioPagoDto)
-{
-    var medioPago = new MediosPago
-    {
-        Descripcion = medioPagoDto.Nombre,
-        Eliminado = false
-    };
+        // POST: api/MediosPagos
+        [HttpPost]
+        public async Task<ActionResult<MedioPagoDto>> CreateMedioPago(MedioPagoDto medioPagoDto)
+        {
+            var medioPago = new MediosPago
+            {
+                Descripcion = medioPagoDto.Nombre,
+                Eliminado = false
+            };
 
-    _context.MediosPagos.Add(medioPago);
-    await _context.SaveChangesAsync();
+            _context.MediosPagos.Add(medioPago);
+            await _context.SaveChangesAsync();
 
-    medioPagoDto.Id = medioPago.Id;
+            medioPagoDto.Id = medioPago.Id;
 
-    return CreatedAtAction("GetMedioPago", new { id = medioPago.Id }, medioPagoDto);
-}
+            return CreatedAtAction("GetMedioPago", new { id = medioPago.Id }, medioPagoDto);
+        }
 
-// PUT: api/MediosPagos/5
-[HttpPut("{id}")]
-public async Task<IActionResult> UpdateMedioPago(int id, MedioPagoDto medioPagoDto)
-{
-    if (id != medioPagoDto.Id)
-    {
-        return BadRequest();
-    }
+        // PUT: api/MediosPagos/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMedioPago(int id, MedioPagoDto medioPagoDto)
+        {
+            if (id != medioPagoDto.Id)
+            {
+                return BadRequest();
+            }
 
-    var medioPago = await _context.MediosPagos.FindAsync(id);
-    if (medioPago == null)
-    {
-        return NotFound();
-    }
+            var medioPago = await _context.MediosPagos.FindAsync(id);
+            if (medioPago == null)
+            {
+                return NotFound();
+            }
 
-    medioPago.Descripcion = medioPagoDto.Nombre;
+            medioPago.Descripcion = medioPagoDto.Nombre;
 
-    await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-    return NoContent();
-}
+            return NoContent();
+        }
 
-// DELETE: api/MediosPagos/5
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteMedioPago(int id)
-{
-    var medioPago = await _context.MediosPagos.FindAsync(id);
-    if (medioPago == null)
-    {
-        return NotFound();
-    }
+        // DELETE: api/MediosPagos/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMedioPago(int id)
+        {
+            var medioPago = await _context.MediosPagos.FindAsync(id);
+            if (medioPago == null)
+            {
+                return NotFound();
+            }
 
-    medioPago.Eliminado = true;
-    await _context.SaveChangesAsync();
+            medioPago.Eliminado = true;
+            await _context.SaveChangesAsync();
 
-    return NoContent();
-}
+            return NoContent();
+        }
 
     }
 }

@@ -66,7 +66,7 @@ public IActionResult AgregarCaja([FromBody] CajaAgregarDto cajaAgregarDto)
         return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
 
-    
+
 }[HttpPost("VerificarUsuario")]
 public async Task<ActionResult<UsuarioConectadoDto>> VerificarUsuario([FromBody] CajaUsuarioDto usuarioDto)
 {

@@ -36,7 +36,7 @@ namespace PeluqueriaWebApi.Controllers
                     TipoMovimiento = "Entrada",
                     Monto = movimientoEntradaDto.Monto,
                     IdFactura = movimientoEntradaDto.IdFactura,
-                    IdFacturaProveedor = null,
+                   IdFacturaProveedor = null,
                     FechaMovimiento = DateTime.Now,
                     Eliminado = false
                 };

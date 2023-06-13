@@ -156,7 +156,5 @@ namespace PeluqueriaWebApi.Controllers
 
             return Ok(stockProducto);
         }
-
-
     }
 }
