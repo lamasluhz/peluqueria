@@ -1,0 +1,55 @@
+.contenedor{
+    border: solid 1px blue ;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 25px;
+    margin-left: 2px;
+}
+
+#linea{
+    color:blue;
+    height: 1px;
+    width: 70%; /* Puedes ajustar este valor según tu necesidad */
+    background-color: blue;
+    margin: 0 auto; /* Centra horizontalmente la línea */
+    
+}
+
+.titulo-caja{
+    font-size: 30px;
+    font-weight: bold;
+    color: blue;
+}
+
+.botones{
+    margin: 5px;
+}
+
+.monto{
+    color:blue;
+    background-color: #aae0fa;
+}
+
+.success-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    animation: fadeOut 2s ease-in forwards;
+  }
+  
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }

@@ -1,5 +1,5 @@
 #contenedorPadre {
-    
+
     margin: 0 auto;
     background-color: #fdfdfd;
     margin-top: 2%;
@@ -34,13 +34,14 @@
     display: flex;
 }
 
-#contenedor-cliente-hijo-1{
+#contenedor-cliente-hijo-1 {
     flex: 1;
 }
 
-#contenedor-cliente-hijo-2{
+#contenedor-cliente-hijo-2 {
     flex: 2;
 }
+
 #div4 {
     border: 1px solid #c3dce8;
     border-radius: 5px;
@@ -68,18 +69,19 @@
     height: 126px;
 }
 
-.image-principal{
+.image-principal {
     width: 200px;
     height: 40px;
 }
+
 .vertical-line {
     width: 1px;
     height: 100%;
     background-color: #ddd;
     margin-left: 10px;
     margin-right: 10px;
-  }
-  
+}
+
 #nombre-empresa {
     font-size: 25px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -99,15 +101,42 @@
     flex: 1;
 }
 
-p{
+p {
     margin: 0;
 }
 
-#div5{
+#div5 {
     border: 1px solid #c3dce8;
     border-radius: 5px;
 }
 
 .texto-negritas {
     font-weight: bold;
-  }
+}
+
+.custom-button {
+    border-bottom: none;
+}
+
+.btn-activo {
+    background-color: green;
+    color: blanco;
+}
+
+.TablaVentas {
+    border: 1px solid blue;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.TablaCompras {
+    border: 1px solid blue;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.tabla-cabeza {
+    border-bottom: blue;
+    border-top: blue;
+}
+
