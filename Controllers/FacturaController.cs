@@ -80,8 +80,6 @@ public IActionResult AgregarIdVentaAFactura([FromBody] IdVentaDto idVentaDto)
     return BadRequest(ModelState);
 }
 
-
-
         // DELETE: api/Factura/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFactura(int id)
@@ -217,7 +215,33 @@ var ventas = factura.IdVentaNavigation;
     }
 }
 
+//////////////
 
+[HttpGet("servicios")]
+public IActionResult ObtenerServiciosFacturados()
+{
+    try
+    {
+        var servicios = _context.Facturas
+            .Where(f => f.Estado == "Facturado")
+            .SelectMany(f => f.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos)
+            .Where(dt => dt.IdTipoServicioNavigation != null)
+            .GroupBy(dt => new { dt.IdTipoServicioNavigation.Tipo, dt.IdTipoServicioNavigation.Descripcion })
+            .Select(g => new
+            {
+                Tipo = g.Key.Tipo,
+                Descripcion = g.Key.Descripcion,
+                Cantidad = g.Count()
+            })
+            .ToList();
+
+        return Ok(servicios); // Respuesta exitosa con los servicios y su cantidad
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
 
     }
 }

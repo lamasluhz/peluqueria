@@ -65,9 +65,10 @@ public IActionResult AgregarCaja([FromBody] CajaAgregarDto cajaAgregarDto)
     {
         return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
-}
-[HttpPost("VerificarUsuario")]
-public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuarioDto usuarioDto)
+
+    
+}[HttpPost("VerificarUsuario")]
+public async Task<ActionResult<UsuarioConectadoDto>> VerificarUsuario([FromBody] CajaUsuarioDto usuarioDto)
 {
     try
     {
@@ -93,7 +94,12 @@ public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuario
             user.MontoApertura = usuarioDto.MontoApertura; // Agregar el nuevo monto
             await _context.SaveChangesAsync();
 
-            return Ok("Caja abierta"); // Mensaje de caja abierta
+            var usuarioConectadoDto = new UsuarioConectadoDto
+            {
+                IdUsuario = user.IdCaja // Asignar el ID de la caja (usuario) conectado al DTO
+            };
+
+            return Ok(usuarioConectadoDto); // Retornar el DTO con el ID del usuario
         }
         else
         {
@@ -105,6 +111,8 @@ public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuario
         return BadRequest(e);
     }
 }
+
+
 
 
 

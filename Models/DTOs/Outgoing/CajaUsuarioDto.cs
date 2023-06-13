@@ -7,6 +7,7 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
 {
     public class CajaUsuarioDto
     {
+       
         public string Nombre { get; set; } = null!;
         public string  Clave { get; set; } = null!;
          public decimal MontoApertura { get; set; }
