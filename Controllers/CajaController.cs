@@ -26,28 +26,36 @@ namespace PeluqueriaWebApi.Controllers
      
 ////////////
 
+
+private string HashPassword(string password)
+        {
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            return hashedPassword;
+        }
+///////////////////////
 [HttpPost("cajas")]
-public IActionResult AgregarCaja([FromBody] CajaDto cajaDTO)
+public IActionResult AgregarCaja([FromBody] CajaAgregarDto cajaAgregarDto)
 {
     try
     {
-        string claveEncriptada = HashPassword(cajaDTO.Clave);
+        string claveEncriptada = HashPassword(cajaAgregarDto.Clave);
+        
         // Crear una nueva instancia de Caja con los datos proporcionados
         var nuevaCaja = new Caja
         {
-            Nombre = cajaDTO.Nombre,
+            Nombre = cajaAgregarDto.Nombre,
             Clave = claveEncriptada,
             HoraInicial = DateTime.Now.TimeOfDay,
             HoraFinal = DateTime.Now.TimeOfDay,
-              FechaCierre = DateTime.Now,
+            FechaCierre = DateTime.Now,
             FechaApertura = DateTime.Now,
-            Estado = cajaDTO.Estado,
-            MontoApertura=cajaDTO.MontoApertura,
-            MontoCierre=cajaDTO.MontoCierre,
+            MontoApertura = cajaAgregarDto.MontoApertura,
+            MontoCierre= 0,
+            Estado="Cerrado",
             Eliminado = false
         };
 
-        // Agregar la nueva caja al contexto de la base de datos
+          // Agregar la nueva caja al contexto de la base de datos
         _context.Cajas.Add(nuevaCaja);
         _context.SaveChanges();
 
@@ -55,66 +63,48 @@ public IActionResult AgregarCaja([FromBody] CajaDto cajaDTO)
     }
     catch (Exception ex)
     {
-        return StatusCode(500, ex.Message); // Error interno del servidor
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
 }
-private string HashPassword(string password)
+
+[HttpPost("VerificarUsuario")]
+public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuarioDto usuarioDto)
+{
+    try
+    {
+        if (usuarioDto.Clave == null)
         {
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-            return hashedPassword;
+            return BadRequest();
         }
-///////////////////////
-
- [HttpPost("VerificarUsuario")]
-        public async Task<ActionResult<CajaDto>> VerificarUsuario([FromBody] CajaUsuarioDto usuarioDto)
+        
+        var user = await _context.Cajas.FirstOrDefaultAsync(u => u.Nombre.Equals(usuarioDto.Nombre));
+        if (user == null)
         {
-            try
-            {
-                if (usuarioDto.Clave == null)
-                {
-
-                    return BadRequest();
-                }
-                var user = await _context.Cajas.FirstOrDefaultAsync(u => u.Nombre.Equals(usuarioDto.Nombre));
-                if (user == null)
-                {
-                    return NotFound();
-                }
-
-                string inputPassword = usuarioDto.Clave;
-                string hashedPassword = user.Clave;
-
-                bool passwordMatches = BCrypt.Net.BCrypt.Verify(inputPassword, hashedPassword);
-
-                if (passwordMatches)
-                {
-                    user.Estado = "Abierta";
-                    await _context.SaveChangesAsync();
-
-                    var usuarioacceso = new CajaUsuarioDto
-                    {
-                       
-                        Nombre = user.Nombre,
-                        Clave=user.Clave,
-                        
-                        //Estado=user.Estado
-                    };
-
-                    return Ok(usuarioacceso);
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
+            return NotFound();
         }
 
+        string inputPassword = usuarioDto.Clave;
+        string hashedPassword = user.Clave;
 
+        bool passwordMatches = BCrypt.Net.BCrypt.Verify(inputPassword, hashedPassword);
 
+        if (passwordMatches)
+        {
+            user.Estado = "Abierta";
+            await _context.SaveChangesAsync();
+
+            return Ok("Caja abierta"); // Mensaje de caja abierta
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+    catch (Exception e)
+    {
+        return BadRequest(e);
+    }
+}
 
 
 
