@@ -138,44 +138,58 @@ private async Task<decimal> CalcularTotalServicio(Venta nuevaVenta)
 
             return totalProducto;
         }
-
-        [HttpPost("/Productos")] 
-        public async Task<ActionResult<Venta>> PostProductos([FromBody] VentaDto ventaDto)
-        {
-            try
-            {
-                var nuevaVenta = new Venta
-                {
-                    IdCliente = ventaDto.IdCliente,
+/*
+IdCliente = ventaDto.IdCliente,
                     IdDeposito = ventaDto.IdDeposito,
                     IdTurno = null,
                     Total = 0,
                     NotasAdicionales = "Ventas Realizadas",
                     Iva = 0,
-                    Eliminado = false
-                };
+                    Eliminado = false*/
+       // Controlador
+[HttpPost("/Productos")]
+public async Task<ActionResult<Venta>> PostProductos([FromBody] VentaDtoPro ventaDto)
+{
+    try
+    {
+        var nuevaVenta = new Venta
+        {
+            IdCliente = ventaDto.IdCliente,
+            IdDeposito = ventaDto.IdDeposito,
+            NotasAdicionales = ventaDto.NotasAdicionales,
+            Eliminado= false,
+            IdTurno= null,
 
-                _context.Ventas.Add(nuevaVenta);
-                await _context.SaveChangesAsync();
+            // Otras asignaciones necesarias
+        };
 
-                var totalProducto = await CalcularTotalProducto(nuevaVenta, ventaDto.DetalleVentaDto);
-
-                nuevaVenta.Total = totalProducto;
-                nuevaVenta.Iva = totalProducto;
-
-                await _context.SaveChangesAsync();
-
-                return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error en la operación");
-                return StatusCode(500, "Error en la operación");
-            }
+        decimal total;
+        if (decimal.TryParse(ventaDto.Total, out total))
+        {
+            nuevaVenta.Total = total;
+            nuevaVenta.Iva = total; // Si también quieres asignar el mismo valor al campo Iva
+        }
+        else
+        {
+            // Manejar el error en caso de que el valor de Total no sea un decimal válido
+            return BadRequest("El valor de Total no es válido.");
         }
 
+        // Guardar la nueva venta en la base de datos
+        _context.Ventas.Add(nuevaVenta);
+        await _context.SaveChangesAsync();
+
+        // Retornar una respuesta exitosa
+        return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error en la operación");
+        return StatusCode(500, "Error en la operación");
+    }
+}
         [HttpPost("/Servicios")]
-        public async Task<ActionResult<Venta>> PostServicios([FromBody] VentaDto ventaDto)
+        public async Task<ActionResult<Venta>> PostServicios([FromBody] VentaDtoPro ventaDto)
         {
             try
             {
