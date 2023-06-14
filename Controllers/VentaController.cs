@@ -65,6 +65,26 @@ namespace PeluqueriaWebApi.Controllers
                 nuevaVenta.Total = totalServicio + totalProducto;
                 await _context.SaveChangesAsync();
 
+                
+var nuevaFactura = new Factura()
+{
+    IdVenta = nuevaVenta.Id,
+     FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
+            IdMedioPago = 1,
+            Estado = "Pendiente", // asignar el estado de la factura correspondiente
+};
+
+_context.Facturas.Add(nuevaFactura);
+await _context.SaveChangesAsync();
+
+nuevaVenta.Facturas = new List<Factura>(); // Inicializa la colección
+
+nuevaVenta.Facturas.Add(nuevaFactura); // Agrega la nueva factura a la colección
+
+// Actualiza la compra con la relación a la nueva factura
+_context.Ventas.Update(nuevaVenta);
+await _context.SaveChangesAsync();
+
                 return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
             }
             catch (Exception ex)
@@ -164,6 +184,25 @@ private async Task<decimal> CalcularTotalServicio(Venta nuevaVenta)
                 nuevaVenta.Iva = totalProducto;
 
                 await _context.SaveChangesAsync();
+                
+var nuevaFactura = new Factura()
+{
+    IdVenta = nuevaVenta.Id,
+     FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
+            IdMedioPago = 1,
+            Estado = "Pendiente", // asignar el estado de la factura correspondiente
+};
+
+_context.Facturas.Add(nuevaFactura);
+await _context.SaveChangesAsync();
+
+nuevaVenta.Facturas = new List<Factura>(); // Inicializa la colección
+
+nuevaVenta.Facturas.Add(nuevaFactura); // Agrega la nueva factura a la colección
+
+// Actualiza la compra con la relación a la nueva factura
+_context.Ventas.Update(nuevaVenta);
+await _context.SaveChangesAsync();
 
                 return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
             }
@@ -198,6 +237,24 @@ private async Task<decimal> CalcularTotalServicio(Venta nuevaVenta)
                 nuevaVenta.Total = totalServicio;
                 await _context.SaveChangesAsync();
 
+var nuevaFactura = new Factura()
+{
+    IdVenta = nuevaVenta.Id,
+     FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
+            IdMedioPago = 1,
+            Estado = "Pendiente", // asignar el estado de la factura correspondiente
+};
+
+_context.Facturas.Add(nuevaFactura);
+await _context.SaveChangesAsync();
+
+nuevaVenta.Facturas = new List<Factura>(); // Inicializa la colección
+
+nuevaVenta.Facturas.Add(nuevaFactura); // Agrega la nueva factura a la colección
+
+// Actualiza la compra con la relación a la nueva factura
+_context.Ventas.Update(nuevaVenta);
+await _context.SaveChangesAsync();
                 return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
             }
             catch (Exception ex)
@@ -205,6 +262,10 @@ private async Task<decimal> CalcularTotalServicio(Venta nuevaVenta)
                 _logger.LogError(ex, "Error en la operación");
                 return StatusCode(500, "Error en la operación");
             }
+     
         }
+    
+    public virtual Factura Factura { get; set; }
+    
     }
 }

@@ -291,16 +291,16 @@ public async Task<IActionResult> ActualizarDetallesTurno(int id, DetallesTurnoUp
 
 
 
-
-//// detalles sin id filtrado por turno
 [HttpGet("GetDetallesTurnoGeneral")]
 public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno()
 {
+    var currentDate = DateTime.Today;
+
     var turnos = await _context.Turnos
         .Include(t => t.DetallesTurnos)
             .ThenInclude(dt => dt.IdTipoServicioNavigation)
         .Include(t => t.IdClienteNavigation)
-            .ThenInclude(c => c.IdPersonaNavigation) // Cargar la entidad Persona del Cliente
+            .ThenInclude(c => c.IdPersonaNavigation)
         .Include(t => t.DetallesTurnos)
             .ThenInclude(dt => dt.IdPeluqueroNavigation)
         .ToListAsync();
@@ -313,11 +313,18 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
         {
             Id = dt.IdTipoServicioNavigation.Id,
             TipoServicio = dt.IdTipoServicioNavigation.Tipo,
-            Descripcion= dt.IdTipoServicioNavigation.Descripcion,
+            Descripcion = dt.IdTipoServicioNavigation.Descripcion,
             Monto = dt.DecMonto ?? 0
         }).ToList();
 
         var montoTotal = servicios.Sum(s => s.Monto);
+
+        // Verificar si la fecha del turno es menor que la fecha actual
+        if (turno.Fecha < currentDate)
+        {
+            turno.Estado = "Ausente";
+            await _context.SaveChangesAsync();
+        }
 
         var detallesTurnoResponse = new DetallesTurnoResponseDto
         {
@@ -346,6 +353,7 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
 
     return detallesTurnoResponses;
 }
+
 
 /////
 [HttpGet("GetDetallesTurnosFiltroMeses")]
