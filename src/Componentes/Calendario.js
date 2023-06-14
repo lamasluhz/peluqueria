@@ -38,7 +38,7 @@ const Calendar = () => {
       idCliente: selectedCliente,
       idPeluquero: selectedPeluqueros,
       //////////////////////////////////////////////////////////////////////////
-      fecha: fechaSeleccionada, //selectedDate,
+      fecha: selectedDate, //selectedDate,
       eliminado: true,
       horaInicio: horaInicio,
       horaFinalizacion: horaFinalizacion,
@@ -72,10 +72,15 @@ const Calendar = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModal1, setShowModal1] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleModal = () => {
     console.log(showModal);
     setShowModal(!showModal);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query.toLowerCase());
   };
 
   const [selectedCliente, setSelectedCliente] = useState([]);
@@ -162,6 +167,7 @@ const Calendar = () => {
     setShowModal2(false);
   };
 
+  /////////////
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
@@ -309,6 +315,7 @@ const Calendar = () => {
     return fecha.slice(0, 10);
   };
 
+  ///////////////////////////////////
   const handleDateSearch = () => {
     // Realizar solicitud GET a la API con la fecha seleccionada
     fetch(`https://localhost:7137/api/DetallesTurno?fecha=${selectedDate}`)
@@ -322,6 +329,8 @@ const Calendar = () => {
       });
   };
 
+
+  ///////////////////////
   useEffect(() => {
     const fetchDetallesTurnoByPeluquero = async () => {
       try {
@@ -487,42 +496,9 @@ const Calendar = () => {
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ marginBottom: "10px" }}>
-            <Buscador action={handleModal} />
+          <Buscador action={handleModal} handleSearch={handleSearch}/>
           </div>
-          <div>
-            {/* <label htmlFor="datePicker">Seleccione una fecha:</label>
-            <input
-              type="date"
-              id="datePicker"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              onKeyDown={handleKeyDown}
-            /> */}
-
-            {/* <button onClick={handleClick}>Aceptar</button> */}
-
-            <div>
-              <label htmlFor="peluquero">Peluquero</label>
-              <div className="input-group">
-                <select
-                  className="form-control"
-                  id="peluquero"
-                  value={selectedPeluquero}
-                  onChange={(e) => {
-                    setSelectedPeluquero(e.target.value);
-                    obtenerDetallesTurnoPorPeluquero(e.target.value);
-                  }}
-                >
-                  <option value="">Seleccionar peluquero</option>
-                  {peluqueros.map((peluquero) => (
-                    <option key={peluquero.id} value={peluquero.id}>
-                      {peluquero.nombres}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
+         
           <div>
             <table
               className="table table-striped table-hover border-white"
@@ -542,19 +518,40 @@ const Calendar = () => {
                 </tr>
               </thead>
               <tbody>
-                {reservas
-                  .filter((reserva) => {
-                    const reservaFecha = new Date(reserva.fecha);
-                    const reservaMes = reservaFecha.getMonth();
-                    const reservaDia = reservaFecha.getDate();
+              {reservas
+    .filter((reserva) => {
+      const cliente = reserva.cliente?.toLowerCase() || '';
+      const peluquero = reserva.peluquero?.toLowerCase() || '';
+      const hora = reserva.hora?.toLowerCase() || '';
+      const fecha = reserva.fecha?.toLowerCase() || '';
+      const servicios = reserva.servicios?.some((servicio) =>
+        servicio.tipoServicio.toLowerCase().includes(searchQuery)
+      );
+      const totalidad = reserva.totalidad?.toLowerCase() || '';
+      const estado = reserva.estado?.toLowerCase() || '';
 
-                    return (
-                      reservaMes === date.getMonth() &&
-                      reservaDia === selectedDay
-                      // && (selectedPeluquero === '' || reserva.peluquero === selectedPeluquero)
-                    );
-                  })
-                  .map((reserva, index) => (
+      return (
+        cliente.includes(searchQuery) ||
+        peluquero.includes(searchQuery) ||
+        hora.includes(searchQuery) ||
+        fecha.includes(searchQuery) ||
+        servicios ||
+        totalidad.includes(searchQuery) ||
+        estado.includes(searchQuery)
+      );
+    })
+    .map((reserva, index) => {
+                  const reservaFecha = new Date(reserva.fecha);
+                  const reservaMes = reservaFecha.getMonth();
+                  const reservaDia = reservaFecha.getDate();
+
+                  if (
+                    reservaMes !== date.getMonth() ||
+                    reservaDia !== selectedDay
+                  ) {
+                    return null;
+                  }
+                  return (
                     <tr key={reserva.id}>
                       <td>{reserva.cliente}</td>
                       <td>
@@ -591,7 +588,8 @@ const Calendar = () => {
                         />
                       </td>
                     </tr>
-                  ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
