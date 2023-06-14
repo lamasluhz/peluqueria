@@ -17,3 +17,4 @@ export { default as VentaProductos } from './VentaProductos'
 export { default as Inicio } from './Inicio'
 export {default as Facturacion} from './Facturacion'
 export { default as Reportes } from './Reportes'
+export { default as VentasProductosServicios} from "./VentasProductosServicios";
