@@ -217,31 +217,60 @@ namespace PeluqueriaWebApi.Controllers
 
 //////////////
 
-[HttpGet("servicios")]
+
+
+[HttpGet("serviciosMasPedidos")]
 public IActionResult ObtenerServiciosFacturados()
 {
     try
     {
-        var servicios = _context.Facturas
-            .Where(f => f.Estado == "Facturado")
-            .SelectMany(f => f.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos)
-            .Where(dt => dt.IdTipoServicioNavigation != null)
-            .GroupBy(dt => new { dt.IdTipoServicioNavigation.Tipo, dt.IdTipoServicioNavigation.Descripcion })
-            .Select(g => new
-            {
-                Tipo = g.Key.Tipo,
-                Descripcion = g.Key.Descripcion,
-                Cantidad = g.Count()
-            })
-            .ToList();
+       var servicios = _context.Facturas
+    .Where(f => f.Estado == "Facturado")
+    .SelectMany(f => f.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos)
+    .Where(dt => dt.IdTipoServicioNavigation != null)
+    .GroupBy(dt => new { dt.IdTipoServicioNavigation.Tipo, dt.IdTipoServicioNavigation.Descripcion,dt.IdTipoServicioNavigation.DecMonto })
+    .Select(g => new
+    {
+        Tipo = g.Key.Tipo,
+        Descripcion = g.Key.Descripcion,
+        Cantidad = g.Count(),
+        Precio = g.Key.DecMonto // Obtener el precio máximo de los detalles de turno
+    })
+    .OrderByDescending(g => g.Cantidad)
+    .ToList();
 
-        return Ok(servicios); // Respuesta exitosa con los servicios y su cantidad
+        return Ok(servicios); // Respuesta exitosa con los servicios y su cantidad ordenados
     }
     catch (Exception ex)
     {
         return StatusCode(500, ex.Message); // Error interno del servidor
     }
 }
+////historial del cliente
+[HttpGet("serviciosPorCliente/{idCliente}")]
+public IActionResult ObtenerServiciosPorCliente(int idCliente)
+{
+    try
+    {
+        var servicios = _context.Facturas
+            .Where(f => f.Estado == "Facturado" && f.IdVentaNavigation.IdCliente == idCliente)
+            .SelectMany(f => f.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos)
+            .Where(dt => dt.IdTipoServicioNavigation != null)
+            .Select(dt => new
+            {
+                Servicio = dt.IdTipoServicioNavigation.Descripcion,
+                Fecha = dt.IdTurnoNavigation.Fecha
+            })
+            .ToList();
+
+        return Ok(servicios); // Respuesta exitosa con los servicios y fechas para el cliente especificado
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
+
 
     }
 }

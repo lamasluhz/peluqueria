@@ -81,17 +81,21 @@ namespace PeluqueriaWebApi.Controllers
         }
 
 
-
-/////get de suma entradas
-// GET: api/MovimientosCaja/entrada/total?fecha=yyyy-MM-dd
-[HttpGet("entrada/total")]
-public IActionResult ObtenerTotalMovimientosEntrada(DateTime fecha)
+// GET: api/MovimientosCaja/entrada/total?fecha=yyyy-MM-dd&idCaja=1
+[HttpGet("entrada/totalSuma")]
+public IActionResult ObtenerTotalMovimientosEntrada(DateTime fecha, int? idCaja)
 {
     try
     {
-        decimal total = _context.MovimientosCajas
-            .Where(m => m.TipoMovimiento == "Entrada" && m.FechaMovimiento.Date == fecha.Date)
-            .Sum(m => m.Monto);
+        IQueryable<MovimientosCaja> query = _context.MovimientosCajas
+            .Where(m => m.TipoMovimiento == "Entrada" && m.FechaMovimiento.Date == fecha.Date);
+
+        if (idCaja.HasValue)
+        {
+            query = query.Where(m => m.IdCaja == idCaja);
+        }
+
+        decimal total = query.Sum(m => m.Monto);
 
         return Ok(total);
     }
@@ -101,15 +105,21 @@ public IActionResult ObtenerTotalMovimientosEntrada(DateTime fecha)
     }
 }
 
-// GET: api/MovimientosCaja/salida/total?fecha=yyyy-MM-dd
-[HttpGet("salida/total")]
-public IActionResult ObtenerTotalMovimientosSalida(DateTime fecha)
+// GET: api/MovimientosCaja/salida/total?fecha=yyyy-MM-dd&idCaja=1
+[HttpGet("salida/totalSuma")]
+public IActionResult ObtenerTotalMovimientosSalida(DateTime fecha, int? idCaja)
 {
     try
     {
-        decimal total = _context.MovimientosCajas
-            .Where(m => m.TipoMovimiento == "Salida" && m.FechaMovimiento.Date == fecha.Date)
-            .Sum(m => m.Monto);
+        IQueryable<MovimientosCaja> query = _context.MovimientosCajas
+            .Where(m => m.TipoMovimiento == "Salida" && m.FechaMovimiento.Date == fecha.Date);
+
+        if (idCaja.HasValue)
+        {
+            query = query.Where(m => m.IdCaja == idCaja);
+        }
+
+        decimal total = query.Sum(m => m.Monto);
 
         return Ok(total);
     }
@@ -118,6 +128,7 @@ public IActionResult ObtenerTotalMovimientosSalida(DateTime fecha)
         return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
 }
+
 // GET: api/MovimientosCaja
 [HttpGet]
 public IActionResult ObtenerTodosLosMovimientos()
