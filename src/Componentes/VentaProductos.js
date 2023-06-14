@@ -3,7 +3,7 @@ import { Container, Row, Col, Table, Button, Form } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import BuscadorCompraProductos from './BuscadorVentaProductos';
-
+import SuccessModal from './SuccessModal';
 
 const VentaProductos = () => {
   const url = 'https://localhost:7137/StockProducto/GetStockProductos';
@@ -16,6 +16,7 @@ const VentaProductos = () => {
   const [productosFiltrados, setProductosFiltrados] = useState([]);
   const [cliente, setCliente] = useState({});
   const [cedulaCliente, setCedulaCliente] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const { state } = location;
 
@@ -144,12 +145,12 @@ const VentaProductos = () => {
     const postUrl = 'https://localhost:7137/Productos'; // Use your API URL
 
     // Collect all the product details into an array
-    let detalleVentaDtos = productosSeleccionados.map(producto => {
+    let detalleVentaDto = productosSeleccionados.map(producto => {
         return {
-            idProducto: producto.id,
+            idProducto: producto.idProducto,
             cantidad: cantidadProducto[producto.id],
-            precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
-            iva: 0.10 // Assuming a 5% tax rate
+            precioUnitario: producto.precioUnitario.toLocaleString('es-ES'), // Assuming producto has a 'precioUnitario' property
+            iva: 0 // Assuming a 5% tax rate
         };
     });
 
@@ -158,7 +159,7 @@ const VentaProductos = () => {
         idCliente: cliente.id,
         idDeposito: 1,
         idTurno: null,
-        detalleVentaDtos: detalleVentaDtos
+        detalleVentaDto: detalleVentaDto
     };
 
     try {
@@ -166,6 +167,7 @@ const VentaProductos = () => {
         await axios.post(postUrl, data);
 
         // Show success modal after completing the request
+        setShowSuccessModal(true);
     } catch (error) {
         console.error('Error during POST request:', error);
     }
@@ -197,6 +199,11 @@ const VentaProductos = () => {
               value={`${cliente?.nombres || ''} ${cliente?.apellidos || ''}`}
             />
           </div>
+          <SuccessModal
+                            show={showSuccessModal}
+                            handleClose={() => setShowSuccessModal(false)}
+                            message="Compra Confirmada"
+          />
         </Col>
       </Row>
       <Row className="mb-4">
@@ -218,7 +225,7 @@ const VentaProductos = () => {
           <tbody>
             {/* Aca va a ir un map de los productos */}
             {productosFiltrados.map((producto) => (
-              <tr id={producto.id}>
+              <tr id={producto.idProducto}>
                 <td> {producto.nombre}</td>
                 <td> {producto.descripcionTipoProducto}</td>
                 <td> {producto.precioUnitario}</td>
