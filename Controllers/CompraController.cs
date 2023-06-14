@@ -10,6 +10,7 @@ using PeluqueriaWebApi.Models;
 using PeluqueriaWebApi.Models.DTOs.Outgoing;
 using PeluqueriaWebApi.Models.DTOs.Incoming;
 
+
 namespace PeluqueriaWebApi.Controllers
 {
     [Route("[controller]")]
@@ -118,10 +119,29 @@ namespace PeluqueriaWebApi.Controllers
             nuevaCompra.Total = totalVenta;
             nuevaCompra.Iva = totalIva;
             await _context.SaveChangesAsync();
+
+var nuevaFactura = new FacturaProveedore()
+{
+    IdCompra = nuevaCompra.Id,
+     FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
+            IdMedioPago = 1,
+            Estado = "Pendiente", // asignar el estado de la factura correspondiente
+};
+
+_context.FacturaProveedores.Add(nuevaFactura);
+await _context.SaveChangesAsync();
+
+nuevaCompra.FacturaProveedores = new List<FacturaProveedore>(); // Inicializa la colección
+
+nuevaCompra.FacturaProveedores.Add(nuevaFactura); // Agrega la nueva factura a la colección
+
+// Actualiza la compra con la relación a la nueva factura
+_context.Compras.Update(nuevaCompra);
+await _context.SaveChangesAsync();
             return new CreatedAtRouteResult("GetCompra", new { id = nuevaCompra.Id }, compraDto);
         }
 
-
-
+///////
+public virtual FacturaProveedore FacturaProveedores { get; set; }
     }
 }

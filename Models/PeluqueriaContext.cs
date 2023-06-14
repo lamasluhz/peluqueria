@@ -727,7 +727,7 @@ namespace PeluqueriaWebApi.Models
                     .HasColumnName("notasAdicionales");
 
                 entity.Property(e => e.Total)
-                    .HasColumnType("decimal(10, 5)")
+                    .HasColumnType("decimal(19, 5)")
                     .HasColumnName("total");
 
                 entity.HasOne(d => d.IdClienteNavigation)

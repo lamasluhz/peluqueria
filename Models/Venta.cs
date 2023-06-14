@@ -14,12 +14,12 @@ namespace PeluqueriaWebApi.Models
         public int Id { get; set; }
         public int IdCliente { get; set; }
         public int IdDeposito { get; set; }
-        public decimal Total { get; set; }
         public string? NotasAdicionales { get; set; }
         public DateTime? Fecha { get; set; }
         public decimal Iva { get; set; }
         public bool? Eliminado { get; set; }
         public int? IdTurno { get; set; }
+        public decimal? Total { get; set; }
 
         public virtual Cliente IdClienteNavigation { get; set; } = null!;
         public virtual Deposito IdDepositoNavigation { get; set; } = null!;

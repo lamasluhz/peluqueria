@@ -60,7 +60,7 @@ namespace PeluqueriaWebApi.Controllers
         }
 
         ///////////
-        //post 
+         //post 
         [HttpPost]
         public IActionResult AgregarIdCompraFactura([FromBody] IdCompraDto idCompraDto)
         {
