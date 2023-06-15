@@ -29,11 +29,10 @@ const FCaja = () => {
   };
 
   const confirmarCerrarSesion = () => {
-    totalAperturaStorage();
-
     cerrarCaja();
     setMostrarConfirmacion(false);
 
+    recargarPagina();
   };
 
   const cancelarCerrarSesion = () => {
@@ -201,24 +200,30 @@ const FCaja = () => {
   };
 
 
+
+  useEffect(() => {
+    const totalAperturaStorage = () => {
+      const storageCajero = localStorage.getItem('cajero');
+      let montoApertura = 0;
+      if (storageCajero !== null) {
+        const parsedData = JSON.parse(storageCajero);
+        montoApertura = parsedData.montoApertura;
+
+      }
+      let montoTotal = fnTotalCaja(montoApertura);
+      setTotalCaja(montoTotal);
+    };
+
+    totalAperturaStorage();
+  }, []);
+
+  const datosCerrarPut = {
+    montoCierre: totalCaja,
+    id: idCajero,
+  }
+
   const cerrarCaja = () => {
     localStorage.removeItem('cajero');
-    const nuevoMonto = totalCaja; 
-
-    axios.put(`https://localhost:7137/api/Caja/CerrarSesion/${idCajero}`, nuevoMonto, {
-      headers: {
-        'Content-Type': 'application/json' // Replace with the expected media type
-      }
-    })
-      .then(response => {
-        // Handle the response
-        console.log('Caja cerrada exitosamente');
-      })
-      .catch(error => {
-        // Handle the error
-        console.error('Error:', error);
-      });
-      
     localStorage.removeItem('idCajero');
   }
 
@@ -237,17 +242,7 @@ const FCaja = () => {
     return total;
   };
 
-  const totalAperturaStorage = () => {
-    const storageCajero = localStorage.getItem('cajero');
-    let montoApertura = 0;
-    if (storageCajero !== null) {
-      const parsedData = JSON.parse(storageCajero);
-      montoApertura = parsedData.montoApertura;
-    }
-    let montoTotal = fnTotalCaja(montoApertura);
 
-    setTotalCaja(montoTotal);
-  }
 
   return (
     <>
