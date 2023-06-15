@@ -24,7 +24,7 @@ const ClienteRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
     };
     const fetchDetallesTurno = async (id) => {
         try {
-            const response = await axios.get(`https://localhost:7137/api/DetallesTurno/GetDetallesTurnoGeneral/${id}`);
+            const response = await axios.get(`https://localhost:7137/api/Factura/serviciosPorCliente/${id}`);
             console.log(response.data);
             setDetallesTurno(response.data);
         } catch (error) {
@@ -128,10 +128,10 @@ const ClienteRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
                         {detallesTurno.map((detalle, index) => (
                             <Card key={index} style={{ marginBottom: '10px' }}>
                                 <Card.Body>
-                                    <Card.Title>{detalle.peluquero}</Card.Title>
+
                                     <Card.Text>
-                                        Fecha: {detalle.fecha}<br />
-                                        Hora: {detalle.hora}<br />
+                                        Fecha: {detalle.fecha.split("T")[0]}<br />
+
                                         Servicio: {detalle.servicio}
                                     </Card.Text>
                                 </Card.Body>

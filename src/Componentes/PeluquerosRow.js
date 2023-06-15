@@ -100,7 +100,10 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
                 )}
             </td>
             <td>
-                <i className="fa-solid fa-arrows-to-eye"></i>
+                {peluquero.listEspecialidades.map((especialidad) => {
+                    return (
+                        <div key={especialidad.id}>{especialidad.especialidad}</div>)
+                })}
             </td>
             <td>
                 {editing ? (
@@ -108,21 +111,25 @@ const PeluquerosRow = ({ peluquero, handleFieldUpdate, handleDeletePeluquero }) 
                         <i
                             className="fa-solid fa-check"
                             onClick={handleSaveEdit}
+                            style={{ cursor: 'pointer' }}
                         ></i>
                         <i
                             className="fa-solid fa-times"
                             onClick={handleCancelEdit}
+                            style={{ cursor: 'pointer' }}
                         ></i>
                     </>
                 ) : (
                     <i
                         className="fa-solid fa-pen"
-                        style={{ marginRight: "15px" }}
+                        style={{ marginRight: "15px", cursor: 'pointer' }}
+
                         onClick={handleEdit}
                     ></i>
                 )}
                 <i
                     className="fa-solid fa-trash"
+                    style={{ cursor: 'pointer' }}
                     onClick={() => handleDeletePeluquero(peluquero.id)}
                 ></i>
             </td>
