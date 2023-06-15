@@ -610,11 +610,11 @@ const Calendar = () => {
                             onClick={() => handleShowModal1(index)}
                             style={{ cursor: "pointer" }}
                           />
-                          <BiPencil
+                          {/* <BiPencil
                             size={20}
                             onClick={handleShowModal2}
                             style={{ cursor: "pointer" }}
-                          />
+                          /> */}
                         </td>
                       </tr>
                     );
