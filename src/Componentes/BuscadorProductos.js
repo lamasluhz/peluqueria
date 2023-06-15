@@ -10,7 +10,7 @@ const BuscadorProductos = ({ action }) => {
                 <BsSearch />
             </InputGroup.Text>
             <FormControl placeholder="Buscar" />
-            <NavLink to='/proveedores'>Proveedores</NavLink>
+            <NavLink to='/proveedores' style={{ textDecoration: 'none', color: '#888', fontWeight: 'bold' }} > Proveedores</NavLink>
 
         </InputGroup>
     );

@@ -16,11 +16,11 @@ const CompraProveedores = () => {
     const [cantidadProducto, setCantidadProducto] = useState({})
     const [productosFiltrados, setProductosFiltrados] = useState([]);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const formatter = new Intl.NumberFormat('en-US', {
+    const formatter = new Intl.NumberFormat('es-PY', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'PYG',
     });
-    
+
     const { state } = location;
     const obtenerProveedor = async () => {
         if (!state || !state.idProveedor) {
@@ -108,24 +108,24 @@ const CompraProveedores = () => {
         // Collect all the product details into an array
         let detalleCompraDtos = productosSeleccionados.map(producto => {
             return {
-                idProducto: producto.id,
+                idProducto: producto.idProducto,
                 cantidad: cantidadProducto[producto.id],
                 precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
-                iva: 0.10 // Assuming a 5% tax rate
+                iva: 5 // Assuming a 5% tax rate
             };
         });
 
         // Prepare the data to be sent in the POST request
         const data = {
             idProveedor: state.idProveedor,
-            idDeposito: 0,
+            idDeposito: 1,
             detalleCompraDtos: detalleCompraDtos
         };
 
         try {
             // Perform a single Axios POST request
             await axios.post(postUrl, data);
-
+            console.log(data)
             // Show success modal after completing the request
             setShowSuccessModal(true);
         } catch (error) {
@@ -231,8 +231,8 @@ const CompraProveedores = () => {
                                             <button onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
 
                                         </td>
-                                        <td> {formatter.format((producto.precioUnitario * producto.cantidad * 0.05).toFixed(4))}</td>
-                                        <td> {formatter.format((producto.cantidad * producto.precioUnitario).toFixed(4))}</td>
+                                        <td> {formatter.format((producto.precioUnitario * cantidadProducto[producto.id] * 0.05).toFixed(4))}</td>
+                                        <td> {formatter.format((cantidadProducto[producto.id] * producto.precioUnitario).toFixed(4))}</td>
                                         {/* Aquí se calcula el IVA */}
                                     </tr>
                                 )
@@ -241,9 +241,7 @@ const CompraProveedores = () => {
                         <tfoot>
                             <tr>
                                 <td colSpan="5">Total</td>
-                                <td>{/*Aca se calcula el total de todos los elementos del carrito */} {formatter.format(total.toFixed(4))}</td>
-                            </tr>
-                        </tfoot>
+                                <td>{formatter.format(productosSeleccionados.reduce((total, producto) => total + producto.precioUnitario * (cantidadProducto[producto.id] || 0), 0).toFixed(4))} </td>           </tr>      </tfoot>
                     </Table>
                 </Col>
             </Row>

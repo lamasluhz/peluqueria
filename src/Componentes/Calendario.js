@@ -30,11 +30,8 @@ const Calendar = () => {
   const [horaInicio, setHoraInicio] = useState("");
   const [horaFinalizacion, setHoraFinalizacion] = useState("");
 
-
-  
-  
   const [clienteId, setClienteId] = useState("");
-  
+
   const handleFormSubmit = () => {
     // Construye el objeto de datos a enviar en la solicitud POST
     const valores = selectedServices.map((objeto) => objeto.value);
@@ -77,6 +74,8 @@ const Calendar = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModal1, setShowModal1] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [showModal3, setShowModal3] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleModal = () => {
@@ -86,6 +85,10 @@ const Calendar = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query.toLowerCase());
+  };
+
+  const handleCloseModal3 = () => {
+    setShowModal3(false);
   };
 
   const [selectedCliente, setSelectedCliente] = useState([]);
@@ -98,14 +101,7 @@ const Calendar = () => {
 
   const [selectedDate, setSelectedDate] = useState("");
   const [fechaSeleccionada, setFechaSeleccionada] = useState("");
-
-  const [loading, setLoading] = useState(false);
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      setSelectedDate(e.target.value);
-    }
-  };
+  
   ///Array 1
   const monthNames = [
     "Enero",
@@ -353,34 +349,31 @@ const Calendar = () => {
     }
   }, [selectedPeluquero]);
 
+  ////////
 
-
-
-////////
-
-  const confirmarFactura= async () => {
-    const postUrl = 'https://localhost:7137/Servicios'; // Use your API URL
+  const confirmarFactura = async () => {
+    const postUrl = "https://localhost:7137/Servicios"; // Use your API URL
 
     // Prepare the data to be sent in the POST request
     const data = {
-      idCliente:selectedReserva.idClienteG,
+      idCliente: selectedReserva.idClienteG,
       idDeposito: 1,
       idTurno: selectedReserva.id,
-      detalleVentaDto: null
-  };
+      detalleVentaDto: null,
+    };
 
     try {
-        // Perform a single Axios POST request
-        await axios.post(postUrl, data);
+      // Perform a single Axios POST request
+      await axios.post(postUrl, data);
 
-        // Show success modal after completing the request
-        setShowSuccessModal(true);
+      // Show success modal after completing the request
+      setShowSuccessModal(true);
     } catch (error) {
-        console.error('Error during POST request:', error);
+      console.error("Error during POST request:", error);
     }
-};
 
-
+    setShowModal2(true);
+  };
 
   return (
     <div>
@@ -413,22 +406,22 @@ const Calendar = () => {
             } ${date.getFullYear()}`}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          <div className="form-group">
-  <label htmlFor="cliente">Cliente</label>
-  <select
-    className="form-control"
-    id="cliente"
-    value={clienteId}
-    onChange={(e) => setClienteId(e.target.value)}
-  >
-    <option value="">Seleccionar Cliente</option>
-    {clientes.map((cliente) => (
-      <option key={cliente.id} value={cliente.id}>
-        {cliente.nombres} {cliente.apellidos}
-      </option>
-    ))}
-  </select>
-</div>
+            <div className="form-group">
+              <label htmlFor="cliente">Cliente</label>
+              <select
+                className="form-control"
+                id="cliente"
+                value={clienteId}
+                onChange={(e) => setClienteId(e.target.value)}
+              >
+                <option value="">Seleccionar Cliente</option>
+                {clientes.map((cliente) => (
+                  <option key={cliente.id} value={cliente.id}>
+                    {cliente.nombres} {cliente.apellidos}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="form-group">
               <label htmlFor="servicios">Servicios</label>
               <Select
@@ -586,8 +579,10 @@ const Calendar = () => {
                       return null;
                     }
                     return (
-                      <tr key={reserva.id} >                       
-                        <td>{reserva.cliente} {reserva.idClienteG} </td>
+                      <tr key={reserva.id}>
+                        <td>
+                          {reserva.cliente} {reserva.idClienteG}{" "}
+                        </td>
                         <td>
                           {formatearHora(
                             reserva.horaInicio,
@@ -615,11 +610,11 @@ const Calendar = () => {
                             onClick={() => handleShowModal1(index)}
                             style={{ cursor: "pointer" }}
                           />
-                          <BiPencil
+                          {/* <BiPencil
                             size={20}
                             onClick={handleShowModal2}
                             style={{ cursor: "pointer" }}
-                          />
+                          /> */}
                         </td>
                       </tr>
                     );
@@ -637,7 +632,7 @@ const Calendar = () => {
               <div>
                 <p>Fecha: {selectedReserva.fecha.split("T")[0]}</p>
                 <p>Cliente:{selectedReserva.cliente}</p>
-                
+
                 <p>
                   Servicio:
                   {selectedReserva.servicios.map((servicio) => (
@@ -658,6 +653,7 @@ const Calendar = () => {
               </div>
             )}
           </Modal.Body>
+
           <Modal.Footer style={{ justifyContent: "space-between" }}>
             <NavLink
               to="/ventas-productos-servicios"
@@ -667,19 +663,20 @@ const Calendar = () => {
               Agregar Producto
             </NavLink>
 
-            <Button variant="success" onClick={confirmarFactura}>Facturar</Button>
+            <Button variant="success" onClick={confirmarFactura}>
+              Facturar
+            </Button>
 
             {/* <Button variant="secondary" onClick={}> */}
           </Modal.Footer>
         </Modal>
+        
 
         <Modal show={showModal2} onHide={handleCloseModal2}>
           <Modal.Header closeButton>
-            <Modal.Title>Descripción 2</Modal.Title>
+            <Modal.Title>Facturacion</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            Aquí puedes agregar la descripción correspondiente al botón 2.
-          </Modal.Body>
+          <Modal.Body>Se facturo correctamente</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseModal2}>
               Cerrar

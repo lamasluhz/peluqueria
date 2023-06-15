@@ -39,8 +39,8 @@ const Stock = () => {
                         <th>Proveedor</th>
                         <th>Precio Unitario</th>
                         <th>Descripcion</th>
-                        <th>Detalles</th>
-                        <th></th>
+
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,8 +56,8 @@ const Stock = () => {
                                     <td> {producto.precioUnitario}</td>
 
                                     <td> {producto.descripcionTipoProducto}</td>
-                                    <td><i className="fa-solid fa-arrows-to-eye"></i></td>
-                                    <td><i className="fa-solid fa-pen" style={{ marginRight: '15px' }}></i> <i class="fa-solid fa-trash"></i></td>
+
+                                    <td><i className="fa-solid fa-pen" style={{ marginRight: '15px', cursor: 'pointer' }}></i> <i class="fa-solid fa-trash" style={{ marginRight: '15px', cursor: 'pointer' }} ></i></td>
                                 </tr>
                             )
 
