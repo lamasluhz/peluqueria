@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../css/Calendario.css";
-
 import { Link } from "react-router-dom";
 import Buscador from "./Buscador";
 import axios from "axios";
@@ -11,6 +10,7 @@ import { BiPencil } from "react-icons/bi";
 import Stock from "./Stock";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import { NavLink } from "react-router-dom";
 
 const Calendar = () => {
   //// segundo post en modal
@@ -30,12 +30,17 @@ const Calendar = () => {
   const [horaInicio, setHoraInicio] = useState("");
   const [horaFinalizacion, setHoraFinalizacion] = useState("");
 
+
+  
+  
+  const [clienteId, setClienteId] = useState("");
+  
   const handleFormSubmit = () => {
     // Construye el objeto de datos a enviar en la solicitud POST
     const valores = selectedServices.map((objeto) => objeto.value);
     const data = {
       idsTipoServicio: valores,
-      idCliente: selectedCliente,
+      idCliente: clienteId,
       idPeluquero: selectedPeluqueros,
       //////////////////////////////////////////////////////////////////////////
       fecha: selectedDate, //selectedDate,
@@ -72,7 +77,7 @@ const Calendar = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModal1, setShowModal1] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleModal = () => {
     console.log(showModal);
@@ -241,6 +246,7 @@ const Calendar = () => {
   const [clientes, setClientes] = useState([]);
   const [peluqueros, setPeluqueros] = useState([]);
   const [Servicios, setServicio] = useState([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     ///Clientes
@@ -329,7 +335,6 @@ const Calendar = () => {
       });
   };
 
-
   ///////////////////////
   useEffect(() => {
     const fetchDetallesTurnoByPeluquero = async () => {
@@ -347,6 +352,35 @@ const Calendar = () => {
       fetchDetallesTurnoByPeluquero();
     }
   }, [selectedPeluquero]);
+
+
+
+
+////////
+
+  const confirmarFactura= async () => {
+    const postUrl = 'https://localhost:7137/Servicios'; // Use your API URL
+
+    // Prepare the data to be sent in the POST request
+    const data = {
+      idCliente:selectedReserva.idClienteG,
+      idDeposito: 1,
+      idTurno: selectedReserva.id,
+      detalleVentaDto: null
+  };
+
+    try {
+        // Perform a single Axios POST request
+        await axios.post(postUrl, data);
+
+        // Show success modal after completing the request
+        setShowSuccessModal(true);
+    } catch (error) {
+        console.error('Error during POST request:', error);
+    }
+};
+
+
 
   return (
     <div>
@@ -379,22 +413,22 @@ const Calendar = () => {
             } ${date.getFullYear()}`}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div className="form-group">
-              <label htmlFor="cliente">Cliente</label>
-              <select
-                className="form-control"
-                id="cliente"
-                value={selectedCliente}
-                onChange={(e) => setSelectedCliente(e.target.value)}
-              >
-                <option value="">Seleccionar Cliente</option>
-                {clientes.map((cliente) => (
-                  <option key={cliente.id} value={cliente.id}>
-                    {cliente.nombres} {cliente.apellidos}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="form-group">
+  <label htmlFor="cliente">Cliente</label>
+  <select
+    className="form-control"
+    id="cliente"
+    value={clienteId}
+    onChange={(e) => setClienteId(e.target.value)}
+  >
+    <option value="">Seleccionar Cliente</option>
+    {clientes.map((cliente) => (
+      <option key={cliente.id} value={cliente.id}>
+        {cliente.nombres} {cliente.apellidos}
+      </option>
+    ))}
+  </select>
+</div>
             <div className="form-group">
               <label htmlFor="servicios">Servicios</label>
               <Select
@@ -496,9 +530,9 @@ const Calendar = () => {
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ marginBottom: "10px" }}>
-          <Buscador action={handleModal} handleSearch={handleSearch}/>
+            <Buscador action={handleModal} handleSearch={handleSearch} />
           </div>
-         
+
           <div>
             <table
               className="table table-striped table-hover border-white"
@@ -518,91 +552,92 @@ const Calendar = () => {
                 </tr>
               </thead>
               <tbody>
-              {reservas
-    .filter((reserva) => {
-      const cliente = reserva.cliente?.toLowerCase() || '';
-      const peluquero = reserva.peluquero?.toLowerCase() || '';
-      const hora = reserva.hora?.toLowerCase() || '';
-      const fecha = reserva.fecha?.toLowerCase() || '';
-      const servicios = reserva.servicios?.some((servicio) =>
-        servicio.tipoServicio.toLowerCase().includes(searchQuery)
-      );
-      const totalidad = reserva.totalidad?.toLowerCase() || '';
-      const estado = reserva.estado?.toLowerCase() || '';
+                {reservas
+                  .filter((reserva) => {
+                    const cliente = reserva.cliente?.toLowerCase() || "";
+                    const peluquero = reserva.peluquero?.toLowerCase() || "";
+                    const hora = reserva.hora?.toLowerCase() || "";
+                    const fecha = reserva.fecha?.toLowerCase() || "";
+                    const servicios = reserva.servicios?.some((servicio) =>
+                      servicio.tipoServicio.toLowerCase().includes(searchQuery)
+                    );
+                    const totalidad = reserva.totalidad?.toLowerCase() || "";
+                    const estado = reserva.estado?.toLowerCase() || "";
 
-      return (
-        cliente.includes(searchQuery) ||
-        peluquero.includes(searchQuery) ||
-        hora.includes(searchQuery) ||
-        fecha.includes(searchQuery) ||
-        servicios ||
-        totalidad.includes(searchQuery) ||
-        estado.includes(searchQuery)
-      );
-    })
-    .map((reserva, index) => {
-                  const reservaFecha = new Date(reserva.fecha);
-                  const reservaMes = reservaFecha.getMonth();
-                  const reservaDia = reservaFecha.getDate();
+                    return (
+                      cliente.includes(searchQuery) ||
+                      peluquero.includes(searchQuery) ||
+                      hora.includes(searchQuery) ||
+                      fecha.includes(searchQuery) ||
+                      servicios ||
+                      totalidad.includes(searchQuery) ||
+                      estado.includes(searchQuery)
+                    );
+                  })
+                  .map((reserva, index) => {
+                    const reservaFecha = new Date(reserva.fecha);
+                    const reservaMes = reservaFecha.getMonth();
+                    const reservaDia = reservaFecha.getDate();
 
-                  if (
-                    reservaMes !== date.getMonth() ||
-                    reservaDia !== selectedDay
-                  ) {
-                    return null;
-                  }
-                  return (
-                    <tr key={reserva.id}>
-                      <td>{reserva.cliente}</td>
-                      <td>
-                        {formatearHora(
-                          reserva.horaInicio,
-                          reserva.horaFinalizacion
-                        )}
-                      </td>
-                      <td>{formatearFecha(reserva.fecha)}</td>
-                      <td>{reserva.peluquero}</td>
-                      <td>
-                        {reserva.servicios.map((servicio) => (
-                          <div key={servicio.id}>
-                            <span>{servicio.tipoServicio}</span>
-                            <span> </span>
-                            <span>{servicio.descripcion}</span>
-                            <span> - </span>
-                            <span>{servicio.monto}</span>
-                          </div>
-                        ))}
-                      </td>
-                      <td>{reserva.montoTotal}</td>
-                      <td>{reserva.estado}</td>
-                      <td>
-                        <IoEyeSharp
-                          size={20}
-                          onClick={() => handleShowModal1(index)}
-                          style={{ cursor: "pointer" }}
-                        />
-                        <BiPencil
-                          size={20}
-                          onClick={handleShowModal2}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
+                    if (
+                      reservaMes !== date.getMonth() ||
+                      reservaDia !== selectedDay
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <tr key={reserva.id} >                       
+                        <td>{reserva.cliente} {reserva.idClienteG} </td>
+                        <td>
+                          {formatearHora(
+                            reserva.horaInicio,
+                            reserva.horaFinalizacion
+                          )}
+                        </td>
+                        <td>{formatearFecha(reserva.fecha)}</td>
+                        <td>{reserva.peluquero}</td>
+                        <td>
+                          {reserva.servicios.map((servicio) => (
+                            <div key={servicio.id}>
+                              <span>{servicio.tipoServicio}</span>
+                              <span> </span>
+                              <span>{servicio.descripcion}</span>
+                              <span> - </span>
+                              <span>{servicio.monto}</span>
+                            </div>
+                          ))}
+                        </td>
+                        <td>{reserva.montoTotal}</td>
+                        <td>{reserva.estado}</td>
+                        <td>
+                          <IoEyeSharp
+                            size={20}
+                            onClick={() => handleShowModal1(index)}
+                            style={{ cursor: "pointer" }}
+                          />
+                          <BiPencil
+                            size={20}
+                            onClick={handleShowModal2}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
         </div>
         <Modal show={showModal1} onHide={handleCloseModal1}>
           <Modal.Header closeButton>
-            <Modal.Title>Facturar</Modal.Title>
+            <Modal.Title>Detalles Generales</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {selectedReserva && (
               <div>
                 <p>Fecha: {selectedReserva.fecha.split("T")[0]}</p>
-                <p>Cliente: {selectedReserva.cliente}</p>
+                <p>Cliente:{selectedReserva.cliente}</p>
+                
                 <p>
                   Servicio:
                   {selectedReserva.servicios.map((servicio) => (
@@ -623,10 +658,18 @@ const Calendar = () => {
               </div>
             )}
           </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal1}>
-              Facturar
-            </Button>
+          <Modal.Footer style={{ justifyContent: "space-between" }}>
+            <NavLink
+              to="/ventas-productos-servicios"
+              className="nav-link"
+              activeClassName="active"
+            >
+              Agregar Producto
+            </NavLink>
+
+            <Button variant="success" onClick={confirmarFactura}>Facturar</Button>
+
+            {/* <Button variant="secondary" onClick={}> */}
           </Modal.Footer>
         </Modal>
 
