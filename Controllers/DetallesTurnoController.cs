@@ -290,7 +290,6 @@ public async Task<IActionResult> ActualizarDetallesTurno(int id, DetallesTurnoUp
 }
 
 
-
 [HttpGet("GetDetallesTurnoGeneral")]
 public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno()
 {
@@ -320,7 +319,7 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
         var montoTotal = servicios.Sum(s => s.Monto);
 
         // Verificar si la fecha del turno es menor que la fecha actual
-        if (turno.Fecha < currentDate)
+        if (turno.Fecha < currentDate && turno.Estado == "Pendiente")
         {
             turno.Estado = "Ausente";
             await _context.SaveChangesAsync();
@@ -354,6 +353,7 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
 
     return detallesTurnoResponses;
 }
+
 
 
 /////
