@@ -20,6 +20,7 @@ const CompraProveedores = () => {
         style: 'currency',
         currency: 'USD',
     });
+    
     const { state } = location;
     const obtenerProveedor = async () => {
         if (!state || !state.idProveedor) {

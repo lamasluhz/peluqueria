@@ -10,7 +10,6 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import "../css/Reportes.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Reportes = () => {

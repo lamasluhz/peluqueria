@@ -23,6 +23,15 @@ const Facturacion = () => {
   const [fechaFiltro, setFechaFiltro] = useState('');
   const [estadoFiltro, setEstadoFiltro] = useState('');
   const [facturaCompra, setFacturaCompra] = useState([]);
+  const [showFactura, setShowFactura] = useState(false);
+  const [idCajas, setIdCaja] = useState('');
+  const [montoCompra, setMontoCompra] = useState('');
+  const [montoVenta, setMontoVenta] = useState('');
+
+
+  const recargarPagina = () => {
+    window.location.reload();
+  }
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -42,6 +51,7 @@ const Facturacion = () => {
 
   const handleCloseModalPago = () => {
     setShowModalPago(false);
+    recargarPagina();
   };
 
   const handleShowModalPago = () => {
@@ -89,7 +99,7 @@ const Facturacion = () => {
   }, []);
 
   useEffect(() => {
-    const fetchFacturas = async () => {
+    const fetchFacturasCompra = async () => {
       try {
         const response = await axios.get("https://localhost:7137/api/FacturaProveedores/facturaProveedores");
         const data = response.data;
@@ -100,7 +110,7 @@ const Facturacion = () => {
       }
     };
 
-    fetchFacturas();
+    fetchFacturasCompra();
   }, []);
 
   useEffect(() => {
@@ -116,6 +126,20 @@ const Facturacion = () => {
     fetchMedioPago();
   }, []);
 
+
+  useEffect(() => {
+    const storedConectado = localStorage.getItem("cajero");
+    if (storedConectado !== null) {
+      setShowFactura(true);
+    }
+    const storedIdCajero = localStorage.getItem("idCajero");
+    if (storedIdCajero !== null) {
+      const parsedData = JSON.parse(storedIdCajero);
+      setIdCaja(parsedData);
+    }
+  }, []);
+
+
   const facturaVentaActualizado = {
     idFactura: idFacturaVentas,
     idMedioPago: idMedioPago,
@@ -126,10 +150,10 @@ const Facturacion = () => {
     idMedioPago: idMedioPago,
   };
 
-  const putFactura = () => {
+  const actualizacionesFactura = () => {
     if (idFacturaVentas != null) {
       axios
-        .put(`https://localhost:7137/api/Factura/${idFacturaVentas}`, facturaVentaActualizado)
+        .put('https://localhost:7137/api/Factura/facturas', facturaVentaActualizado)
         .then((response) => {
           console.log("Factura de Ventas Actualizado");
           // Realiza las acciones adicionales necesarias después de la actualización
@@ -137,6 +161,7 @@ const Facturacion = () => {
         .catch((error) => {
           console.error("Error al actualizar la factura de ventas:", error);
         });
+      cajaEntradaPost();
       setIdFacturaVentas(null);
     } else if (idFacturaCompra != null) {
       axios
@@ -148,8 +173,10 @@ const Facturacion = () => {
         .catch((error) => {
           console.error("Error al actualizar la factura de compras:", error);
         });
+      cajaSalidaPost();
       setIdFacturaCompra(null);
     }
+    handleCloseModalPago();
   };
 
 
@@ -163,9 +190,33 @@ const Facturacion = () => {
     setShowTablaVentas(false);
   };
 
+  const cajaEntradaPost = () => {
+    axios.post("https://localhost:7137/api/MovimientosCaja/entrada", {
+      idCaja: idCajas,
+      monto: montoVenta,
+      idFactura: idFacturaVentas
+    }).then((response) => {
+      console.log("Movimiento Entrada Agregado con Exito")
+    }).catch((error) => {
+      console.error("Error al actualizar el Movimiento de Entrada:", error);
+    })
+  }
+
+  const cajaSalidaPost = () => {
+    axios.post("https://localhost:7137/api/MovimientosCaja/salida", {
+      idCaja: idCajas,
+      monto: montoCompra,
+      idFacturaProveedor: idFacturaCompra
+    }).then((response) => {
+      console.log("Movimiento Salida Agregado con Exito")
+    }).catch((error) => {
+      console.error("Error al actualizar el Movimiento de Salida:", error);
+    })
+  }
 
 
   return (
+
     <div style={{ display: 'flex' }}>
       <div style={{ flex: '1' }}>
         <FCaja />
@@ -174,210 +225,217 @@ const Facturacion = () => {
       <div className="container" style={{ flex: '4' }}>
         <br />
 
-        <div className="input-group mb-1">
-          <button type="button" className="btn btn-outline-primary boton">
-            <BsSearch />
-          </button>
-          <input type="text" onChange={(e) => setBuscar(e.target.value)} className="form-control" placeholder="Buscador" aria-label="" aria-describedby="basic-addon1" />
-        </div>
+        {showFactura ? (
+          <div>
+            <div className="input-group mb-1">
+              <button type="button" className="btn btn-outline-primary boton">
+                <BsSearch />
+              </button>
+              <input type="text" onChange={(e) => setBuscar(e.target.value)} className="form-control" placeholder="Buscador" aria-label="" aria-describedby="basic-addon1" />
+            </div>
 
-        <div style={{ backgroundColor: '#aae0fa', padding: '6' }}>
-          <Form>
-            <Form.Group as={Row}>
-              <Col sm="1">
-                <Button disabled>Fecha: </Button>
-              </Col>
-              <Col sm="3">
-                <Form.Control
-                  type="date"
-                  value={fechaFiltro}
-                  onChange={(e) => setFechaFiltro(e.target.value)}
-                />
-              </Col>
-              <Col sm="1">
-                <Button disabled>Estado: </Button>
-              </Col>
-              <Col sm="3">
-                <Form.Select
-                  value={estadoFiltro}
-                  onChange={(e) => setEstadoFiltro(e.target.value)}
-                >
-                  <option value="">Todos</option>
-                  <option value="Pendiente">Pendiente</option>
-                  <option value="Facturado">Facturado</option>
-                </Form.Select>
-              </Col>
-            </Form.Group>
-          </Form>
-        </div>
+            <div style={{ backgroundColor: '#aae0fa', padding: '6' }}>
+              <Form>
+                <Form.Group as={Row}>
+                  <Col sm="1">
+                    <Button disabled>Fecha: </Button>
+                  </Col>
+                  <Col sm="3">
+                    <Form.Control
+                      type="date"
+                      value={fechaFiltro}
+                      onChange={(e) => setFechaFiltro(e.target.value)}
+                    />
+                  </Col>
+                  <Col sm="1">
+                    <Button disabled>Estado: </Button>
+                  </Col>
+                  <Col sm="3">
+                    <Form.Select
+                      value={estadoFiltro}
+                      onChange={(e) => setEstadoFiltro(e.target.value)}
+                    >
+                      <option value="">Todos</option>
+                      <option value="Pendiente">Pendiente</option>
+                      <option value="Facturado">Facturado</option>
+                    </Form.Select>
+                  </Col>
+                </Form.Group>
+              </Form>
+            </div>
 
-        {/* Div tabla de ventas*/}
-        <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button
-            className={showTablaVentas ? "btn-activo" : ""}
-            style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
-            onClick={() => {
-              handleShowTablaVentas();
-            }}
-          >
-            Ventas
-          </Button>
+            {/* Div tabla de ventas*/}
+            <div style={{ display: "flex", justifyContent: "end" }}>
+              <Button
+                className={showTablaVentas ? "btn-activo" : ""}
+                style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+                onClick={() => {
+                  handleShowTablaVentas();
+                }}
+              >
+                Ventas
+              </Button>
 
-          <Button
+              <Button
+                className={showTablaCompras ? "btn-activo" : ""}
+                style={{ marginLeft: "1%", borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+                onClick={() => {
+                  handleShowTablaCompras();
+                }}
+              >
+                Compras
+              </Button>
+            </div>
 
-            className={showTablaCompras ? "btn-activo" : ""}
-            style={{ marginLeft: "1%", borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
-            onClick={() => {
-              handleShowTablaCompras();
-            }}
-          >
-            Compras
-          </Button>
-        </div>
-        {showTablaVentas && (
-          <div className="TablaVentas">
-            {/* TABLAS */}
-            <table className="mt-0 table table-striped table-hover" id="myTable">
-              <thead className='tabla-cabeza' >
-                <tr style={{ backgroundColor: "#B4D8E9" }}>
-                  <th scope="col">Nombre</th>
-                  <th scope="col">Fecha</th>
-                  <th scope="col">Total</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col">Otros</th>
-                </tr>
-              </thead>
-              <tbody>
-                {facturas
-                  .filter(searchingSales(buscar))
-                  .filter((factura) =>
-                    fechaFiltro ? (
-                      isSameDay(parseISO(factura.fechaEmision), parseISO(fechaFiltro))
-                    ) : true
-                  )
-                  .filter((factura) =>
-                    estadoFiltro ? (
-                      factura.estado === estadoFiltro
-                    ) : true
-                  )
-                  .map((factura) => (
-
-                    <tr key={factura.id}>
-                      <td>
-                        {factura.nombreCliente} {factura.apellidoCliente}
-                      </td>
-                      <td>
-                        <ConvertirFecha fecha={factura.fechaEmision} />
-                      </td>
-                      <td>{factura.totalVenta}</td>
-                      <td>{factura.estado}</td>
-                      <td>
-                        {factura.estado === "Pendiente" ? (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => {
-                              setIdFacturaCompra(null);
-                              setIdFacturaVentas(factura.id);
-                              handleShowModalPago();
-                            }}
-                            style={{ color: "red" }}
-                          >
-                            Facturar
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => {
-                              setIdFacturaVentas(factura.id);
-                              handleShowModal();
-                            }}
-                            style={{ color: "green" }}
-                          >
-                            Ver
-                          </Button>
-                        )}
-                      </td>
+            {showTablaVentas && (
+              <div className="TablaVentas">
+                {/* TABLAS */}
+                <table className="mt-0 table table-striped table-hover" id="myTable">
+                  <thead className='tabla-cabeza' >
+                    <tr style={{ backgroundColor: "#B4D8E9" }}>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Total</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col">Otros</th>
                     </tr>
+                  </thead>
+                  <tbody>
+                    {facturas
+                      .filter(searchingSales(buscar))
+                      .filter((factura) =>
+                        fechaFiltro ? (
+                          isSameDay(parseISO(factura.fechaEmision), parseISO(fechaFiltro))
+                        ) : true
+                      )
+                      .filter((factura) =>
+                        estadoFiltro ? (
+                          factura.estado === estadoFiltro
+                        ) : true
+                      )
+                      .map((factura) => (
+                        <tr key={factura.id}>
+                          <td>
+                            {factura.nombreCliente} {factura.apellidoCliente}
+                          </td>
+                          <td>
+                            <ConvertirFecha fecha={factura.fechaEmision} />
+                          </td>
+                          <td>{factura.totalVenta}</td>
+                          <td>{factura.estado}</td>
+                          <td>
+                            {factura.estado === "Pendiente" ? (
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  setMontoVenta(factura.totalVenta);
+                                  setIdFacturaCompra(null);
+                                  setIdFacturaVentas(factura.id);
+                                  handleShowModalPago();
+                                  //ACA GUARDO EL POST DE MOVIMIENTO DE CAJ
 
-                  ))}
+                                }}
+                                style={{ color: "red" }}
+                              >
+                                Facturar
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  setIdFacturaVentas(factura.id);
+                                  handleShowModal();
+                                }}
+                                style={{ color: "green" }}
+                              >
+                                Ver
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Div tabla de Compras*/}
-        {showTablaCompras && (
-          <div className="TablaCompras">
-            {/* TABLAS */}
-            <table className="mt-0 table table-striped table-hover" id="myTable">
-              <thead className='tabla-cabeza'>
-                <tr style={{ backgroundColor: "#B4D8E9" }}>
-                  <th scope="col">Empresa</th>
-                  <th scope="col">Fecha</th>
-                  <th scope="col">Total</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col">Otros</th>
-                </tr>
-              </thead>
-              <tbody>
-                {facturaCompra
-                  .filter(searchingBuys(buscar))
-                  .filter((factura) =>
-                    fechaFiltro ? (
-                      isSameDay(parseISO(factura.facturaProveedor.fechaEmision) - 1, parseISO(fechaFiltro))
-                    ) : true
-                  )
-                  .filter((factura) =>
-                    estadoFiltro ? (
-                      factura.facturaProveedor.estado === estadoFiltro
-                    ) : true
-                  )
-                  .map((factura) => (
-                    <tr key={factura.id}>
-                      <td>
-                        {factura.proveedor.nombreEmpresa}
-                      </td>
-                      <td>
-                        <ConvertirFecha fecha={factura.facturaProveedor.fechaEmision} />
-                      </td>
-                      <td>{factura.totalProductos}</td>
-                      <td>{factura.facturaProveedor.estado}</td>
-                      <td>
-                        {factura.facturaProveedor.estado === "Pendiente" ? (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => {
-                              setIdFacturaVentas(null);
-                              setIdFacturaCompra(factura.facturaProveedor.id);
-                              handleShowModalPago();
-                            }}
-                            style={{ color: "red" }}
-                          >
-                            Facturar
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => {
-                              setIdFacturaCompra(factura.facturaProveedor.id);
-                              handleShowModalCompra();
-                            }}
-                            style={{ color: "green" }}
-                          >
-                            Ver
-                          </Button>
-                        )}
-                      </td>
+            {showTablaCompras && (
+              <div className="TablaCompras">
+                {/* TABLAS */}
+                <table className="mt-0 table table-striped table-hover" id="myTable">
+                  <thead className='tabla-cabeza'>
+                    <tr style={{ backgroundColor: "#B4D8E9" }}>
+                      <th scope="col">Empresa</th>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Total</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col">Otros</th>
                     </tr>
-                  ))}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {facturaCompra
+                      .filter(searchingBuys(buscar))
+                      .filter((factura) =>
+                        fechaFiltro ? (
+                          isSameDay(parseISO(factura.facturaProveedor.fechaEmision) - 1, parseISO(fechaFiltro))
+                        ) : true
+                      )
+                      .filter((factura) =>
+                        estadoFiltro ? (
+                          factura.facturaProveedor.estado === estadoFiltro
+                        ) : true
+                      )
+                      .map((factura) => (
+                        <tr key={factura.id}>
+                          <td>
+                            {factura.proveedor.nombreEmpresa}
+                          </td>
+                          <td>
+                            <ConvertirFecha fecha={factura.facturaProveedor.fechaEmision} />
+                          </td>
+                          <td>{factura.totalProductos}</td>
+                          <td>{factura.facturaProveedor.estado}</td>
+                          <td>
+                            {factura.facturaProveedor.estado === "Pendiente" ? (
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  setMontoCompra(factura.totalProductos);
+                                  setIdFacturaVentas(null);
+                                  setIdFacturaCompra(factura.facturaProveedor.id);
+                                  handleShowModalPago();
+                                }}
+                                style={{ color: "red" }}
+                              >
+                                Facturar
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  setIdFacturaCompra(factura.facturaProveedor.id);
+                                  handleShowModalCompra();
+                                }}
+                                style={{ color: "green" }}
+                              >
+                                Ver
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
           </div>
+        ) : (
+          null
         )}
       </div>
 
@@ -419,7 +477,7 @@ const Facturacion = () => {
           <Button variant="secondary" onClick={handleCloseModalPago}>
             Cerrar
           </Button>
-          <Button variant="primary" onClick={putFactura}>
+          <Button variant="primary" onClick={actualizacionesFactura}>
             Confirmar
           </Button>
         </Modal.Footer>
