@@ -3,6 +3,7 @@ namespace PeluqueriaWebApi.Models.DTOs.Outgoing
 public class DetallesTurnoResponseDto
 {
     public int Id { get; set; }
+    public int IdClienteG { get; set; }
     public string Cliente { get; set; }
     public string Peluquero { get; set; }
     public List<ServicioDto> Servicios { get; set; }

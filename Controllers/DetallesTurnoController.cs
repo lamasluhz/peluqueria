@@ -329,6 +329,7 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
         var detallesTurnoResponse = new DetallesTurnoResponseDto
         {
             Id = turno.Id,
+            IdClienteG= turno.IdCliente,
             Cliente = turno.IdClienteNavigation?.IdPersonaNavigation != null ? $"{turno.IdClienteNavigation.IdPersonaNavigation.Nombres} {turno.IdClienteNavigation.IdPersonaNavigation.Apellidos}" : string.Empty,
             Peluquero = turno.DetallesTurnos.Any()
                 ? _context.Peluqueros
