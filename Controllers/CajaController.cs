@@ -176,19 +176,20 @@ public IActionResult ObtenerCajaPorId(int id)
         return StatusCode(500, ex.Message); // Error interno del servidor
     }
 }
-[HttpPut("CerrarSesion/{id}")]
-public async Task<IActionResult> UpdateCerrarSesion(int id, [FromBody] decimal nuevoMonto)
+
+[HttpPut("CerrarSesion")]
+public async Task<IActionResult> UpdateCerrarSesion([FromBody] CierreSesionDto dto)
 {
     try
     {
-        var caja = await _context.Cajas.FindAsync(id);
+        var caja = await _context.Cajas.FindAsync(dto.Id);
         if (caja == null)
         {
             return NotFound(); // Caja no encontrada
         }
 
         caja.Estado = "Cerrado";
-        caja.MontoCierre = nuevoMonto;
+        caja.MontoCierre = dto.MontoCierre;
         caja.FechaCierre = DateTime.Now;
 
         await _context.SaveChangesAsync();
@@ -200,6 +201,7 @@ public async Task<IActionResult> UpdateCerrarSesion(int id, [FromBody] decimal n
         return StatusCode(500, ex.Message); // Error interno del servidor
     }
 }
+
 
 
 
