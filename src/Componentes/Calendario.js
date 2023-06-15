@@ -670,17 +670,7 @@ const Calendar = () => {
             {/* <Button variant="secondary" onClick={}> */}
           </Modal.Footer>
         </Modal>
-        <Modal show={showModal2} onHide={handleCloseModal2}>
-          <Modal.Header closeButton>
-            <Modal.Title>Facturado correctamente</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>La factura se ha generado exitosamente.</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal2}>
-              Cerrar
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        
 
         <Modal show={showModal2} onHide={handleCloseModal2}>
           <Modal.Header closeButton>
