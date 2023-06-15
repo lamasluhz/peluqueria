@@ -103,7 +103,6 @@ const Facturacion = () => {
       try {
         const response = await axios.get("https://localhost:7137/api/FacturaProveedores/facturaProveedores");
         const data = response.data;
-        console.log("Datos de las facturas de Compras:", data);
         setFacturaCompra(data);
       } catch (error) {
         console.error("Error al obtener los datos de las facturas de Compras:", error);
@@ -220,7 +219,7 @@ const Facturacion = () => {
         <FCaja />
       </div>
 
-      <div className="container" style={{ flex: '4' }}>
+      <div className="container" style={{ flex: '5' }}>
         <br />
 
         {showFactura ? (

@@ -5,6 +5,8 @@ import axios from 'axios';
 
 const estilo = { paddingLeft: '10px' };
 
+const estiloIcons = { maxHeight: 25, maxWidth: 20  };
+
 const Header = (props) => {
     const API_URL = "https://localhost:7137";
     const datosUsuario = localStorage.getItem('usuario');
@@ -49,20 +51,19 @@ const Header = (props) => {
             <div>
                
             </div>
-            <Navbar expand="lg" style={{ display: "flex", alignItems: 'center', padding: 0 }}>
+            <Navbar expand="lg" style={{ display: "flex", alignItems: 'center', padding: 0, borderBottom: '1px solid blue' }}>
                 <Navbar.Toggle aria-controls="navbarNavAltMarkup" />
-                <Navbar.Collapse id="navbarNavAltMarkup" style={{ backgroundColor: '#aae0fa'}}>
+                <Navbar.Collapse id="navbarNavAltMarkup" style={{ backgroundColor: '#aae0fa' }}>
                     <Nav className="mr-auto w-100 justify-content-center" style={{ backgroundColor: "#aae0fa", paddingLeft: '30px', fontSize: '20px' }}>
-                        <NavLink className="nav-link" to="/inicio" style={estilo}> <img src='/inicio.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Inicio</NavLink>
-                        <NavLink className="nav-link" to="/clientes" style={estilo}> <img src='/clientes.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Clientes </NavLink>
-                        <NavLink className="nav-link" to="/peluqueros" style={estilo}> <img src='/peluqueros.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Peluqueros </NavLink>
-                        <NavLink className="nav-link" to="/servicios" style={estilo}> <img src='/servicios.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Servicios </NavLink>
-                        <NavLink className="nav-link" to="/reservas" style={estilo}> <img src='/reservas.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Reservas </NavLink>
-                        <NavLink className="nav-link" to="/stock" style={estilo}> <img src='/compras.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Compras </NavLink>
-                        <NavLink className="nav-link" to="/ventaProductos" style={estilo}> <img src='/venta.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Venta </NavLink>
-                        <NavLink className="nav-link" to="/facturacion" style={estilo}> <img src='/factura.png' style={{ maxHeight: 25, maxWidth: 20 }} />Caja</NavLink>
-                   <NavLink className="nav-link" to="/reportes" style={estilo}> <img src='/factura.png' style={{ maxHeight: 25, maxWidth: 20 }} />Reportes</NavLink>
-                            </Nav>
+                        <NavLink className="nav-link" to="/inicio" style={estilo}> <img src='/inicio.png' style={estiloIcons} /> Inicio</NavLink>
+                        <NavLink className="nav-link" to="/clientes" style={estilo}> <img src='/clientes.png' style={estiloIcons} /> Clientes </NavLink>
+                        <NavLink className="nav-link" to="/peluqueros" style={estilo}> <img src='/peluqueros.png' style={estiloIcons} /> Peluqueros </NavLink>
+                        <NavLink className="nav-link" to="/servicios" style={estilo}> <img src='/servicios.png' style={estiloIcons} /> Servicios </NavLink>
+                        <NavLink className="nav-link" to="/reservas" style={estilo}> <img src='/reservas.png' style={estiloIcons} /> Reservas </NavLink>
+                        <NavLink className="nav-link" to="/stock" style={estilo}> <img src='/compras.png' style={estiloIcons} /> Compras </NavLink>
+                        <NavLink className="nav-link" to="/ventaProductos" style={estilo}> <img src='/venta.png' style={estiloIcons} /> Venta </NavLink>
+                        <NavLink className="nav-link" to="/facturacion" style={estilo}> <img src='/factura.png' style={estiloIcons} />Caja</NavLink>
+                        </Nav>
                     <div style={{ borderLeft: '1px solid blue', paddingLeft: '20px' }}>
                         <img src="./usuario.png" alt="Logo" />
                     </div>

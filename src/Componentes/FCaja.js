@@ -22,7 +22,9 @@ const FCaja = () => {
   const [totalCaja, setTotalCaja] = useState('');
 
   const recargarPagina = () => {
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   }
   const handleCerrarSesion = () => {
     setMostrarConfirmacion(true);
@@ -39,7 +41,7 @@ const FCaja = () => {
     setMostrarConfirmacion(false);
   };
 
-  
+
   useEffect(() => {
     const storedIdCajero = localStorage.getItem("idCajero");
     if (storedIdCajero !== null) {
@@ -58,6 +60,7 @@ const FCaja = () => {
       setShowCaja(true);
     }
   }, []);
+
 
 
   useEffect(() => {
@@ -165,7 +168,7 @@ const FCaja = () => {
       .catch(error => {
         console.error('Error:', error);
       });
-
+    recargarPagina();
   };
 
   const handleCrearCaja = () => {
@@ -193,23 +196,6 @@ const FCaja = () => {
     }
   };
 
-
-
-  useEffect(() => {
-    const totalAperturaStorage = () => {
-      const storageCajero = localStorage.getItem('cajero');
-      let montoApertura = 0;
-      if (storageCajero !== null) {
-        const parsedData = JSON.parse(storageCajero);
-        montoApertura = parsedData.montoApertura;
-
-      }
-      let montoTotal = fnTotalCaja(montoApertura);
-      setTotalCaja(montoTotal);
-    };
-
-    totalAperturaStorage();
-  }, []);
 
   const datosCerrarPut = {
     montoCierre: totalCaja,
@@ -312,7 +298,6 @@ const FCaja = () => {
                   onChange={handleInputChange}
                 />
               </div>
-
 
             </form>
           </Modal.Body>
