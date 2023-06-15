@@ -156,7 +156,6 @@ const Facturacion = () => {
         .put('https://localhost:7137/api/Factura/facturas', facturaVentaActualizado)
         .then((response) => {
           console.log("Factura de Ventas Actualizado");
-          // Realiza las acciones adicionales necesarias después de la actualización
         })
         .catch((error) => {
           console.error("Error al actualizar la factura de ventas:", error);
@@ -168,7 +167,6 @@ const Facturacion = () => {
         .put('https://localhost:7137/api/FacturaProveedores/FacturaProveedores', facturaCompraActualizado)
         .then((response) => {
           console.log("Factura de Compras Actualizado");
-          // Realiza las acciones adicionales necesarias después de la actualización
         })
         .catch((error) => {
           console.error("Error al actualizar la factura de compras:", error);
@@ -333,7 +331,6 @@ const Facturacion = () => {
                                   setIdFacturaCompra(null);
                                   setIdFacturaVentas(factura.id);
                                   handleShowModalPago();
-                                  //ACA GUARDO EL POST DE MOVIMIENTO DE CAJ
 
                                 }}
                                 style={{ color: "red" }}

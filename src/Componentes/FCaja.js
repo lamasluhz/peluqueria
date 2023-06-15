@@ -39,10 +39,7 @@ const FCaja = () => {
     setMostrarConfirmacion(false);
   };
 
-  {/*
-  Obtenemos el ID de la caja que fue abierta
-  Lo llamamos del localStorage
-*/}
+  
   useEffect(() => {
     const storedIdCajero = localStorage.getItem("idCajero");
     if (storedIdCajero !== null) {
@@ -172,19 +169,16 @@ const FCaja = () => {
   };
 
   const handleCrearCaja = () => {
-    // Realizar la solicitud POST utilizando Axios
     axios.post('https://localhost:7137/api/Caja/cajas', {
       nombre: cajero,
       clave: clave
     })
       .then(response => {
-        // Reiniciar los valores
         setCajero('');
         setClave('');
         handleCreateSuccess();
       })
       .catch(error => {
-        // Lógica a realizar en caso de error
         console.error('Error:', error);
       });
   };
