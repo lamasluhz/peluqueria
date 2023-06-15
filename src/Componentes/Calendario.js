@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../css/Calendario.css";
-import { Button, Modal } from "react-bootstrap";
+
 import { Link } from "react-router-dom";
 import Buscador from "./Buscador";
 import axios from "axios";
@@ -9,9 +9,26 @@ import Select from "react-select";
 import { IoEyeSharp } from "react-icons/io5";
 import { BiPencil } from "react-icons/bi";
 import Stock from "./Stock";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 
 const Calendar = () => {
   //// segundo post en modal
+  const obtenerDetallesTurnoPorPeluquero = async (peluqueroId) => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7137/api/DetallesTurno/GetDetallesTurnoByPeluquero(${peluqueroId})`
+      );
+      const detallesTurno = response.data;
+      // Actualiza el estado de las reservas con los detalles del turno obtenidos
+      setReservas(detallesTurno);
+    } catch (error) {
+      console.error("Error al obtener los detalles del turno:", error);
+    }
+  };
+
+  const [horaInicio, setHoraInicio] = useState("");
+  const [horaFinalizacion, setHoraFinalizacion] = useState("");
 
   const handleFormSubmit = () => {
     // Construye el objeto de datos a enviar en la solicitud POST
@@ -21,10 +38,10 @@ const Calendar = () => {
       idCliente: selectedCliente,
       idPeluquero: selectedPeluqueros,
       //////////////////////////////////////////////////////////////////////////
-      fecha: selectedDate,
+      fecha: selectedDate, //selectedDate,
       eliminado: true,
-      horaInicio: document.getElementById("horaInicio").value,
-      horaFinalizacion: document.getElementById("horaFinalizacion").value,
+      horaInicio: horaInicio,
+      horaFinalizacion: horaFinalizacion,
       estado: "pendiente",
     };
     console.log(data);
@@ -55,22 +72,35 @@ const Calendar = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModal1, setShowModal1] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleModal = () => {
     console.log(showModal);
     setShowModal(!showModal);
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query.toLowerCase());
+  };
+
   const [selectedCliente, setSelectedCliente] = useState([]);
+
+  //////////////////////////
+  const [selectedPeluquero, setSelectedPeluquero] = useState("");
 
   const [selectedPeluqueros, setSelectedPeluqueros] = useState([]);
   const [reservas, setReservas] = useState([]);
 
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState("");
+  const [fechaSeleccionada, setFechaSeleccionada] = useState("");
 
- 
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setSelectedDate(e.target.value);
+    }
+  };
   ///Array 1
   const monthNames = [
     "Enero",
@@ -137,10 +167,19 @@ const [loading, setLoading] = useState(false);
     setShowModal2(false);
   };
 
+  /////////////
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  const handleClick = () => {
+    setFechaSeleccionada(selectedDate);
+    handleFormSubmit();
+  };
+
   //renderHeader renderiza la cabecera del calendario, que incluye botones para navegar entre meses
   // y muestra el mes y año actual.
   const renderHeader = () => {
-    
     return (
       <div>
         {" "}
@@ -155,7 +194,7 @@ const [loading, setLoading] = useState(false);
             &lt;
           </button>
           <div className="month-year">
-            {monthNames[date.getMonth()]} {date.getFullYear()}
+            {selectedDay} {monthNames[date.getMonth()]} {date.getFullYear()}
           </div>
           <button
             className="btn btn-primary"
@@ -182,7 +221,6 @@ const [loading, setLoading] = useState(false);
       const isSelected = selectedDay === i;
 
       days.push(
-        /////////////////////////////////// Aca modifique tambien
         <div
           className={`day ${isSelected ? "selected" : ""}`}
           key={i}
@@ -205,6 +243,7 @@ const [loading, setLoading] = useState(false);
   const [Servicios, setServicio] = useState([]);
 
   useEffect(() => {
+    ///Clientes
     const fetchClientes = async () => {
       try {
         const response = await axios.get(
@@ -276,7 +315,38 @@ const [loading, setLoading] = useState(false);
     return fecha.slice(0, 10);
   };
 
-  // const [selectedCliente, setSelectedCliente] = useState("");
+  ///////////////////////////////////
+  const handleDateSearch = () => {
+    // Realizar solicitud GET a la API con la fecha seleccionada
+    fetch(`https://localhost:7137/api/DetallesTurno?fecha=${selectedDate}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Actualizar el estado 'reservas' con los datos obtenidos
+        setReservas(data);
+      })
+      .catch((error) => {
+        console.error("Error al buscar las reservas:", error);
+      });
+  };
+
+
+  ///////////////////////
+  useEffect(() => {
+    const fetchDetallesTurnoByPeluquero = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:7137/api/DetallesTurno/GetDetallesTurnoByPeluquero(${selectedPeluquero})`
+        );
+        setReservas(response.data);
+      } catch (error) {
+        console.error("Error al obtener los detalles de los turnos:", error);
+      }
+    };
+
+    if (selectedPeluquero) {
+      fetchDetallesTurnoByPeluquero();
+    }
+  }, [selectedPeluquero]);
 
   return (
     <div>
@@ -362,22 +432,26 @@ const [loading, setLoading] = useState(false);
               </div>
             </div>
             <div className="form-group">
-  <label htmlFor="fecha">Fecha</label>
-  <input
-    type="date"
-    className="form-control"
-    id="fecha"
-    value={selectedDate}
-    onChange={(e) => setSelectedDate(e.target.value)}
-  />
-</div>
-
-
+              <label htmlFor="fecha">Fecha</label>
+              <input
+                type="date"
+                className="form-control"
+                id="fecha"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+              />
+            </div>
             <div className="form-group">
               <div className="row">
                 <div className="col-sm-6">
                   <label htmlFor="hora_inicio">Hora de inicio</label>
-                  <input type="time" className="form-control" id="horaInicio" />
+                  <input
+                    type="time"
+                    className="form-control"
+                    id="horaInicio"
+                    value={horaInicio}
+                    onChange={(e) => setHoraInicio(e.target.value)}
+                  />
                 </div>
                 <div className="col-sm-6">
                   <label htmlFor="hora_fin">Hora de finalización</label>
@@ -385,6 +459,8 @@ const [loading, setLoading] = useState(false);
                     type="time"
                     className="form-control"
                     id="horaFinalizacion"
+                    value={horaFinalizacion}
+                    onChange={(e) => setHoraFinalizacion(e.target.value)}
                   />
                 </div>
               </div>
@@ -420,8 +496,9 @@ const [loading, setLoading] = useState(false);
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ marginBottom: "10px" }}>
-            <Buscador action={handleModal} />
+          <Buscador action={handleModal} handleSearch={handleSearch}/>
           </div>
+         
           <div>
             <table
               className="table table-striped table-hover border-white"
@@ -441,53 +518,78 @@ const [loading, setLoading] = useState(false);
                 </tr>
               </thead>
               <tbody>
-                
-                {reservas.map((reserva, index) => {
-                     const reservaMes = new Date(reserva.fecha).getMonth();
-                     if (reservaMes !== date.getMonth()) {
-                       return null; // Omitir la reserva si no es del mes actual
-                     }
-                     return (
-                  <tr key={reserva.id}>
-                    <td>{reserva.cliente}</td>
-                    <td>
-                      {formatearHora(
-                        reserva.horaInicio,
-                        reserva.horaFinalizacion
-                      )}
-                    </td>
-                    <td>{formatearFecha(reserva.fecha)}</td>
-                    <td>{reserva.peluquero}</td>
-                    <td>
-                      {reserva.servicios.map((servicio) => (
-                        <div key={servicio.id}>
-                          <span>{servicio.tipoServicio}</span>
-                          <span> </span>
-                          <span>{servicio.descripcion}</span>
-                          <span> - </span>
-                          <span>{servicio.monto}</span>
-                        </div>
-                      ))}
-                    </td>
-                    <td>{reserva.montoTotal}</td>
-                    <td>{reserva.estado}</td>
-                    <td>
-                      {" "}
-                      <IoEyeSharp
-                        size={20}
-                        onClick={() => handleShowModal1(index)}
-                        style={{ cursor: "pointer" }}
-                      />
-                      <BiPencil
-                        size={20}
-                        onClick={handleShowModal2}
-                        style={{ cursor: "pointer" }}
-                      />
-                    </td>
-                    {/* Agrega aquí los datos adicionales que quieras mostrar */}
-                  </tr>
-                     );
-                      })}
+              {reservas
+    .filter((reserva) => {
+      const cliente = reserva.cliente?.toLowerCase() || '';
+      const peluquero = reserva.peluquero?.toLowerCase() || '';
+      const hora = reserva.hora?.toLowerCase() || '';
+      const fecha = reserva.fecha?.toLowerCase() || '';
+      const servicios = reserva.servicios?.some((servicio) =>
+        servicio.tipoServicio.toLowerCase().includes(searchQuery)
+      );
+      const totalidad = reserva.totalidad?.toLowerCase() || '';
+      const estado = reserva.estado?.toLowerCase() || '';
+
+      return (
+        cliente.includes(searchQuery) ||
+        peluquero.includes(searchQuery) ||
+        hora.includes(searchQuery) ||
+        fecha.includes(searchQuery) ||
+        servicios ||
+        totalidad.includes(searchQuery) ||
+        estado.includes(searchQuery)
+      );
+    })
+    .map((reserva, index) => {
+                  const reservaFecha = new Date(reserva.fecha);
+                  const reservaMes = reservaFecha.getMonth();
+                  const reservaDia = reservaFecha.getDate();
+
+                  if (
+                    reservaMes !== date.getMonth() ||
+                    reservaDia !== selectedDay
+                  ) {
+                    return null;
+                  }
+                  return (
+                    <tr key={reserva.id}>
+                      <td>{reserva.cliente}</td>
+                      <td>
+                        {formatearHora(
+                          reserva.horaInicio,
+                          reserva.horaFinalizacion
+                        )}
+                      </td>
+                      <td>{formatearFecha(reserva.fecha)}</td>
+                      <td>{reserva.peluquero}</td>
+                      <td>
+                        {reserva.servicios.map((servicio) => (
+                          <div key={servicio.id}>
+                            <span>{servicio.tipoServicio}</span>
+                            <span> </span>
+                            <span>{servicio.descripcion}</span>
+                            <span> - </span>
+                            <span>{servicio.monto}</span>
+                          </div>
+                        ))}
+                      </td>
+                      <td>{reserva.montoTotal}</td>
+                      <td>{reserva.estado}</td>
+                      <td>
+                        <IoEyeSharp
+                          size={20}
+                          onClick={() => handleShowModal1(index)}
+                          style={{ cursor: "pointer" }}
+                        />
+                        <BiPencil
+                          size={20}
+                          onClick={handleShowModal2}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

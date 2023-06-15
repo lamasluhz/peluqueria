@@ -24,7 +24,7 @@ const PeluqueroModal = ({ showModal, handleClose }) => {
             const data = response.data;
 
             setOptions(data.map(item => ({
-                value: item.id,
+                value: item,
                 label: item.especialidad
             })));
 
@@ -49,16 +49,25 @@ const PeluqueroModal = ({ showModal, handleClose }) => {
 
     const handleAddStylist = (e) => {
         e.preventDefault();
-        axios.post('https://localhost:7137/api/Peluquero', formValues)
+
+        // include selectedOptions in the formValues
+        const updatedFormValues = {
+            ...formValues,
+            listEspecialidades: selectedOptions.map(option => option.value)
+        };
+
+        axios.post('https://localhost:7137/api/Peluquero', updatedFormValues)
             .then(response => {
                 console.log(response.data); // You can check the server response
             })
             .catch(error => {
                 console.error(`Error: ${error}`);
             });
+
         handleClose();
     };
 
+    useEffect(() => { fetchData() }, [])
     return (
         <Modal show={showModal} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -137,6 +146,7 @@ const PeluqueroModal = ({ showModal, handleClose }) => {
                     </Form.Group>
 
                     <Form.Group controlId="formEspecialidad">
+                        <Form.Label>Especialidades</Form.Label>
                         <Select
                             isMulti
                             options={options}

@@ -5,7 +5,7 @@ import axios from 'axios';
 import BuscadorCompraProductos from './BuscadorVentaProductos';
 import SuccessModal from './SuccessModal';
 
-const VentaProductos = () => {
+const VentasProductosServicios = () => {
   const url = 'https://localhost:7137/StockProducto/GetStockProductos';
   const location = useLocation();
   const [proveedor, setProveedor] = useState();
@@ -149,7 +149,7 @@ const VentaProductos = () => {
         return {
             idProducto: producto.idProducto,
             cantidad: cantidadProducto[producto.id],
-            precioUnitario: producto.precioUnitario.toLocaleString('es-ES'), // Assuming producto has a 'precioUnitario' property
+            precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
             iva: 0 // Assuming a 5% tax rate
         };
     });
@@ -174,124 +174,125 @@ const VentaProductos = () => {
 };
 
 
-  return (
-    <Container className="w-75 mt-4">
-      <Row className="mb-4">
-      <h2>Cliente</h2>
-        <Col>
-          <div className='column is-one-third'>
-            <label htmlFor="cedula">Nro Documento</label>
-            <input
-              className="input is-primary"
-              type="text"
-              name="cedula"
-              onChange={handleCedulaChange}
-              onKeyDown={handleKeyDown}
-            />
-          </div>
-          <div className='column is-one-third'>
-            <label htmlFor="str_nombre">Nombre</label>
-            <input
-              className="input is-primary"
-              type="text"
-              name="str_nombre"
-              readOnly
-              value={`${cliente?.nombres || ''} ${cliente?.apellidos || ''}`}
-            />
-          </div>
-          <SuccessModal
-                            show={showSuccessModal}
-                            handleClose={() => setShowSuccessModal(false)}
-                            message="Compra Confirmada"
+ 
+return (
+  <Container className="w-75 mt-4">
+    <Row className="mb-4">
+    <h2>Cliente</h2>
+      <Col>
+        <div className='column is-one-third'>
+          <label htmlFor="cedula">Nro Documento</label>
+          <input
+            className="input is-primary"
+            type="text"
+            name="cedula"
+            onChange={handleCedulaChange}
+            onKeyDown={handleKeyDown}
           />
+        </div>
+        <div className='column is-one-third'>
+          <label htmlFor="str_nombre">Nombre</label>
+          <input
+            className="input is-primary"
+            type="text"
+            name="str_nombre"
+            readOnly
+            value={`${cliente?.nombres || ''} ${cliente?.apellidos || ''}`}
+          />
+        </div>
+        <SuccessModal
+                          show={showSuccessModal}
+                          handleClose={() => setShowSuccessModal(false)}
+                          message="Compra Confirmada"
+        />
+      </Col>
+    </Row>
+    <Row className="mb-4">
+      <Row>
+        <Col>
+          <h2>Venta de Productos</h2>
+          <BuscadorCompraProductos handleSearch={handleSearch} action={openModal} />
         </Col>
       </Row>
-      <Row className="mb-4">
-        <Row>
-          <Col>
-            <h2>Venta de Productos</h2>
-            <BuscadorCompraProductos handleSearch={handleSearch} action={openModal} />
-          </Col>
-        </Row>
-        <Table striped bordered hover>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Detalles</th>
+            <th>Costo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Aca va a ir un map de los productos */}
+          {productosFiltrados.map((producto) => (
+            <tr id={producto.idProducto}>
+              <td> {producto.nombre}</td>
+              <td> {producto.descripcionTipoProducto}</td>
+              <td> {producto.precioUnitario}</td>
+              <td>
+                <button onClick={() => agregarAlCarrito(producto)}>Añadir al carrito</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Row>
+    <Row className="mb-4">
+      <Col>
+        <h2>Productos Seleccionados</h2>
+        <Table striped bordered hover id="carrito">
           <thead>
             <tr>
               <th>Nombre</th>
               <th>Detalles</th>
               <th>Costo</th>
-              <th></th>
+              <th>Cantidad</th>
+              <th>IVA 5%</th>
+              <th>Total</th>
             </tr>
           </thead>
           <tbody>
-            {/* Aca va a ir un map de los productos */}
-            {productosFiltrados.map((producto) => (
-              <tr id={producto.idProducto}>
+            {/* Aca se cargan los elemento del carrito */}
+            {productosSeleccionados.map((producto) => (
+              <tr id={producto.id}>
                 <td> {producto.nombre}</td>
                 <td> {producto.descripcionTipoProducto}</td>
-                <td> {producto.precioUnitario}</td>
+                <td> {formatearPrecio(producto.precioUnitario)}</td>
                 <td>
-                  <button onClick={() => agregarAlCarrito(producto)}>Añadir al carrito</button>
+                  <input
+                    type="number"
+                    value={cantidadProducto[producto.id]}
+                    onChange={(e) => {
+                      const nuevaCantidad = e.target.value;
+                      setCantidadProducto({ ...cantidadProducto, [producto.id]: nuevaCantidad });
+                      cambiarCantidadProducto(producto.id, nuevaCantidad);
+                    }}
+                    min={1}
+                  />
+                  <button onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
                 </td>
+                <td> {formatearPrecio(producto.precioUnitario * producto.cantidad * 0.05)}</td>
+                <td> {formatearPrecio(producto.precioUnitario * (1 + 0.05) * producto.cantidad)}</td>
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="5">Total</td>
+              <td>{/* Aca se calcula el total de todos los elementos del carrito */ formatearPrecio(total)}</td>
+            </tr>
+          </tfoot>
         </Table>
-      </Row>
-      <Row className="mb-4">
-        <Col>
-          <h2>Productos Seleccionados</h2>
-          <Table striped bordered hover id="carrito">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Detalles</th>
-                <th>Costo</th>
-                <th>Cantidad</th>
-                <th>IVA 5%</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Aca se cargan los elemento del carrito */}
-              {productosSeleccionados.map((producto) => (
-                <tr id={producto.id}>
-                  <td> {producto.nombre}</td>
-                  <td> {producto.descripcionTipoProducto}</td>
-                  <td> {formatearPrecio(producto.precioUnitario)}</td>
-                  <td>
-                    <input
-                      type="number"
-                      value={cantidadProducto[producto.id]}
-                      onChange={(e) => {
-                        const nuevaCantidad = e.target.value;
-                        setCantidadProducto({ ...cantidadProducto, [producto.id]: nuevaCantidad });
-                        cambiarCantidadProducto(producto.id, nuevaCantidad);
-                      }}
-                      min={1}
-                    />
-                    <button onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
-                  </td>
-                  <td> {formatearPrecio(producto.precioUnitario * producto.cantidad * 0.05)}</td>
-                  <td> {formatearPrecio(producto.precioUnitario * (1 + 0.05) * producto.cantidad)}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan="5">Total</td>
-                <td>{/* Aca se calcula el total de todos los elementos del carrito */ formatearPrecio(total)}</td>
-              </tr>
-            </tfoot>
-          </Table>
-        </Col>
-      </Row>
-      <Row>
-        <Col style={{ justifyContent: 'center', display: 'flex' }}>
-          <Button variant="success" onClick={confirmarVenta}>Confirmar Venta</Button>
-        </Col>
-      </Row>
-    </Container>
-  );
+      </Col>
+    </Row>
+    <Row>
+      <Col style={{ justifyContent: 'center', display: 'flex' }}>
+        <Button variant="success" onClick={confirmarVenta}>Confirmar Venta</Button>
+      </Col>
+    </Row>
+  </Container>
+);
 };
 
-export default VentaProductos;
+export default VentasProductosServicios;

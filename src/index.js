@@ -23,8 +23,10 @@ import {
   Proveedores,
   CompraProveedores,
   Reportes,
+  VentasProductosServicios,
   
 } from "./Componentes";
+import MasPedidos from "./Componentes/MasPedidos";
 
 const App = () => {
   const [ingresar, setIngresar] = useState(false);
@@ -42,6 +44,7 @@ const App = () => {
         <Route path="/peluqueros" element={<Peluqueros />} />
         <Route path="/reservas" element={<Reservas />} />
         <Route path="/cortes" element={<Cortes />} />
+        <Route path="/masPedidos" element={<MasPedidos />} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/manicuras" element={<Manicuras />} />
         <Route path="/peinados" element={<Peinados />} />
@@ -54,6 +57,7 @@ const App = () => {
         <Route path="/proveedores" element={<Proveedores />} />
         <Route path="/compra-proveedores" element={<CompraProveedores />} />
         <Route path="/reportes" element={<Reportes />} />
+        <Route path="/ventas-productos-servicios" element={<VentasProductosServicios />} />
         
       </Routes>: null}
     </Router> 

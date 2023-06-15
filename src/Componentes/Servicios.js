@@ -11,6 +11,16 @@ const Servicios = () => {
       </div>
       <Container>
         <Row>
+        <Col className="mb-4">
+            <Link to="/masPedidos">
+              <Card>
+                <Card.Img variant="top" src="https://d500.epimg.net/cincodias/imagenes/2021/01/28/pyme/1611867181_254477_1611936996_noticia_normal.jpg" style={{ height: '200px', objectFit: 'cover' }} />
+                <Card.Body>
+                  <Card.Title>Mas Pedidos</Card.Title>
+                </Card.Body>
+              </Card>
+            </Link>
+          </Col>
           <Col className="mb-4">
             <Link to="/cortes">
               <Card>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import axios from "axios";
+import { Modal, Card } from 'react-bootstrap'
 const ClienteRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
     const [editing, setEditing] = useState(false);
     const [editedFields, setEditedFields] = useState({
@@ -12,6 +13,24 @@ const ClienteRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
         ruc: cliente.ruc,
         eliminado: cliente.eliminado
     });
+    const [showModal, setShowModal] = useState(false);
+    const [detallesTurno, setDetallesTurno] = useState([]);
+    const handleOpenModal = () => {
+        setShowModal(true);
+        fetchDetallesTurno(cliente.id);
+    };
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+    const fetchDetallesTurno = async (id) => {
+        try {
+            const response = await axios.get(`https://localhost:7137/api/DetallesTurno/GetDetallesTurnoGeneral/${id}`);
+            console.log(response.data);
+            setDetallesTurno(response.data);
+        } catch (error) {
+            console.error('Error al obtener los detalles de turno:', error);
+        }
+    };
 
     const handleEdit = () => {
         setEditing(true);
@@ -100,7 +119,28 @@ const ClienteRow = ({ cliente, handleFieldUpdate, handleDeleteCliente }) => {
                 )}
             </td>
             <td>
-                <i className="fa-solid fa-arrows-to-eye"></i>
+                <i className="fa-solid fa-arrows-to-eye" style={{ cursor: 'pointer' }} onClick={handleOpenModal}></i>
+                <Modal show={showModal} onHide={handleCloseModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Detalles de Turno</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {detallesTurno.map((detalle, index) => (
+                            <Card key={index} style={{ marginBottom: '10px' }}>
+                                <Card.Body>
+                                    <Card.Title>{detalle.peluquero}</Card.Title>
+                                    <Card.Text>
+                                        Fecha: {detalle.fecha}<br />
+                                        Hora: {detalle.hora}<br />
+                                        Servicio: {detalle.servicio}
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        ))}
+                    </Modal.Body>
+                </Modal>
+
+
             </td>
             <td>
                 {editing ? (
