@@ -149,7 +149,7 @@ const VentaProductos = () => {
         return {
             idProducto: producto.idProducto,
             cantidad: cantidadProducto[producto.id],
-            precioUnitario: producto.precioUnitario.toLocaleString('es-ES'), // Assuming producto has a 'precioUnitario' property
+            precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
             iva: 0 // Assuming a 5% tax rate
         };
     });
