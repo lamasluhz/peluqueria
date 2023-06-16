@@ -5,6 +5,7 @@ import Buscador from "./Buscador";
 import { Modal, Form, Button } from 'react-bootstrap';
 import ClienteRow from "./ClientesRow";
 import ProveedorRow from "./ProveedorRow";
+import ProveedorModal from "./ProveedorModal";
 const url = 'https://localhost:7137/Proveedor/GetProveedores';
 
 
@@ -152,7 +153,7 @@ const Proveedores = () => {
                 <br />
 
                 {/* <!-- TABLAS --> */}
-                <ClienteModal showModal={showModal} handleClose={handleClose} />
+                <ProveedorModal showModal={showModal} handleClose={handleClose} />
                 <Buscador action={handleModal} handleSearch={handleSearch} />
 
                 <table className="table table-striped table-hover border-white" style={{ border: '1px solid white' }} id="myTable">
