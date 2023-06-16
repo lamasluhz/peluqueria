@@ -204,6 +204,13 @@ nuevaVenta.Facturas.Add(nuevaFactura); // Agrega la nueva factura a la colecció
 _context.Ventas.Update(nuevaVenta);
 await _context.SaveChangesAsync();
 
+
+/////
+       
+ await ActualizarStockProducto(ventaDto.DetalleVentaDto, ventaDto.IdDeposito);
+
+
+//////////
                 return CreatedAtRoute("GetVenta", new { id = nuevaVenta.Id }, ventaDto);
             }
             catch (Exception ex)
@@ -266,6 +273,23 @@ await _context.SaveChangesAsync();
         }
     
     public virtual Factura Factura { get; set; }
-    
+
+
+private async Task ActualizarStockProducto(List<DetalleVentaDto> detalleVentaDto, int idDeposito)
+{
+    foreach (var detalle in detalleVentaDto)
+    {
+        var stockProducto = await _context.StockProductos
+            .FirstOrDefaultAsync(sp => sp.IdProducto == detalle.IdProducto && sp.IdDeposito == idDeposito);
+
+        if (stockProducto != null)
+        {
+            stockProducto.Cantidad -= detalle.Cantidad;
+            await _context.SaveChangesAsync();
+        }
+    }
+}
+   
+
     }
 }
