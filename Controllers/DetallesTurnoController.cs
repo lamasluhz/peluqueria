@@ -319,7 +319,7 @@ public async Task<ActionResult<List<DetallesTurnoResponseDto>>> GetDetallesTurno
         var montoTotal = servicios.Sum(s => s.Monto);
 
         // Verificar si la fecha del turno es menor que la fecha actual
-        if (turno.Fecha < currentDate && turno.Estado == "Pendiente")
+        if (turno.Fecha < currentDate && turno.Estado == "pendiente")
         {
             turno.Estado = "Ausente";
             await _context.SaveChangesAsync();
