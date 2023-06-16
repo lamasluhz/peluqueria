@@ -6,11 +6,12 @@ const ProveedorModal = ({ showModal, handleClose }) => {
     const initialFormValues = {
         nombres: '',
         apellidos: '',
-        cedula: '',
-        telefono: '',
         correo: '',
+        telefono: '',
+        cedula: '',
         direccion: '',
         ruc: '',
+        nombreEmpresa: '',
     };
     const [formValues, setFormValues] = useState(initialFormValues);
     const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para el modal de operación exitosa
@@ -22,7 +23,7 @@ const ProveedorModal = ({ showModal, handleClose }) => {
 
     const handleClienteModal = () => {
         axios
-            .post('https://localhost:7137/api/Cliente/postCliente', formValues)
+            .post(`https://localhost:7137/Proveedor?Nombres=${formValues.nombres}&Apellidos=${formValues.apellidos}&Correo=${formValues.correo}&Telefono=${formValues.telefono}&Direccion=${formValues.direccion}&Cedula=${formValues.direccion}&NombreEmpresa=${formValues.nombreEmpresa}&Ruc=${formValues.ruc}`)
             .then((response) => {
                 console.log('PUT request successful');
                 console.log(response.data); // You can do something with the response if needed
@@ -43,7 +44,7 @@ const ProveedorModal = ({ showModal, handleClose }) => {
 
             <Modal show={showModal} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Agregar Cliente</Modal.Title>
+                    <Modal.Title>Agregar Proveedor</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
@@ -65,12 +66,30 @@ const ProveedorModal = ({ showModal, handleClose }) => {
                                 onChange={handleInputChange}
                             />
                         </Form.Group>
+                        <Form.Group controlId="formNombreEmpresa">
+                            <Form.Label>Nombre Empresa</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="nombreEmpresa"
+                                value={formValues.nombreEmpresa}
+                                onChange={handleInputChange}
+                            />
+                        </Form.Group>
                         <Form.Group controlId="formCedula">
                             <Form.Label>Cedula</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="cedula"
                                 value={formValues.cedula}
+                                onChange={handleInputChange}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="formRuc">
+                            <Form.Label>Ruc</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="ruc"
+                                value={formValues.ruc}
                                 onChange={handleInputChange}
                             />
                         </Form.Group>

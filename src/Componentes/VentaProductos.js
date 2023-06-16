@@ -238,52 +238,50 @@ const VentaProductos = () => {
         </Table>
       </Row>
       <Row className="mb-4">
-        <Col>
-          <h3>Productos Seleccionados</h3>
-          <Table striped bordered hover id="carrito">
-            <thead>
-              <tr style={{ backgroundColor: '#B4D8E9' }}>
-                <th>Nombre</th>
-                <th>Detalles</th>
-                <th>Costo</th>
-                <th>Cantidad</th>
-                <th>IVA 5%</th>
-                <th>Total</th>
+        <h3>Productos Seleccionados</h3>
+        <Table striped bordered hover id="carrito">
+          <thead>
+            <tr style={{ backgroundColor: '#B4D8E9' }}>
+              <th>Nombre</th>
+              <th>Detalles</th>
+              <th>Costo</th>
+              <th>Cantidad</th>
+              <th>IVA 5%</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Aca se cargan los elemento del carrito */}
+            {productosSeleccionados.map((producto) => (
+              <tr id={producto.id}>
+                <td> {producto.nombre}</td>
+                <td> {producto.descripcionTipoProducto}</td>
+                <td> {formatearPrecio(producto.precioUnitario)}</td>
+                <td>
+                  <input
+                    type="number"
+                    value={cantidadProducto[producto.id]}
+                    onChange={(e) => {
+                      const nuevaCantidad = e.target.value;
+                      setCantidadProducto({ ...cantidadProducto, [producto.id]: nuevaCantidad });
+                      cambiarCantidadProducto(producto.id, nuevaCantidad);
+                    }}
+                    min={1}
+                  />
+                  <button onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
+                </td>
+                <td> {formatearPrecio(producto.precioUnitario * producto.cantidad * 0.05)}</td>
+                <td> {formatearPrecio(producto.precioUnitario * (1 + 0.05) * producto.cantidad)}</td>
               </tr>
-            </thead>
-            <tbody>
-              {/* Aca se cargan los elemento del carrito */}
-              {productosSeleccionados.map((producto) => (
-                <tr id={producto.id}>
-                  <td> {producto.nombre}</td>
-                  <td> {producto.descripcionTipoProducto}</td>
-                  <td> {formatearPrecio(producto.precioUnitario)}</td>
-                  <td>
-                    <input
-                      type="number"
-                      value={cantidadProducto[producto.id]}
-                      onChange={(e) => {
-                        const nuevaCantidad = e.target.value;
-                        setCantidadProducto({ ...cantidadProducto, [producto.id]: nuevaCantidad });
-                        cambiarCantidadProducto(producto.id, nuevaCantidad);
-                      }}
-                      min={1}
-                    />
-                    <button onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
-                  </td>
-                  <td> {formatearPrecio(producto.precioUnitario * producto.cantidad * 0.05)}</td>
-                  <td> {formatearPrecio(producto.precioUnitario * (1 + 0.05) * producto.cantidad)}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan="5">Total</td>
-                <td>{/* Aca se calcula el total de todos los elementos del carrito */ formatearPrecio(total)}</td>
-              </tr>
-            </tfoot>
-          </Table>
-        </Col>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="5">Total</td>
+              <td>{/* Aca se calcula el total de todos los elementos del carrito */ formatearPrecio(total)}</td>
+            </tr>
+          </tfoot>
+        </Table>
       </Row>
       <Row>
         <Col style={{ justifyContent: 'center', display: 'flex' }}>

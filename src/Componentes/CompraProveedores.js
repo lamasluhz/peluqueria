@@ -153,7 +153,7 @@ const CompraProveedores = () => {
              
                         <h4>Compras de Productos</h4>
                         <BuscadorCompraProductos handleSearch={handleSearch} action={openModal} />
-                        <CompraModal showModal={showModal} handleClose={handleClose} />
+                        <CompraModal showModal={showModal} handleClose={handleClose} idProveedores={state.idProveedor} />
                         <SuccessModal
                             show={showSuccessModal}
                             handleClose={() => setShowSuccessModal(false)}

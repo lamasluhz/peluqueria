@@ -6,6 +6,8 @@ import { Modal, Form, Button } from 'react-bootstrap';
 import ClienteRow from "./ClientesRow";
 import ProveedorRow from "./ProveedorRow";
 import '../css/Estilos.css'
+import ProveedorModal from "./ProveedorModal";
+
 const url = 'https://localhost:7137/Proveedor/GetProveedores';
 
 
@@ -152,7 +154,7 @@ const Proveedores = () => {
                 <br />
 
                 {/* <!-- TABLAS --> */}
-                <ClienteModal showModal={showModal} handleClose={handleClose} />
+                <ProveedorModal showModal={showModal} handleClose={handleClose} />
                 <Buscador action={handleModal} handleSearch={handleSearch} />
                 <div className="TablaBordes">
 
