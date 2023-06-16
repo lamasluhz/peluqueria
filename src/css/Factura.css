@@ -124,19 +124,19 @@ p {
 }
 
 .TablaVentas {
-    border: 1px solid blue;
+    border: 1px solid #B4D8E9;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 }
 
 .TablaCompras {
-    border: 1px solid blue;
+    border: 1px solid #B4D8E9;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 }
 
 .tabla-cabeza {
-    border-bottom: blue;
-    border-top: blue;
+    border-bottom: #B4D8E9;
+    border-top: #B4D8E9;
 }
 
