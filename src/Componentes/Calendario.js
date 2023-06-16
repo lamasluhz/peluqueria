@@ -11,6 +11,7 @@ import Stock from "./Stock";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { NavLink } from "react-router-dom";
+import '../css/Estilos.css'
 
 const Calendar = () => {
   //// segundo post en modal
@@ -184,7 +185,7 @@ const Calendar = () => {
     return (
       <div>
         {" "}
-        <h2>Reservas</h2>
+        <h2 className="Reservas">Reservas</h2>
         <div className="header">
           {/* Aqui hice cambios para modificar en el front  */}
           <button
@@ -377,6 +378,7 @@ const Calendar = () => {
 
   return (
     <div>
+      <br/>
       <div className="calendar">
         {renderHeader()}
         <div className="weekdays">
@@ -506,33 +508,22 @@ const Calendar = () => {
 
       {/* Tabla de reservas */}
       <div>
-        <div>
-          <hr
-            style={{ marginBottom: "-15px", borderTop: "2px solid #B4D8E9" }}
-          />
-          <h2
-            style={{
-              paddingLeft: "20px",
-              marginTop: "15px",
-              marginBottom: "-15px",
-            }}
-          >
-            Reservas "MES"
-          </h2>
-          <hr style={{ borderTop: "2px solid #B4D8E9" }} />
+        <div>     
+          <h4 className="Reservas">Reservas 'MES'</h4>
         </div>
+
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ marginBottom: "10px" }}>
             <Buscador action={handleModal} handleSearch={handleSearch} />
           </div>
 
           <div>
+          <div className="TablaBordes">
             <table
-              className="table table-striped table-hover border-white"
-              style={{ border: "1px solid black" }}
+              className="table table-striped table-hover"
               id="myTable"
             >
-              <thead>
+              <thead >
                 <tr style={{ backgroundColor: "#c3dce8" }}>
                   <th scope="col">Nombre</th>
                   <th scope="col">Hora</th>
@@ -621,6 +612,7 @@ const Calendar = () => {
                   })}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
         <Modal show={showModal1} onHide={handleCloseModal1}>

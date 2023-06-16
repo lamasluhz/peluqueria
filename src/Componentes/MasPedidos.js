@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-
+import '../css/Estilos.css';
 import Buscador from './Buscador';
 
 const MasPedidos = () => {
@@ -38,7 +38,7 @@ const MasPedidos = () => {
         <td>{servicio.descripcion}</td>
         <td>{servicio.precio}</td>
         <td>{servicio.cantidad}</td>
-       
+
         <td></td>
       </tr>
     ));
@@ -46,32 +46,31 @@ const MasPedidos = () => {
 
   return (
     <div>
-      <div>
-        <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-        <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Servicios Mas Pedidos</h2>
-        <hr style={{ borderTop: '2px solid #B4D8E9' }} />
-      </div>
-
       <div className="container">
+        <div>
+          <h4 className="titulos">Servicios más pedidos</h4>
+        </div>
         <br />
         {/* <!-- TABLAS --> */}
-        
+
         <Buscador handleSearch={handleSearch} />
-        <table className="table table-striped table-hover border-black" style={{ border: '1px solid black' }} id="myTable">
-          <thead>
-            <tr>
-              <th scope="col">Tipo de Servicio</th>
-              <th scope="col">Descripción</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Cantidad</th>
-              
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {renderServicios()}
-          </tbody>
-        </table>
+        <div className="TablaBordes">
+          <table className="table table-striped table-hover" id="myTable">
+            <thead>
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
+                <th scope="col">Tipo de Servicio</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Cantidad</th>
+
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {renderServicios()}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

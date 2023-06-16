@@ -5,6 +5,7 @@ import Buscador from "./Buscador";
 import { Modal, Form, Button } from 'react-bootstrap';
 import ClienteRow from "./ClientesRow";
 import ProveedorRow from "./ProveedorRow";
+import '../css/Estilos.css'
 const url = 'https://localhost:7137/Proveedor/GetProveedores';
 
 
@@ -143,9 +144,8 @@ const Proveedores = () => {
     return (
         <div>
             <div>
-                <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-                <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px', fontWeight: 'bold' }}>Proveedores</h2>
-                <hr style={{ borderTop: '2px solid #B4D8E9' }} />
+                <h3 className="titulos">Proveedores</h3>
+                <hr className="hr" />
             </div>
 
             <div className="container">
@@ -154,23 +154,25 @@ const Proveedores = () => {
                 {/* <!-- TABLAS --> */}
                 <ClienteModal showModal={showModal} handleClose={handleClose} />
                 <Buscador action={handleModal} handleSearch={handleSearch} />
+                <div className="TablaBordes">
 
-                <table className="table table-striped table-hover border-white" style={{ border: '1px solid white' }} id="myTable">
-                    <thead>
-                        <tr style={{ backgroundColor: '#B4D8E9' }}>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">C.I.</th>
-                            <th scope="col">Correo</th>
-                            <th scope="col">Direccion</th>
-                            <th scope="col">Telefono</th>
-                            <th scope="col">Historial</th>
-                            <th scope="col">Otros</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {renderClientes()}
-                    </tbody>
-                </table>
+                    <table className="table table-striped table-hover" id="myTable">
+                        <thead>
+                            <tr style={{ backgroundColor: '#B4D8E9' }}>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">C.I.</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Direccion</th>
+                                <th scope="col">Telefono</th>
+                                <th scope="col">Compras</th>
+                                <th scope="col">Otros</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {renderClientes()}
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <Modal show={showConfirmationModal} onHide={handleCancelDeleteCliente}>
                 <Modal.Header closeButton>

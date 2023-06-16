@@ -1,5 +1,5 @@
 .contenedor {
-  border: solid 1px blue;
+  border: solid 1px #B4D8E9;
   border-radius: 10px;
   text-align: center;
   margin-top: 25px;
@@ -22,7 +22,7 @@
 .titulo-caja {
   font-size: 30px;
   font-weight: bold;
-  color: blue;
+  color: rgb(0, 0, 0);
 }
 
 .botones {
@@ -30,7 +30,7 @@
 }
 
 .monto {
-  color: blue;
+  color: rgb(0, 0, 0);
   background-color: #aae0fa;
 }
 

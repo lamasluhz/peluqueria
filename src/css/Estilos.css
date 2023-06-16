@@ -1,0 +1,38 @@
+.TablaBordes {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.hr {
+    color: #aae0fa
+}
+
+.titulos {
+    padding-left: 20px;
+    margin-top: 15px;
+    margin-bottom: -15px;
+    font-weight: bold;
+    color: #000000
+}
+
+.tabla-cabeza {
+    border-bottom: #ffffff;
+    border-top: #ffffff;
+}
+
+.Reservas{
+    font-weight: bold;
+    color: #000000
+}
+
+.compras-titulos{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.ventas-titulos{
+    font-weight: bold;
+    font-size: 15px;
+    padding-right: 5px;
+}
+

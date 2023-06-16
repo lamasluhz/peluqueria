@@ -4,6 +4,7 @@ import MaquillajesModal from './MaquillajesModal';
 import Buscador from './Buscador';
 import { Modal, Form, Button } from 'react-bootstrap';
 import MaquillajesRow from './MaquillajesRow';
+import '../css/Estilos.css'
 
 const Maquillajes = () => {
   const [maquillajes, setMaquillajes] = useState([]);
@@ -84,31 +85,30 @@ const Maquillajes = () => {
       );
     });
   };
-  
+
   return (
     <div>
-      <div>
-        <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-        <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Maquillajes</h2>
-        <hr style={{ borderTop: '2px solid #B4D8E9' }} />
-      </div>
-
       <div className="container">
+        <div>
+          <h4 className="titulos">Maquillajes</h4>
+        </div>
         <br />
         <MaquillajesModal showModal={showModal} handleClose={handleClose} />
         <Buscador action={handleModal} handleSearch={handleSearch} />
-        <table className="table table-striped table-hover border-black" style={{ border: '1px solid black' }} id="myTable">
-          <thead>
-            <tr>
-              <th scope="col">Maquillaje</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Otros</th>
-            </tr>
-          </thead>
-          <tbody>
-            {renderMaquillajes()}
-          </tbody>
-        </table>
+        <div className="TablaBordes">
+          <table className="table table-striped table-hover " id="myTable">
+            <thead >
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
+                <th scope="col">Maquillaje</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Otros</th>
+              </tr>
+            </thead>
+            <tbody>
+              {renderMaquillajes()}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

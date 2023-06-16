@@ -4,6 +4,7 @@ import LavadosModal from './LavadosModal';
 import Buscador from './Buscador';
 import { Modal, Button } from 'react-bootstrap';
 import LavadosRow from './LavadosRow';
+import '../css/Estilos.css';
 
 const Lavados = () => {
   const [lavados, setLavados] = useState([]);
@@ -84,28 +85,22 @@ const Lavados = () => {
       );
     });
   };
-    return (
-      <div>
+  return (
+    <div>
+      <div className="container">
         <div>
-          <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-          <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Lavados</h2>
-          <hr style={{ borderTop: '2px solid #B4D8E9' }} />
+          <h4 className="titulos">Lavados</h4>
         </div>
-  
-        <div className="container">
-  
-          <br />
-  
-          {/* <!-- TABLAS --> */}
-          <LavadosModal showModal={showModal} handleClose={handleClose} />
-          <Buscador action={handleModal} handleSearch={handleSearch} />
-         
-          <table className="table table-striped table-hover border-black " style={{
-            border: '1px solid black'
-          }} id="myTable"
+        <br />
+
+        {/* <!-- TABLAS --> */}
+        <LavadosModal showModal={showModal} handleClose={handleClose} />
+        <Buscador action={handleModal} handleSearch={handleSearch} />
+        <div className="TablaBordes">
+          <table className="table table-striped table-hover" id="myTable"
           >
             < thead >
-              <tr>
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
                 <th scope="col">Lavado</th>
                 <th scope="col">Precio</th>
                 <th scope="col">Otros</th>
@@ -116,9 +111,10 @@ const Lavados = () => {
             </tbody>
           </table >
         </div>
-      </div >
-    );
-  
+      </div>
+    </div >
+  );
+
 }
 
 export default Lavados

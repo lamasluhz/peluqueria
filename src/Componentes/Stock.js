@@ -22,49 +22,53 @@ const Stock = () => {
 
 
     return (
-        <div style={{ padding: '0 15%' }}>
+        <div>
             <div>
-                <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>
-                    Stock de Productos</h2>
-
+                <h3 className="titulos">Stock de Productos</h3>
+                <hr className="hr" />
             </div>
-            <br />
-            <BuscadorProductos />
-            <Table bordered hover>
-                <thead>
-                    <tr style={{ backgroundColor: '#B4D8E9' }}>
+            <div style={{ padding: '0 15%' }}>
 
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Proveedor</th>
-                        <th>Precio Unitario</th>
-                        <th>Descripcion</th>
+                <BuscadorProductos />
+                <div className="TablaBordes">
 
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        productos.map((producto) => {
-                            return (
-                                <tr id={producto.id}>
-                                    <td> {producto.nombre}</td>
-                                    <td> {producto.cantidad}</td>
+                    <table className="table table-striped table-hover" id="myTable">
+                        <thead>
+                            <tr style={{ backgroundColor: '#B4D8E9' }}>
 
-                                    <td> {producto.proveedor}</td>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Proveedor</th>
+                                <th>Precio Unitario</th>
+                                <th>Descripcion</th>
 
-                                    <td> {producto.precioUnitario}</td>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                productos.map((producto) => {
+                                    return (
+                                        <tr id={producto.id}>
+                                            <td> {producto.nombre}</td>
+                                            <td> {producto.cantidad}</td>
 
-                                    <td> {producto.descripcionTipoProducto}</td>
+                                            <td> {producto.proveedor}</td>
 
-                                    <td><i className="fa-solid fa-pen" style={{ marginRight: '15px', cursor: 'pointer' }}></i> <i class="fa-solid fa-trash" style={{ marginRight: '15px', cursor: 'pointer' }} ></i></td>
-                                </tr>
-                            )
+                                            <td> {producto.precioUnitario}</td>
 
-                        })
-                    }
-                </tbody>
-            </Table>
+                                            <td> {producto.descripcionTipoProducto}</td>
+
+                                            <td><i className="fa-solid fa-pen" style={{ marginRight: '15px', cursor: 'pointer' }}></i> <i class="fa-solid fa-trash" style={{ marginRight: '15px', cursor: 'pointer' }} ></i></td>
+                                        </tr>
+                                    )
+
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
     );

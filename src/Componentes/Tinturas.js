@@ -4,6 +4,7 @@ import TinturasModal from './TinturasModal';
 import Buscador from './Buscador';
 import { Modal, Button } from 'react-bootstrap';
 import TinturasRow from './TinturasRow';
+import '../css/Estilos.css'
 
 const Tinturas = () => {
   const [tinturas, setTinturas] = useState([]);
@@ -84,38 +85,39 @@ const Tinturas = () => {
       );
     });
   };
-  
+
   return (
     <div>
-      <div>
-        <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-        <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Tinturas</h2>
-        <hr style={{ borderTop: '2px solid #B4D8E9' }} />
-      </div>
-  
+
+
       <div className="container">
+        <div>
+          <h4 className="titulos">Tinturas</h4>
+        </div>
         <br />
         {/* Buscador */}
         <Buscador action={handleModal} handleSearch={handleSearch} />
         {/* Modal de Tinturas */}
         <TinturasModal showModal={showModal} handleClose={handleClose} />
         {/* Tabla de Tinturas */}
-        <table className="table table-striped table-hover border-black" style={{ border: '1px solid black' }} id="myTable">
-          <thead>
-            <tr>
-              <th scope="col">Tintura</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Otros</th>
-            </tr>
-          </thead>
-          <tbody>
-            {renderTinturas()}
-          </tbody>
-        </table>
+        <div className="TablaBordes">
+          <table className="table table-striped table-hover" id="myTable">
+            <thead >
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
+                <th scope="col">Tintura</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Otros</th>
+              </tr>
+            </thead>
+            <tbody>
+              {renderTinturas()}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
-  
+
 }
 
 export default Tinturas

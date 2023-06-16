@@ -6,13 +6,14 @@ import { NavLink } from "react-router-dom";
 const BuscadorProductos = ({ action }) => {
     return (
         <InputGroup>
-            <InputGroup.Text>
+            <button type="button" className="btn btn-outline-primary boton">
                 <BsSearch />
-            </InputGroup.Text>
+            </button>
             <FormControl placeholder="Buscar" />
-            <NavLink to='/proveedores' style={{ textDecoration: 'none', color: '#888', fontWeight: 'bold' }} > Proveedores</NavLink>
-
-        </InputGroup>
+            <button className="btn btn-success">
+                <NavLink to='/proveedores' style={{ textDecoration: 'none', color: 'white', fontWeight: 'bold' }} > Proveedores</NavLink>
+            </button>
+        </InputGroup >
     );
 };
 

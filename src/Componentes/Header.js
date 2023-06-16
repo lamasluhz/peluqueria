@@ -51,7 +51,7 @@ const Header = (props) => {
             <div>
                
             </div>
-            <Navbar expand="lg" style={{ display: "flex", alignItems: 'center', padding: 0, borderBottom: '1px solid blue' }}>
+            <Navbar expand="lg" style={{ display: "flex", alignItems: 'center', padding: 0 }}>
                 <Navbar.Toggle aria-controls="navbarNavAltMarkup" />
                 <Navbar.Collapse id="navbarNavAltMarkup" style={{ backgroundColor: '#aae0fa' }}>
                     <Nav className="mr-auto w-100 justify-content-center" style={{ backgroundColor: "#aae0fa", paddingLeft: '30px', fontSize: '20px' }}>

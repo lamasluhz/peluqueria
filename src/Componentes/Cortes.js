@@ -4,6 +4,7 @@ import CortesModal from './CortesModal';
 import Buscador from './Buscador';
 import { Modal, Button } from 'react-bootstrap';
 import CortesRow from './CortesRow';
+import '../css/Estilos.css'
 
 const Cortes = () => {
   const [cortes, setCortes] = useState([]);
@@ -87,35 +88,33 @@ const Cortes = () => {
 
   return (
     <div>
-      <div>
-        <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-        <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Cortes</h2>
-        <hr style={{ borderTop: '2px solid #B4D8E9' }} />
-      </div>
+
 
       <div className="container">
-
+        <div>
+          <h4 className="titulos">Cortes</h4>
+        </div>
         <br />
         {/* <!-- TABLAS --> */}
         <CortesModal showModal={showModal} handleClose={handleClose} />
         <Buscador action={handleModal} handleSearch={handleSearch} />
-        <table className="table table-striped table-hover border-black " style={{
-          border: '1px solid black'
-        }} id="myTable"
-        >
-          < thead >
-            <tr>
-              <th scope="col">Corte</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Otros</th>
-            </tr>
-          </thead >
-          <tbody>
-            {renderCortes()}
-          </tbody>
-        </table >
-      </div>
-    </div >
+        <div className="TablaBordes">
+          <table className="table table-striped table-hover" id="myTable"
+          >
+            < thead >
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
+                <th scope="col">Corte</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Otros</th>
+              </tr>
+            </thead >
+            <tbody>
+              {renderCortes()}
+            </tbody>
+          </table >
+        </div>
+      </div >
+    </div>
   )
 }
 

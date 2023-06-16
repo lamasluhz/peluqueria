@@ -22,9 +22,9 @@ const BuscadorVentaProductos = ({ action, handleSearch }) => {
 
     return (
         <InputGroup>
-            <InputGroup.Text>
+            <button type="button" className="btn btn-outline-primary boton">
                 <BsSearch />
-            </InputGroup.Text>
+            </button>
             <FormControl placeholder="Buscar" onChange={handleInputChange} value={searchValue} />
         </InputGroup>
     );

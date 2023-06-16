@@ -22,13 +22,15 @@ const Buscador = ({ action, handleSearch }) => {
 
     return (
         <InputGroup>
-            <InputGroup.Text>
+            {/*<InputGroup.Text>*/}
+            <button type="button" className="btn btn-outline-primary boton">
                 <BsSearch />
-            </InputGroup.Text>
+            </button>
+            {/*</InputGroup.Text>*/}
             <FormControl placeholder="Buscar" onChange={handleInputChange} value={searchValue} />
-            <Button variant="light" onClick={action}>
+            <button className="btn btn-success" onClick={action}>
                 <IoMdPersonAdd />
-            </Button>
+            </button>
         </InputGroup>
     );
 };

@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import BuscadorCompraProductos from './BuscadorVentaProductos';
 import SuccessModal from './SuccessModal';
+import '../css/Estilos.css'
 
 const VentaProductos = () => {
   const url = 'https://localhost:7137/StockProducto/GetStockProductos';
@@ -41,7 +42,7 @@ const VentaProductos = () => {
       console.log(error.message);
     }
   };
-  
+
   const obtenerProductos = async () => {
     const response = await axios.get(url);
     const updatedProductos = response.data.map((producto) => ({
@@ -58,7 +59,7 @@ const VentaProductos = () => {
   useEffect(() => {
     obtenerProveedor();
   }, [state]); // Depend on state so the effect runs whenever state changes
-  
+
   useEffect(() => {
     console.log(cliente);
   }, [cliente]);
@@ -101,7 +102,7 @@ const VentaProductos = () => {
 
   const agregarAlCarrito = (productoAgregado) => {
     let productoYaEnCarrito = productosSeleccionados.find((producto) => producto.id === productoAgregado.id);
-  
+
     if (productoYaEnCarrito) {
       // Si el producto ya está en el carrito, aumenta su cantidad
       setCantidadProducto({
@@ -141,46 +142,47 @@ const VentaProductos = () => {
   );
 
 
-  const confirmarVenta= async () => {
+  const confirmarVenta = async () => {
     const postUrl = 'https://localhost:7137/Productos'; // Use your API URL
 
     // Collect all the product details into an array
     let detalleVentaDto = productosSeleccionados.map(producto => {
-        return {
-            idProducto: producto.idProducto,
-            cantidad: cantidadProducto[producto.id],
-            precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
-            iva: 0 // Assuming a 5% tax rate
-        };
+      return {
+        idProducto: producto.idProducto,
+        cantidad: cantidadProducto[producto.id],
+        precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
+        iva: 0 // Assuming a 5% tax rate
+      };
     });
 
     // Prepare the data to be sent in the POST request
     const data = {
-        idCliente: cliente.id,
-        idDeposito: 1,
-        idTurno: null,
-        detalleVentaDto: detalleVentaDto
+      idCliente: cliente.id,
+      idDeposito: 1,
+      idTurno: null,
+      detalleVentaDto: detalleVentaDto
     };
 
     try {
-        // Perform a single Axios POST request
-        await axios.post(postUrl, data);
+      // Perform a single Axios POST request
+      await axios.post(postUrl, data);
 
-        // Show success modal after completing the request
-        setShowSuccessModal(true);
+      // Show success modal after completing the request
+      setShowSuccessModal(true);
     } catch (error) {
-        console.error('Error during POST request:', error);
+      console.error('Error during POST request:', error);
     }
-};
+  };
 
 
   return (
     <Container className="w-75 mt-4">
-      <Row className="mb-4">
-      <h2>Cliente</h2>
+      <Row className="mb-4" style={{ border: '1px solid #aae0fa', borderRadius: '10px' }}>
+        <h3 >Cliente</h3>
+        <hr className='hr' />
         <Col>
           <div className='column is-one-third'>
-            <label htmlFor="cedula">Nro Documento</label>
+            <label htmlFor="cedula" className='ventas-titulos'>Nro Documento: </label>
             <input
               className="input is-primary"
               type="text"
@@ -189,8 +191,9 @@ const VentaProductos = () => {
               onKeyDown={handleKeyDown}
             />
           </div>
+          <br />
           <div className='column is-one-third'>
-            <label htmlFor="str_nombre">Nombre</label>
+            <label htmlFor="str_nombre" className='ventas-titulos'>Nombre:</label>
             <input
               className="input is-primary"
               type="text"
@@ -199,23 +202,20 @@ const VentaProductos = () => {
               value={`${cliente?.nombres || ''} ${cliente?.apellidos || ''}`}
             />
           </div>
+          <br />
           <SuccessModal
-                            show={showSuccessModal}
-                            handleClose={() => setShowSuccessModal(false)}
-                            message="Compra Confirmada"
+            show={showSuccessModal}
+            handleClose={() => setShowSuccessModal(false)}
+            message="Compra Confirmada"
           />
         </Col>
       </Row>
       <Row className="mb-4">
-        <Row>
-          <Col>
-            <h2>Venta de Productos</h2>
-            <BuscadorCompraProductos handleSearch={handleSearch} action={openModal} />
-          </Col>
-        </Row>
+        <h3>Venta de Productos</h3>
+        <BuscadorCompraProductos handleSearch={handleSearch} action={openModal} />
         <Table striped bordered hover>
           <thead>
-            <tr>
+            <tr style={{ backgroundColor: '#B4D8E9' }}>
               <th>Nombre</th>
               <th>Detalles</th>
               <th>Costo</th>
@@ -239,10 +239,10 @@ const VentaProductos = () => {
       </Row>
       <Row className="mb-4">
         <Col>
-          <h2>Productos Seleccionados</h2>
+          <h3>Productos Seleccionados</h3>
           <Table striped bordered hover id="carrito">
             <thead>
-              <tr>
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
                 <th>Nombre</th>
                 <th>Detalles</th>
                 <th>Costo</th>

@@ -4,6 +4,7 @@ import ManicurasModal from './ManicurasModal';
 import Buscador from './Buscador';
 import { Modal, Form, Button } from 'react-bootstrap';
 import ManicurasRow from './ManicurasRow';
+import '../css/Estilos.css'
 
 const Manicuras = () => {
   const [manicuras, setManicuras] = useState([]);
@@ -87,34 +88,30 @@ const Manicuras = () => {
 
   return (
     <div>
-      <div>
-        <hr style={{ marginBottom: '-15px', borderTop: '2px solid #B4D8E9' }} />
-        <h2 style={{ paddingLeft: '20px', marginTop: '15px', marginBottom: '-15px' }}>Manicuras</h2>
-        <hr style={{ borderTop: '2px solid #B4D8E9' }} />
-      </div>
 
       <div className="container">
-
+        <div>
+          <h4 className="titulos">Manicuras</h4>
+        </div>
         <br />
-
         {/* <!-- TABLAS --> */}
         <ManicurasModal showModal={showModal} handleClose={handleClose} />
         <Buscador action={handleModal} handleSearch={handleSearch} />
+        <div className="TablaBordes">
 
-        <table className="table table-striped table-hover border-black" style={{
-          border: '1px solid black'
-        }} id="myTable">
-          <thead>
-            <tr>
-              <th scope="col">Manicura</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Otros</th>
-            </tr>
-          </thead>
-          <tbody>
-            {renderManicuras()}
-          </tbody>
-        </table>
+          <table className="table table-striped table-hover" id="myTable">
+            <thead >
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
+                <th scope="col">Manicura</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Otros</th>
+              </tr>
+            </thead>
+            <tbody>
+              {renderManicuras()}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
