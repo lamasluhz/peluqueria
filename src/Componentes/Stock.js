@@ -9,15 +9,19 @@ const Stock = () => {
     const obtenerProductos = async () => {
         const response = await axios.get(url);
         setProducto(response.data);
+
     }
     // {
+     
+      
 
+      
     //   }
     useEffect(() => {
         obtenerProductos();
     }, []);
 
-
+   
 
 
 

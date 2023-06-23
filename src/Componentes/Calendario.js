@@ -388,7 +388,7 @@ const Calendar = () => {
         </div>
         {renderDays()}
 
-        <div className="button-container" style={{ marginBottom: "30px" }}>
+        <div className="button-container" style={{ marginBottom: "30px" ,  justifyContent: "flex-end"}}>
           <button
             className="btn btn-primary create-button"
             onClick={handleCreateClick}
@@ -517,7 +517,9 @@ const Calendar = () => {
               marginBottom: "-15px",
             }}
           >
-            Reservas "MES"
+           {`Fecha seleccionada: ${selectedDay} de ${
+              monthNames[date.getMonth()]
+            } ${date.getFullYear()}`}
           </h2>
           <hr style={{ borderTop: "2px solid #B4D8E9" }} />
         </div>
@@ -581,7 +583,7 @@ const Calendar = () => {
                     return (
                       <tr key={reserva.id}>
                         <td>
-                          {reserva.cliente} {reserva.idClienteG}{" "}
+                          {reserva.cliente} {" "}
                         </td>
                         <td>
                           {formatearHora(
@@ -654,14 +656,8 @@ const Calendar = () => {
             )}
           </Modal.Body>
 
-          <Modal.Footer style={{ justifyContent: "space-between" }}>
-            <NavLink
-              to="/ventas-productos-servicios"
-              className="nav-link"
-              activeClassName="active"
-            >
-              Agregar Producto
-            </NavLink>
+          <Modal.Footer style={{ justifyContent: "flex-end" }}>
+        
 
             <Button variant="success" onClick={confirmarFactura}>
               Facturar

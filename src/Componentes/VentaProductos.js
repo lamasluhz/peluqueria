@@ -176,11 +176,12 @@ const VentaProductos = () => {
 
   return (
     <Container className="w-75 mt-4">
-      <Row className="mb-4">
-      <h2>Cliente</h2>
+      <Row className="mb-4" style={{ border: '1px solid #aae0fa', borderRadius: '10px' }}>
+        <h3 >Cliente</h3>
+        <hr style={{ color: '#aae0fa'}} />
         <Col>
           <div className='column is-one-third'>
-            <label htmlFor="cedula">Nro Documento</label>
+            <label htmlFor="cedula" style={{fontWeight: 'bold',fontSize: '15',paddingRight: '5'}}>Nro Documento: </label>
             <input
               className="input is-primary"
               type="text"
@@ -189,8 +190,9 @@ const VentaProductos = () => {
               onKeyDown={handleKeyDown}
             />
           </div>
+          <br />
           <div className='column is-one-third'>
-            <label htmlFor="str_nombre">Nombre</label>
+            <label htmlFor="str_nombre"  style={{fontWeight: 'bold',fontSize: '15',paddingRight: '5'}}>Nombre:</label>
             <input
               className="input is-primary"
               type="text"
@@ -199,10 +201,11 @@ const VentaProductos = () => {
               value={`${cliente?.nombres || ''} ${cliente?.apellidos || ''}`}
             />
           </div>
+          <br />
           <SuccessModal
-                            show={showSuccessModal}
-                            handleClose={() => setShowSuccessModal(false)}
-                            message="Compra Confirmada"
+            show={showSuccessModal}
+            handleClose={() => setShowSuccessModal(false)}
+            message="Compra Confirmada"
           />
         </Col>
       </Row>
@@ -215,7 +218,7 @@ const VentaProductos = () => {
         </Row>
         <Table striped bordered hover>
           <thead>
-            <tr>
+            <tr style={{ backgroundColor: '#B4D8E9' }}>
               <th>Nombre</th>
               <th>Detalles</th>
               <th>Costo</th>
@@ -242,7 +245,7 @@ const VentaProductos = () => {
           <h2>Productos Seleccionados</h2>
           <Table striped bordered hover id="carrito">
             <thead>
-              <tr>
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
                 <th>Nombre</th>
                 <th>Detalles</th>
                 <th>Costo</th>

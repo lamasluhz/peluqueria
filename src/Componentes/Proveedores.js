@@ -159,12 +159,12 @@ const Proveedores = () => {
                 <table className="table table-striped table-hover border-white" style={{ border: '1px solid white' }} id="myTable">
                     <thead>
                         <tr style={{ backgroundColor: '#B4D8E9' }}>
-                            <th scope="col">Nombre</th>
+                            <th scope="col">Empresa</th>
                             <th scope="col">C.I.</th>
                             <th scope="col">Correo</th>
                             <th scope="col">Direccion</th>
                             <th scope="col">Telefono</th>
-                            <th scope="col">Historial</th>
+                            <th scope="col">Realizar Compra</th>
                             <th scope="col">Otros</th>
                         </tr>
                     </thead>

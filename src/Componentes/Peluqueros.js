@@ -95,7 +95,7 @@ const Peluquero = () => {
                             <th scope="col">Correo</th>
                             <th scope="col">Direccion</th>
                             <th scope="col">Telefono</th>
-                            <th scope="col">Especialidades</th>  <th scope="col">Edit</th>
+                            <th scope="col">Especialidades</th>  <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>

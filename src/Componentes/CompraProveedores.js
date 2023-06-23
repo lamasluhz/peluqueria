@@ -140,9 +140,9 @@ const CompraProveedores = () => {
         <Container className="w-75 mt-4" >
             <Row className="mb-4">
                 <Col>
-                    <h2>Proveedor: {(proveedor && proveedor.nombreEmpresa) ? proveedor.nombreEmpresa : null} </h2>
+                    <h3>Proveedor: {(proveedor && proveedor.nombreEmpresa) ? proveedor.nombreEmpresa : null} </h3>
 
-                    <h2>Deposito: Deposito 1</h2>
+                    <h3>Deposito: Deposito 1</h3>
                 </Col>
             </Row>
             <Row>
@@ -164,7 +164,7 @@ const CompraProveedores = () => {
                 </Row>
                 <Table striped bordered hover>
                     <thead>
-                        <tr>
+                        <tr style={{ backgroundColor: '#B4D8E9' }}>
                             <th>Nombre</th>
                             <th>Detalles</th>
 
@@ -200,7 +200,7 @@ const CompraProveedores = () => {
                     <h2>Productos Seleccionados</h2>
                     <Table striped bordered hover id='carrito'>
                         <thead>
-                            <tr>
+                            <tr style={{ backgroundColor: '#B4D8E9' }}>
                                 <th>Nombre</th>
                                 <th>Detalles</th>
 
