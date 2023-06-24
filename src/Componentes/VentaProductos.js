@@ -179,10 +179,10 @@ const VentaProductos = () => {
     <Container className="w-75 mt-4">
       <Row className="mb-4" style={{ border: '1px solid #aae0fa', borderRadius: '10px' }}>
         <h3 >Cliente</h3>
-        <hr className='hr' />
+        <hr style={{ color: '#aae0fa'}} />
         <Col>
           <div className='column is-one-third'>
-            <label htmlFor="cedula" className='ventas-titulos'>Nro Documento: </label>
+            <label htmlFor="cedula" style={{fontWeight: 'bold',fontSize: '15',paddingRight: '5'}}>Nro Documento: </label>
             <input
               className="input is-primary"
               type="text"
@@ -193,7 +193,7 @@ const VentaProductos = () => {
           </div>
           <br />
           <div className='column is-one-third'>
-            <label htmlFor="str_nombre" className='ventas-titulos'>Nombre:</label>
+            <label htmlFor="str_nombre"  style={{fontWeight: 'bold',fontSize: '15',paddingRight: '5'}}>Nombre:</label>
             <input
               className="input is-primary"
               type="text"
