@@ -200,6 +200,75 @@ public IActionResult ObtenerFacturaProveedorGeneral(int id)
 }
 
 
+/////////////// reportes // Obtener facturas facturadas de proveedores
+[HttpGet("facturaProveedoresFacturadas")]
+public IActionResult ObtenerFacturasProveedoresFacturadas()
+{
+    try
+    {
+        var facturasProveedoresFacturadas = _context.FacturaProveedores
+            .Where(fp => fp.Estado == "Facturado")
+            .Include(fp => fp.IdCompraNavigation)
+                .ThenInclude(c => c.IdProveedorNavigation)
+            .ToList();
+
+        var respuesta = facturasProveedoresFacturadas.Select(facturaProveedor => new
+        {
+            FacturaProveedor = new
+            {
+                facturaProveedor.Id,
+                FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
+                Estado = facturaProveedor.Estado
+            },
+            Proveedor = new
+            {
+                facturaProveedor.IdCompraNavigation.IdProveedorNavigation.NombreEmpresa
+            },
+            TotalProductos = facturaProveedor.IdCompraNavigation.Total
+        });
+
+        return Ok(respuesta); // Respuesta exitosa con las facturas facturadas de proveedores
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
+
+// Obtener facturas pendientes de proveedores
+[HttpGet("facturaProveedoresPendientes")]
+public IActionResult ObtenerFacturasProveedoresPendientes()
+{
+    try
+    {
+        var facturasProveedoresPendientes = _context.FacturaProveedores
+            .Where(fp => fp.Estado == "Pendiente")
+            .Include(fp => fp.IdCompraNavigation)
+                .ThenInclude(c => c.IdProveedorNavigation)
+            .ToList();
+
+        var respuesta = facturasProveedoresPendientes.Select(facturaProveedor => new
+        {
+            FacturaProveedor = new
+            {
+                facturaProveedor.Id,
+                FechaEmision = facturaProveedor.FechaEmision.ToString("yyyy-MM-dd"),
+                Estado = facturaProveedor.Estado
+            },
+            Proveedor = new
+            {
+                facturaProveedor.IdCompraNavigation.IdProveedorNavigation.NombreEmpresa
+            },
+            TotalProductos = facturaProveedor.IdCompraNavigation.Total
+        });
+
+        return Ok(respuesta); // Respuesta exitosa con las facturas pendientes de proveedores
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
 
 
     }

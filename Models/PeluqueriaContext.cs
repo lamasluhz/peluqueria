@@ -60,11 +60,6 @@ namespace PeluqueriaWebApi.Models
 
                 entity.Property(e => e.IdCaja).HasColumnName("idCaja");
 
-                entity.Property(e => e.Clave)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("clave");
-
                 entity.Property(e => e.Eliminado).HasColumnName("eliminado");
 
                 entity.Property(e => e.Estado)

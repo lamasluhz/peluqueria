@@ -23,153 +23,77 @@ namespace PeluqueriaWebApi.Controllers
             _logger = logger;
             _context = context;
         }
-     
-////////////
+
+        ////////////
 
 
-private string HashPassword(string password)
+        private string HashPassword(string password)
         {
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             return hashedPassword;
         }
-///////////////////////
-[HttpPost("cajas")]
-public IActionResult AgregarCaja([FromBody] CajaAgregarDto cajaAgregarDto)
-{
-    try
-    {
-        string claveEncriptada = HashPassword(cajaAgregarDto.Clave);
-        
-        // Crear una nueva instancia de Caja con los datos proporcionados
-        var nuevaCaja = new Caja
+
+///nuevo 
+ [HttpPost("cajas")]
+        public IActionResult AbrirCaja(CajaAgregarDto cajaAperturaDto)
         {
-            Nombre = cajaAgregarDto.Nombre,
-            Clave = claveEncriptada,
-            HoraInicial = DateTime.Now.TimeOfDay,
-            HoraFinal = DateTime.Now.TimeOfDay,
-            FechaCierre = DateTime.Now,
-            FechaApertura = DateTime.Now,
-            MontoApertura = 0,
-            MontoCierre= 0,
-            Estado="Cerrado",
-            Eliminado = false
-        };
-
-          // Agregar la nueva caja al contexto de la base de datos
-        _context.Cajas.Add(nuevaCaja);
-        _context.SaveChanges();
-
-        return Ok(nuevaCaja.IdCaja); // Devolver el ID de la caja recién creada
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
-    }
-
-
-}[HttpPost("VerificarUsuario")]
-public async Task<ActionResult<UsuarioConectadoDto>> VerificarUsuario([FromBody] CajaUsuarioDto usuarioDto)
-{
-    try
-    {
-        if (usuarioDto.Clave == null)
-        {
-            return BadRequest();
-        }
-        
-        var user = await _context.Cajas.FirstOrDefaultAsync(u => u.Nombre.Equals(usuarioDto.Nombre));
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        string inputPassword = usuarioDto.Clave;
-        string hashedPassword = user.Clave;
-
-        bool passwordMatches = BCrypt.Net.BCrypt.Verify(inputPassword, hashedPassword);
-
-        if (passwordMatches)
-        {
-            user.Estado = "Abierta";
-            user.MontoApertura = usuarioDto.MontoApertura; // Agregar el nuevo monto
-            await _context.SaveChangesAsync();
-
-            var usuarioConectadoDto = new UsuarioConectadoDto
+            try
             {
-                IdUsuario = user.IdCaja // Asignar el ID de la caja (usuario) conectado al DTO
-            };
+                var nuevaCaja = new Caja
+                {
+                    FechaApertura = DateTime.Now,
+                    HoraInicial = DateTime.Now.TimeOfDay,
+                    MontoApertura = cajaAperturaDto.MontoInicial,
+                    Nombre = "Caja",
+                    Estado = "Abierta",
+                    Eliminado = false
+                };
 
-            return Ok(usuarioConectadoDto); // Retornar el DTO con el ID del usuario
-        }
-        else
-        {
-            return NotFound();
-        }
-    }
-    catch (Exception e)
-    {
-        return BadRequest(e);
-    }
-}
+                _context.Cajas.Add(nuevaCaja);
+                _context.SaveChanges();
 
-
-
-
-
-
-//////////////
-
-[HttpGet("cajas")]
-public IActionResult ObtenerCajas()
-{
-    try
-    {
-        var cajas = _context.Cajas
-            .Select(c => new CajaDto
+                return Ok(nuevaCaja.IdCaja);
+            }
+            catch (Exception ex)
             {
-                Nombre = c.Nombre,
-                FechaApertura = c.FechaApertura,
-              //  HoraInicio =c.HoraInicial.ToString("hh\\:mm"),
-                //Horafinal =c.HoraFinal.ToString("hh\\:mm"),
-                Estado = c.Estado,
-                MontoApertura=c.MontoApertura,
-                  
-               // Eliminado = c.Eliminado
-            })
-            .ToList();
+                _logger.LogError(ex, "Error al abrir la caja");
+                return StatusCode(500, "Error al abrir la caja");
+            }
+        }
 
-        return Ok(cajas); // Respuesta exitosa con todas las cajas
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message); // Error interno del servidor
-    }
-}
+
+
+
+
+
 [HttpGet("cajas/{id}")]
-public IActionResult ObtenerCajaPorId(int id)
+public IActionResult ObtenerDetallesCaja(int id)
 {
     try
     {
         var caja = _context.Cajas
-            .Where(c => c.IdCaja == id)
-            .Select(c => new CajaDto
-            {
-                Nombre = c.Nombre,
-                FechaApertura = c.FechaApertura,
-                // HoraInicio =c.HoraInicial.ToString("hh\\:mm"),
-                // Horafinal =c.HoraFinal.ToString("hh\\:mm"),
-                Estado = c.Estado,
-                MontoApertura = c.MontoApertura,
-                // Eliminado = c.Eliminado
-            })
-            .FirstOrDefault();
+            .FirstOrDefault(c => c.IdCaja == id);
 
         if (caja == null)
         {
             return NotFound(); // Caja no encontrada
         }
 
-        return Ok(caja); // Respuesta exitosa con la caja encontrada
+        var detallesCaja = new CajaDto
+        {
+            IdCaja = caja.IdCaja,
+            FechaApertura = caja.FechaApertura.ToString("dd/MM/yyyy"),
+            FechaCierre = caja.FechaCierre?.ToString("dd/MM/yyyy"),
+           HoraInicio = caja.HoraInicial?.ToString(@"hh\:mm"),
+            HoraFin = caja.HoraFinal?.ToString(@"hh\:mm"),
+            MontoApertura = caja.MontoApertura,
+            MontoCierre = caja.MontoCierre,
+            Nombre = caja.Nombre,
+            Estado = caja.Estado,
+            Eliminado = caja.Eliminado
+        };
+
+        return Ok(detallesCaja); // Respuesta exitosa con los detalles de la caja
     }
     catch (Exception ex)
     {
@@ -177,20 +101,21 @@ public IActionResult ObtenerCajaPorId(int id)
     }
 }
 
-[HttpPut("CerrarSesion")]
-public async Task<IActionResult> UpdateCerrarSesion([FromBody] CierreSesionDto dto)
+[HttpPut("cajas/{id}/cerrar")]
+public async Task<IActionResult> CerrarCaja(int id, CierreCajaDto cierreCajaDto)
 {
     try
     {
-        var caja = await _context.Cajas.FindAsync(dto.Id);
+        var caja = await _context.Cajas.FindAsync(id);
         if (caja == null)
         {
             return NotFound(); // Caja no encontrada
         }
 
-        caja.Estado = "Cerrado";
-        caja.MontoCierre = dto.MontoCierre;
+        caja.MontoCierre = cierreCajaDto.MontoCierre;
+        caja.HoraFinal = DateTime.Now.TimeOfDay;
         caja.FechaCierre = DateTime.Now;
+        caja.Estado="Cerrado";
 
         await _context.SaveChangesAsync();
 
@@ -201,6 +126,11 @@ public async Task<IActionResult> UpdateCerrarSesion([FromBody] CierreSesionDto d
         return StatusCode(500, ex.Message); // Error interno del servidor
     }
 }
+
+        // guardar cierre tabla de caja trae total fecha y datos de hora
+
+
+
 
 
 

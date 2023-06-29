@@ -65,6 +65,7 @@ namespace PeluqueriaWebApi.Controllers
                     Monto = movimientoSalidaDto.Monto,
                     IdFactura = null,
                     IdFacturaProveedor = movimientoSalidaDto.IdFacturaProveedor,
+                    
                     FechaMovimiento = DateTime.Now,
                     Eliminado = false
                 };
@@ -162,5 +163,128 @@ public IActionResult ObtenerMovimientosPorFecha(DateTime fecha)
     }
 }
 
+
+///////// total de la caja con todos los miovimientos  // GET: api/MovimientosCaja/totalPorCaja/{idCaja}
+[HttpGet("totalPorCaja/{idCaja}")]
+public IActionResult ObtenerTotalPorCaja(int idCaja)
+{
+    try
+    {
+        var movimientosPorCaja = _context.MovimientosCajas
+            .Where(m => m.IdCaja == idCaja)
+            .GroupBy(m => m.IdCaja)
+            .Select(g => new
+            {
+                IdCaja = g.Key,
+                TotalEntrada = g.Where(m => m.TipoMovimiento == "Entrada").Sum(m => m.Monto),
+                TotalSalida = g.Where(m => m.TipoMovimiento == "Salida").Sum(m => m.Monto),
+                Total = g.Where(m => m.TipoMovimiento == "Entrada").Sum(m => m.Monto) - g.Where(m => m.TipoMovimiento == "Salida").Sum(m => m.Monto)
+            })
+            .SingleOrDefault();
+
+        if (movimientosPorCaja == null)
+        {
+            return NotFound(); // Caja no encontrada
+        }
+
+        return Ok(movimientosPorCaja);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
 }
+
+///para reporte general 
+// GET: api/Caja/cajas/{id}/movimientos
+[HttpGet("cajas/{id}/movimientosReporte")]
+public IActionResult ObtenerMovimientosCaja(int id)
+{
+    try
+    {
+        var caja = _context.Cajas.FirstOrDefault(c => c.IdCaja == id);
+        if (caja == null)
+        {
+            return NotFound(); // Caja no encontrada
+        }
+
+        var movimientosCaja = _context.MovimientosCajas
+            .Where(m => m.IdCaja == id)
+            .ToList();
+
+        var resultado = new
+        {Movimientos = movimientosCaja.Select(m => new
+            {
+                TipoMovimiento = m.TipoMovimiento,
+                Monto = m.Monto
+            }).ToList(),
+           
+            Diferencia = movimientosCaja.Where(m => m.TipoMovimiento == "Entrada").Sum(m => m.Monto) - movimientosCaja.Where(m => m.TipoMovimiento == "Salida").Sum(m => m.Monto),
+           
+            Caja = new
+            {
+                HoraInicio = caja.HoraInicial?.ToString("hh\\:mm"),
+                HoraFin = caja.HoraFinal?.ToString("hh\\:mm"),
+                FechaInicio = caja.FechaApertura.ToString("yyyy-MM-dd"),
+                FechaFin = caja.FechaCierre?.ToString("yyyy-MM-dd"),
+                MontoApertura = caja.MontoApertura,
+                MontoCierre = movimientosCaja.Where(m => m.TipoMovimiento == "Entrada").Sum(m => m.Monto) - movimientosCaja.Where(m => m.TipoMovimiento == "Salida").Sum(m => m.Monto)
+            }
+            
+        };
+
+        return Ok(resultado);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
+
+
+///reporte mas general 
+// GET: api/MovimientosCaja/cajas/movimientosReporte
+[HttpGet("cajas/movimientosReporteGeneral")]
+public IActionResult ObtenerMovimientosCajaReporte()
+{
+    try
+    {
+        var cajas = _context.Cajas.ToList();
+        var movimientosCajas = _context.MovimientosCajas.ToList();
+
+        var resultado = cajas.Select(caja => new
+        {
+            Caja = new
+            {
+                HoraInicio = caja.HoraInicial?.ToString("hh\\:mm"),
+                HoraFin = caja.HoraFinal?.ToString("hh\\:mm"),
+                FechaInicio = caja.FechaApertura.ToString("yyyy-MM-dd"),
+                FechaFin = caja.FechaCierre?.ToString("yyyy-MM-dd"),
+                MontoApertura = caja.MontoApertura,
+                MontoCierre = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto) - movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto)
+            },
+            Movimientos = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja).Select(m => new
+            {
+                TipoMovimiento = m.TipoMovimiento,
+                Monto = m.Monto
+            }).ToList(),
+            Diferencia = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto) - movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto)
+        });
+
+        return Ok(resultado);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
+
+
+
+
+    }
+}
+ // get de facturas ventasfacturadas 
+ //factura compras ya facturadas 
+ // los pendientes de ambos 
+

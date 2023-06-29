@@ -258,6 +258,7 @@ public IActionResult ObtenerServiciosPorCliente(int idCliente)
             .Where(dt => dt.IdTipoServicioNavigation != null)
             .Select(dt => new
             {
+
                 Servicio = dt.IdTipoServicioNavigation.Descripcion,
                 Fecha = dt.IdTurnoNavigation.Fecha
             })
@@ -268,6 +269,71 @@ public IActionResult ObtenerServiciosPorCliente(int idCliente)
     catch (Exception ex)
     {
         return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
+///////////////reportes generales
+
+// GET: api/Factura/pendientes
+[HttpGet("pendientes")]
+public IActionResult ObtenerFacturasPendientes()
+{
+    try
+    {
+        var facturasPendientes = _context.Facturas
+            .Include(f => f.IdVentaNavigation)
+            .ThenInclude(v => v.IdClienteNavigation)
+            .ThenInclude(c => c.IdPersonaNavigation)
+            .Include(f => f.IdVentaNavigation.VentasDetalles)
+            .ThenInclude(d => d.IdProductoNavigation)
+            .Where(f => f.Estado == "Pendiente")
+            .Select(f => new FacturaDTO
+            {
+                Id = f.Id,
+                FechaEmision = f.FechaEmision,
+                Estado = f.Estado,
+                TotalVenta = f.IdVentaNavigation.Total,
+                NombreCliente = f.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Nombres,
+                ApellidoCliente = f.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Apellidos
+            })
+            .ToList();
+
+        return Ok(facturasPendientes);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
+
+// GET: api/Factura/facturadas
+[HttpGet("facturadas")]
+public IActionResult ObtenerFacturasFacturadas()
+{
+    try
+    {
+        var facturasFacturadas = _context.Facturas
+            .Include(f => f.IdVentaNavigation)
+            .ThenInclude(v => v.IdClienteNavigation)
+            .ThenInclude(c => c.IdPersonaNavigation)
+            .Include(f => f.IdVentaNavigation.VentasDetalles)
+            .ThenInclude(d => d.IdProductoNavigation)
+            .Where(f => f.Estado == "Facturado")
+            .Select(f => new FacturaDTO
+            {
+                Id = f.Id,
+                FechaEmision = f.FechaEmision,
+                Estado = f.Estado,
+                TotalVenta = f.IdVentaNavigation.Total,
+                NombreCliente = f.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Nombres,
+                ApellidoCliente = f.IdVentaNavigation.IdClienteNavigation.IdPersonaNavigation.Apellidos
+            })
+            .ToList();
+
+        return Ok(facturasFacturadas);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
 }
 
