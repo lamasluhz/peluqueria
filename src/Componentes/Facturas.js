@@ -5,8 +5,7 @@ import ConvertirFecha from "./ConvertirFecha";
 import axios from "axios";
 import "../css/Factura.css";
 
-
-const FacturaVenta = (props) => {
+const Facturas = (props) => {
     const [factura, setFactura] = useState(null);
     const [totalVenta, setTotalVenta] = useState(0);
     const [totalIvaCinco, setTotalIvaCinco] = useState(0);
@@ -71,7 +70,6 @@ const FacturaVenta = (props) => {
 
     return (
         <div>
-      
             <div id="contenedorPadre" ref={facturaRef}>
                 <div id="contenedor-padre-1">
                     <div id="contenedor-datos-peluqueria">
@@ -90,6 +88,7 @@ const FacturaVenta = (props) => {
                     <div id="contenedor-datos-factura" >
                         <h5>RUC: 90000000-5</h5>
                         <p>N° de Timbrado: 2323232</p>
+                        <p>FACTURA ELECTRONICA N°</p>
                         <p>{factura.factura.numeroFactura}</p>
                     </div>
                 </div>
@@ -160,4 +159,4 @@ const FacturaVenta = (props) => {
     );
 }
 
-export default FacturaVenta
+export default Facturas

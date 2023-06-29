@@ -5,7 +5,6 @@ import axios from 'axios';
 import BuscadorCompraProductos from './BuscadorCompraProductos'
 import CompraModal from './ProductoModal';
 import SuccessModal from './SuccessModal';
-import '../css/Estilos.css'
 
 const CompraProveedores = () => {
     const url = 'https://localhost:7137/StockProducto/GetStockProductos'
@@ -140,18 +139,19 @@ const CompraProveedores = () => {
 
         <Container className="w-75 mt-4" >
             <Row className="mb-4">
-                <Col style={{border:'1px solid #aae0fa', borderRadius:'10px'}}>
-                    <span className='compras-titulos'>Proveedor: </span> <span> {(proveedor && proveedor.nombreEmpresa) ? proveedor.nombreEmpresa : null} </span>
-                    <br/>
-                    <span className='compras-titulos'>Deposito: </span> <span>Deposito 1</span>
+                <Col>
+                    <h3>Proveedor: {(proveedor && proveedor.nombreEmpresa) ? proveedor.nombreEmpresa : null} </h3>
+
+                    <h3>Deposito: Deposito 1</h3>
                 </Col>
             </Row>
             <Row>
-            </Row>
 
+            </Row>
             <Row className="mb-4">
-             
-                        <h4>Compras de Productos</h4>
+                <Row>
+                    <Col>
+                        <h2>Compras de Productos</h2>
                         <BuscadorCompraProductos handleSearch={handleSearch} action={openModal} />
                         <CompraModal showModal={showModal} handleClose={handleClose} idProveedores={state.idProveedor} />
                         <SuccessModal
@@ -159,12 +159,15 @@ const CompraProveedores = () => {
                             handleClose={() => setShowSuccessModal(false)}
                             message="Compra Confirmada"
                         />
-             
-                <Table striped bordered hover >
-                <thead >
-                <tr style={{ backgroundColor: '#B4D8E9' }}>
+                    </Col>
+
+                </Row>
+                <Table striped bordered hover>
+                    <thead>
+                        <tr style={{ backgroundColor: '#B4D8E9' }}>
                             <th>Nombre</th>
                             <th>Detalles</th>
+
                             <th>Costo</th>
                             <th></th>
                         </tr>
@@ -192,10 +195,9 @@ const CompraProveedores = () => {
                     </tbody>
                 </Table>
             </Row>
-
-
             <Row className="mb-4">
-                    <h4>Productos Seleccionados</h4>
+                <Col>
+                    <h2>Productos Seleccionados</h2>
                     <Table striped bordered hover id='carrito'>
                         <thead>
                             <tr style={{ backgroundColor: '#B4D8E9' }}>
@@ -241,6 +243,7 @@ const CompraProveedores = () => {
                                 <td colSpan="5">Total</td>
                                 <td>{formatter.format(productosSeleccionados.reduce((total, producto) => total + producto.precioUnitario * (cantidadProducto[producto.id] || 0), 0).toFixed(4))} </td>           </tr>      </tfoot>
                     </Table>
+                </Col>
             </Row>
             <Row>
 

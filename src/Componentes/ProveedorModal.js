@@ -23,7 +23,7 @@ const ProveedorModal = ({ showModal, handleClose }) => {
 
     const handleClienteModal = () => {
         axios
-            .post(`https://localhost:7137/Proveedor?Nombres=${formValues.nombres}&Apellidos=${formValues.apellidos}&Correo=${formValues.correo}&Telefono=${formValues.telefono}&Direccion=${formValues.direccion}&Cedula=${formValues.direccion}&NombreEmpresa=${formValues.nombreEmpresa}&Ruc=${formValues.ruc}`)
+            .post(`https://localhost:7137/Proveedor?Nombres=${formValues.nombres}&Apellidos=${formValues.apellidos}&Correo=${formValues.correo}&Telefono=${formValues.telefono}&Direccion=${formValues.direccion}&Cedula=${formValues.cedula}&NombreEmpresa=${formValues.nombreEmpresa}&Ruc=${formValues.ruc}`)
             .then((response) => {
                 console.log('PUT request successful');
                 console.log(response.data); // You can do something with the response if needed

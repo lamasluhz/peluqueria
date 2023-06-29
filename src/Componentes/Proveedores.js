@@ -158,15 +158,15 @@ const Proveedores = () => {
                 <Buscador action={handleModal} handleSearch={handleSearch} />
                 <div className="TablaBordes">
 
-                    <table className="table table-striped table-hover" id="myTable">
+                    <table className="table table-striped table-hover border-white" style={{ border: '1px solid white' }} id="myTable">
                         <thead>
                             <tr style={{ backgroundColor: '#B4D8E9' }}>
-                                <th scope="col">Nombre</th>
+                                <th scope="col">Empresa</th>
                                 <th scope="col">C.I.</th>
                                 <th scope="col">Correo</th>
                                 <th scope="col">Direccion</th>
                                 <th scope="col">Telefono</th>
-                                <th scope="col">Compras</th>
+                                <th scope="col">Realizar Compra</th>
                                 <th scope="col">Otros</th>
                             </tr>
                         </thead>
@@ -175,23 +175,23 @@ const Proveedores = () => {
                         </tbody>
                     </table>
                 </div>
+                <Modal show={showConfirmationModal} onHide={handleCancelDeleteCliente}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmar eliminación</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>¿Estás seguro de que deseas eliminar este cliente?</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCancelDeleteCliente}>
+                            Cancelar
+                        </Button>
+                        <Button variant="danger" onClick={handleConfirmDeleteCliente}>
+                            Eliminar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
-            <Modal show={showConfirmationModal} onHide={handleCancelDeleteCliente}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmar eliminación</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>¿Estás seguro de que deseas eliminar este cliente?</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCancelDeleteCliente}>
-                        Cancelar
-                    </Button>
-                    <Button variant="danger" onClick={handleConfirmDeleteCliente}>
-                        Eliminar
-                    </Button>
-                </Modal.Footer>
-            </Modal>
         </div>
     );
 };

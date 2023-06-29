@@ -113,7 +113,7 @@ const FCaja = () => {
       fetchData();
     }
   }, [idCajero]);
-
+{/*ANIMACION PARA HACER QUE APAREZCA CUANDO SE CREA UNA CAJA */}
   const handleCreateSuccess = () => {
     setShowSuccess(true);
     setTimeout(() => {

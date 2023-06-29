@@ -88,23 +88,21 @@ const Peluquero = () => {
                 <br />
                 <PeluqueroModal showModal={showModal} handleClose={handleModal} />
                 <Buscador action={handleModal} handleSearch={handleSearch} />
-                <div className="TablaBordes">
-                    <table className="table table-striped table-hover" id="myTable">
-                        <thead>
-                            <tr style={{ backgroundColor: '#B4D8E9' }}>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">C.I.</th>
-                                <th scope="col">Correo</th>
-                                <th scope="col">Direccion</th>
-                                <th scope="col">Telefono</th>
-                                <th scope="col">Especialidades</th>  <th scope="col">Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {renderPeluqueros()}
-                        </tbody>
-                    </table>
-                </div>
+                <table className="table table-striped table-hover border-white" style={{ border: '1px solid white' }} id="myTable">
+                    <thead>
+                        <tr style={{ backgroundColor: '#B4D8E9' }}>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">C.I.</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Direccion</th>
+                            <th scope="col">Telefono</th>
+                            <th scope="col">Especialidades</th>  <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {renderPeluqueros()}
+                    </tbody>
+                </table>
             </div>
         </div >)
 }

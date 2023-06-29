@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import BuscadorCompraProductos from './BuscadorVentaProductos';
 import SuccessModal from './SuccessModal';
-import '../css/Estilos.css'
 
 const VentaProductos = () => {
   const url = 'https://localhost:7137/StockProducto/GetStockProductos';
@@ -42,7 +41,7 @@ const VentaProductos = () => {
       console.log(error.message);
     }
   };
-
+  
   const obtenerProductos = async () => {
     const response = await axios.get(url);
     const updatedProductos = response.data.map((producto) => ({
@@ -59,7 +58,7 @@ const VentaProductos = () => {
   useEffect(() => {
     obtenerProveedor();
   }, [state]); // Depend on state so the effect runs whenever state changes
-
+  
   useEffect(() => {
     console.log(cliente);
   }, [cliente]);
@@ -102,7 +101,7 @@ const VentaProductos = () => {
 
   const agregarAlCarrito = (productoAgregado) => {
     let productoYaEnCarrito = productosSeleccionados.find((producto) => producto.id === productoAgregado.id);
-
+  
     if (productoYaEnCarrito) {
       // Si el producto ya está en el carrito, aumenta su cantidad
       setCantidadProducto({
@@ -142,37 +141,37 @@ const VentaProductos = () => {
   );
 
 
-  const confirmarVenta = async () => {
+  const confirmarVenta= async () => {
     const postUrl = 'https://localhost:7137/Productos'; // Use your API URL
 
     // Collect all the product details into an array
     let detalleVentaDto = productosSeleccionados.map(producto => {
-      return {
-        idProducto: producto.idProducto,
-        cantidad: cantidadProducto[producto.id],
-        precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
-        iva: 0 // Assuming a 5% tax rate
-      };
+        return {
+            idProducto: producto.idProducto,
+            cantidad: cantidadProducto[producto.id],
+            precioUnitario: producto.precioUnitario, // Assuming producto has a 'precioUnitario' property
+            iva: 0 // Assuming a 5% tax rate
+        };
     });
 
     // Prepare the data to be sent in the POST request
     const data = {
-      idCliente: cliente.id,
-      idDeposito: 1,
-      idTurno: null,
-      detalleVentaDto: detalleVentaDto
+        idCliente: cliente.id,
+        idDeposito: 1,
+        idTurno: null,
+        detalleVentaDto: detalleVentaDto
     };
 
     try {
-      // Perform a single Axios POST request
-      await axios.post(postUrl, data);
+        // Perform a single Axios POST request
+        await axios.post(postUrl, data);
 
-      // Show success modal after completing the request
-      setShowSuccessModal(true);
+        // Show success modal after completing the request
+        setShowSuccessModal(true);
     } catch (error) {
-      console.error('Error during POST request:', error);
+        console.error('Error during POST request:', error);
     }
-  };
+};
 
 
   return (
@@ -211,8 +210,12 @@ const VentaProductos = () => {
         </Col>
       </Row>
       <Row className="mb-4">
-        <h3>Venta de Productos</h3>
-        <BuscadorCompraProductos handleSearch={handleSearch} action={openModal} />
+        <Row>
+          <Col>
+            <h2>Venta de Productos</h2>
+            <BuscadorCompraProductos handleSearch={handleSearch} action={openModal} />
+          </Col>
+        </Row>
         <Table striped bordered hover>
           <thead>
             <tr style={{ backgroundColor: '#B4D8E9' }}>
@@ -238,50 +241,52 @@ const VentaProductos = () => {
         </Table>
       </Row>
       <Row className="mb-4">
-        <h3>Productos Seleccionados</h3>
-        <Table striped bordered hover id="carrito">
-          <thead>
-            <tr style={{ backgroundColor: '#B4D8E9' }}>
-              <th>Nombre</th>
-              <th>Detalles</th>
-              <th>Costo</th>
-              <th>Cantidad</th>
-              <th>IVA 5%</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Aca se cargan los elemento del carrito */}
-            {productosSeleccionados.map((producto) => (
-              <tr id={producto.id}>
-                <td> {producto.nombre}</td>
-                <td> {producto.descripcionTipoProducto}</td>
-                <td> {formatearPrecio(producto.precioUnitario)}</td>
-                <td>
-                  <input
-                    type="number"
-                    value={cantidadProducto[producto.id]}
-                    onChange={(e) => {
-                      const nuevaCantidad = e.target.value;
-                      setCantidadProducto({ ...cantidadProducto, [producto.id]: nuevaCantidad });
-                      cambiarCantidadProducto(producto.id, nuevaCantidad);
-                    }}
-                    min={1}
-                  />
-                  <button onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
-                </td>
-                <td> {formatearPrecio(producto.precioUnitario * producto.cantidad * 0.05)}</td>
-                <td> {formatearPrecio(producto.precioUnitario * (1 + 0.05) * producto.cantidad)}</td>
+        <Col>
+          <h2>Productos Seleccionados</h2>
+          <Table striped bordered hover id="carrito">
+            <thead>
+              <tr style={{ backgroundColor: '#B4D8E9' }}>
+                <th>Nombre</th>
+                <th>Detalles</th>
+                <th>Costo</th>
+                <th>Cantidad</th>
+                <th>IVA 5%</th>
+                <th>Total</th>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colSpan="5">Total</td>
-              <td>{/* Aca se calcula el total de todos los elementos del carrito */ formatearPrecio(total)}</td>
-            </tr>
-          </tfoot>
-        </Table>
+            </thead>
+            <tbody>
+              {/* Aca se cargan los elemento del carrito */}
+              {productosSeleccionados.map((producto) => (
+                <tr id={producto.id}>
+                  <td> {producto.nombre}</td>
+                  <td> {producto.descripcionTipoProducto}</td>
+                  <td> {formatearPrecio(producto.precioUnitario)}</td>
+                  <td>
+                    <input
+                      type="number"
+                      value={cantidadProducto[producto.id]}
+                      onChange={(e) => {
+                        const nuevaCantidad = e.target.value;
+                        setCantidadProducto({ ...cantidadProducto, [producto.id]: nuevaCantidad });
+                        cambiarCantidadProducto(producto.id, nuevaCantidad);
+                      }}
+                      min={1}
+                    />
+                    <button onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
+                  </td>
+                  <td> {formatearPrecio(producto.precioUnitario * producto.cantidad * 0.05)}</td>
+                  <td> {formatearPrecio(producto.precioUnitario * (1 + 0.05) * producto.cantidad)}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colSpan="5">Total</td>
+                <td>{/* Aca se calcula el total de todos los elementos del carrito */ formatearPrecio(total)}</td>
+              </tr>
+            </tfoot>
+          </Table>
+        </Col>
       </Row>
       <Row>
         <Col style={{ justifyContent: 'center', display: 'flex' }}>

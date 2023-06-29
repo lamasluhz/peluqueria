@@ -5,7 +5,7 @@ const SuccessModal = ({ show, handleClose, message }) => {
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Éxito!</Modal.Title>
+                <Modal.Title>Exito!!</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p>{message}</p>
