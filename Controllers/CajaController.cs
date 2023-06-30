@@ -132,7 +132,34 @@ public async Task<IActionResult> CerrarCaja(int id, CierreCajaDto cierreCajaDto)
 
 
 
+[HttpGet("cajasGenerales ")]
+public IActionResult ObtenerTodasLasCajas()
+{
+    try
+    {
+        var todasLasCajas = _context.Cajas.ToList();
 
+        var detallesCajas = todasLasCajas.Select(caja => new CajaDto
+        {
+            IdCaja = caja.IdCaja,
+            FechaApertura = caja.FechaApertura.ToString("dd/MM/yyyy"),
+            FechaCierre = caja.FechaCierre?.ToString("dd/MM/yyyy"),
+            HoraInicio = caja.HoraInicial?.ToString(@"hh\:mm"),
+            HoraFin = caja.HoraFinal?.ToString(@"hh\:mm"),
+            MontoApertura = caja.MontoApertura,
+            MontoCierre = caja.MontoCierre,
+            Nombre = caja.Nombre,
+            Estado = caja.Estado,
+            Eliminado = caja.Eliminado
+        });
+
+        return Ok(detallesCajas); // Respuesta exitosa con los detalles de todas las cajas
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message); // Error interno del servidor
+    }
+}
 
 
     }

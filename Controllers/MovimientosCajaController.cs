@@ -223,6 +223,7 @@ public IActionResult ObtenerMovimientosCaja(int id)
            
             Caja = new
             {
+                IdCaja =caja.IdCaja,
                 HoraInicio = caja.HoraInicial?.ToString("hh\\:mm"),
                 HoraFin = caja.HoraFinal?.ToString("hh\\:mm"),
                 FechaInicio = caja.FechaApertura.ToString("yyyy-MM-dd"),
@@ -243,8 +244,7 @@ public IActionResult ObtenerMovimientosCaja(int id)
 
 
 ///reporte mas general 
-// GET: api/MovimientosCaja/cajas/movimientosReporte
-[HttpGet("cajas/movimientosReporteGeneral")]
+// GET: api/MovimientosCaja/cajas/movimientosReporte[HttpGet("cajas/movimientosReporteGeneral")]
 public IActionResult ObtenerMovimientosCajaReporte()
 {
     try
@@ -256,6 +256,7 @@ public IActionResult ObtenerMovimientosCajaReporte()
         {
             Caja = new
             {
+                IdCaja = caja.IdCaja,
                 HoraInicio = caja.HoraInicial?.ToString("hh\\:mm"),
                 HoraFin = caja.HoraFinal?.ToString("hh\\:mm"),
                 FechaInicio = caja.FechaApertura.ToString("yyyy-MM-dd"),
@@ -268,6 +269,8 @@ public IActionResult ObtenerMovimientosCajaReporte()
                 TipoMovimiento = m.TipoMovimiento,
                 Monto = m.Monto
             }).ToList(),
+            MovimientoTotalEntrada = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto),
+            MovimientoTotalSalida = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto),
             Diferencia = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto) - movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto)
         });
 
@@ -278,7 +281,6 @@ public IActionResult ObtenerMovimientosCajaReporte()
         return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
 }
-
 
 
 
