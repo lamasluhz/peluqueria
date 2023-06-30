@@ -132,7 +132,7 @@ public async Task<IActionResult> CerrarCaja(int id, CierreCajaDto cierreCajaDto)
 
 
 
-[HttpGet("cajasGenerales ")]
+[HttpGet("cajasGenerales")]
 public IActionResult ObtenerTodasLasCajas()
 {
     try
