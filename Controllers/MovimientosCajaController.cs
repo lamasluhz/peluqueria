@@ -245,7 +245,8 @@ public IActionResult ObtenerMovimientosCaja(int id)
 
 ///reporte mas general 
 // GET: api/MovimientosCaja/cajas/movimientosReporte[HttpGet("cajas/movimientosReporteGeneral")]
-public IActionResult ObtenerMovimientosCajaReporte()
+[HttpGet("cajas/movimientosReporteGEneral")]
+public IActionResult ObtenerMovimientosCajaReportes()
 {
     try
     {
