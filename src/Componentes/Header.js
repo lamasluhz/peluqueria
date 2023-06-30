@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from "react-router-dom";
-import { Navbar, Nav, Modal, Button } from 'react-bootstrap';
+import { Navbar, Nav, Modal, Button, NavDropdown } from 'react-bootstrap';
 import axios from 'axios';
 
 const estilo = { paddingLeft: '10px' };
+const estiloImagen = {
+    maxHeight: 25,
+    maxWidth: 20
+};
 
 const Header = (props) => {
     const API_URL = "https://localhost:7137";
@@ -47,22 +51,26 @@ const Header = (props) => {
     return (
         <div>
             <div>
-               
+
             </div>
             <Navbar expand="lg" style={{ display: "flex", alignItems: 'center', padding: 0 }}>
                 <Navbar.Toggle aria-controls="navbarNavAltMarkup" />
-                <Navbar.Collapse id="navbarNavAltMarkup" style={{ backgroundColor: '#aae0fa'}}>
+                <Navbar.Collapse id="navbarNavAltMarkup" style={{ backgroundColor: '#aae0fa' }}>
                     <Nav className="mr-auto w-100 justify-content-center" style={{ backgroundColor: "#aae0fa", paddingLeft: '30px', fontSize: '20px' }}>
-                        <NavLink className="nav-link" to="/inicio" style={estilo}> <img src='/inicio.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Inicio</NavLink>
-                        <NavLink className="nav-link" to="/clientes" style={estilo}> <img src='/clientes.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Clientes </NavLink>
-                        <NavLink className="nav-link" to="/peluqueros" style={estilo}> <img src='/peluqueros.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Peluqueros </NavLink>
-                        <NavLink className="nav-link" to="/servicios" style={estilo}> <img src='/servicios.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Servicios </NavLink>
-                        <NavLink className="nav-link" to="/reservas" style={estilo}> <img src='/reservas.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Reservas </NavLink>
-                        <NavLink className="nav-link" to="/stock" style={estilo}> <img src='/compras.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Compras </NavLink>
-                        <NavLink className="nav-link" to="/ventaProductos" style={estilo}> <img src='/venta.png' style={{ maxHeight: 25, maxWidth: 20 }} /> Venta </NavLink>
-                        <NavLink className="nav-link" to="/facturacion" style={estilo}> <img src='/factura.png' style={{ maxHeight: 25, maxWidth: 20 }} />Caja</NavLink>
-                
-                            </Nav>
+                        <NavLink className="nav-link" to="/inicio" style={estilo}> <img src='/inicio.png' style={estiloImagen} /> Inicio</NavLink>
+                        <NavLink className="nav-link" to="/clientes" style={estilo}> <img src='/clientes.png' style={estiloImagen} /> Clientes </NavLink>
+                        <NavLink className="nav-link" to="/peluqueros" style={estilo}> <img src='/peluqueros.png' style={estiloImagen} /> Peluqueros </NavLink>
+                        <NavLink className="nav-link" to="/servicios" style={estilo}> <img src='/servicios.png' style={estiloImagen} /> Servicios </NavLink>
+                        <NavLink className="nav-link" to="/reservas" style={estilo}> <img src='/reservas.png' style={estiloImagen} /> Reservas </NavLink>
+                        <NavLink className="nav-link" to="/stock" style={estilo}> <img src='/compras.png' style={estiloImagen} /> Compras </NavLink>
+                        <NavLink className="nav-link" to="/ventaProductos" style={estilo}> <img src='/venta.png' style={estiloImagen} /> Venta </NavLink>
+                        <NavLink className="nav-link" to="/facturacion" style={estilo}> <img src='/factura.png' style={estiloImagen} />Caja</NavLink>
+                        <NavDropdown title="Reportes" id="reportes-dropdown" style={estilo} >
+                            <NavDropdown.Item href="/facturascobradas">Facturas</NavDropdown.Item>
+                            <NavDropdown.Item href="/reporte2">Reporte 2</NavDropdown.Item>
+                            <NavDropdown.Item href="/reporte3">Reporte 3</NavDropdown.Item>
+                        </NavDropdown>
+                    </Nav>
                     <div style={{ borderLeft: '1px solid blue', paddingLeft: '20px' }}>
                         <img src="./usuario.png" alt="Logo" />
                     </div>

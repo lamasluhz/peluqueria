@@ -88,7 +88,7 @@ const Facturacion = () => {
   useEffect(() => {
     const fetchFacturas = async () => {
       try {
-        const response = await axios.get("https://localhost:7137/api/Factura");
+        const response = await axios.get("https://localhost:7137/api/Factura/pendientes");
         setFacturas(response.data);
       } catch (error) {
         console.error("Error al obtener los datos de las facturas de Ventas:", error);
@@ -101,7 +101,7 @@ const Facturacion = () => {
   useEffect(() => {
     const fetchFacturasCompra = async () => {
       try {
-        const response = await axios.get("https://localhost:7137/api/FacturaProveedores/facturaProveedores");
+        const response = await axios.get("https://localhost:7137/api/FacturaProveedores/facturaProveedoresPendientes");
         const data = response.data;
         setFacturaCompra(data);
       } catch (error) {
@@ -244,19 +244,6 @@ const Facturacion = () => {
                       onChange={(e) => setFechaFiltro(e.target.value)}
                     />
                   </Col>
-                  <Col sm="1">
-                    <Button disabled>Estado: </Button>
-                  </Col>
-                  <Col sm="3">
-                    <Form.Select
-                      value={estadoFiltro}
-                      onChange={(e) => setEstadoFiltro(e.target.value)}
-                    >
-                      <option value="">Todos</option>
-                      <option value="Pendiente">Pendiente</option>
-                      <option value="Facturado">Facturado</option>
-                    </Form.Select>
-                  </Col>
                 </Form.Group>
               </Form>
             </div>
@@ -321,34 +308,20 @@ const Facturacion = () => {
                           <td>{factura.totalVenta}</td>
                           <td>{factura.estado}</td>
                           <td>
-                            {factura.estado === "Pendiente" ? (
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => {
-                                  setMontoVenta(factura.totalVenta);
-                                  setIdFacturaCompra(null);
-                                  setIdFacturaVentas(factura.id);
-                                  handleShowModalPago();
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => {
+                                setMontoVenta(factura.totalVenta);
+                                setIdFacturaCompra(null);
+                                setIdFacturaVentas(factura.id);
+                                handleShowModalPago();
 
-                                }}
-                                style={{ color: "red" }}
-                              >
-                                Facturar
-                              </Button>
-                            ) : (
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => {
-                                  setIdFacturaVentas(factura.id);
-                                  handleShowModal();
-                                }}
-                                style={{ color: "green" }}
-                              >
-                                Ver
-                              </Button>
-                            )}
+                              }}
+                              style={{ color: "red" }}
+                            >
+                              Pagar
+                            </Button>
                           </td>
                         </tr>
                       ))}
@@ -394,33 +367,19 @@ const Facturacion = () => {
                           <td>{factura.totalProductos}</td>
                           <td>{factura.facturaProveedor.estado}</td>
                           <td>
-                            {factura.facturaProveedor.estado === "Pendiente" ? (
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => {
-                                  setMontoCompra(factura.totalProductos);
-                                  setIdFacturaVentas(null);
-                                  setIdFacturaCompra(factura.facturaProveedor.id);
-                                  handleShowModalPago();
-                                }}
-                                style={{ color: "red" }}
-                              >
-                                Facturar
-                              </Button>
-                            ) : (
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => {
-                                  setIdFacturaCompra(factura.facturaProveedor.id);
-                                  handleShowModalCompra();
-                                }}
-                                style={{ color: "green" }}
-                              >
-                                Ver
-                              </Button>
-                            )}
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => {
+                                setMontoCompra(factura.totalProductos);
+                                setIdFacturaVentas(null);
+                                setIdFacturaCompra(factura.facturaProveedor.id);
+                                handleShowModalPago();
+                              }}
+                              style={{ color: "red" }}
+                            >
+                              Pagar
+                            </Button>
                           </td>
                         </tr>
                       ))}

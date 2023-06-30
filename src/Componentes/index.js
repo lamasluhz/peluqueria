@@ -19,3 +19,4 @@ export {default as Facturacion} from './Facturacion'
 
 export { default as MasPedidos } from './MasPedidos'
 export { default as VentasProductosServicios} from "./VentasProductosServicios";
+export {default as FacturasCobradas} from "./FacturasCobradas";

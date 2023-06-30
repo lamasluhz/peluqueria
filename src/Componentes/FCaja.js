@@ -2,15 +2,11 @@ import React, { useEffect, useState } from "react";
 import '../css/Caja.css';
 import { Button, Modal } from "react-bootstrap";
 import axios from 'axios';
-import { parse } from "date-fns";
 
 
 
 const FCaja = () => {
-  const [showModalCreacion, setShowModalCreacion] = useState(false);
   const [showModalAbrir, setShowModalAbrir] = useState(false);
-  const [cajero, setCajero] = useState('');
-  const [clave, setClave] = useState('');
   const [montoInicial, setMontoInicial] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCaja, setShowCaja] = useState(false);
@@ -19,7 +15,9 @@ const FCaja = () => {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [sumaEntradas, setSumaEntradas] = useState(0);
   const [sumaSalidas, setSumaSalidas] = useState(0);
-  const [totalCaja, setTotalCaja] = useState('');
+  const [totalCaja, setTotalCaja] = useState(0);
+  const [sumaTotal, setSumaTotal] = useState(0);
+
 
   const recargarPagina = () => {
     setTimeout(() => {
@@ -62,18 +60,6 @@ const FCaja = () => {
   }, []);
 
 
-
-  useEffect(() => {
-    const storedConectado = localStorage.getItem("cajero");
-    if (storedConectado !== null) {
-      const parsedData = JSON.parse(storedConectado);
-      setDatosCajero(parsedData);
-      setShowCaja(true);
-    }
-  }, []);
-
-
-
   function getFormattedDate() {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -113,20 +99,13 @@ const FCaja = () => {
       fetchData();
     }
   }, [idCajero]);
-{/*ANIMACION PARA HACER QUE APAREZCA CUANDO SE CREA UNA CAJA */}
+
+  {/*ANIMACION PARA HACER QUE APAREZCA CUANDO SE CREA UNA CAJA */ }
   const handleCreateSuccess = () => {
     setShowSuccess(true);
     setTimeout(() => {
       setShowSuccess(false);
     }, 2000);
-  };
-
-  const handleCloseModalCreacion = () => {
-    setShowModalCreacion(false);
-  };
-
-  const handleShowModalCreacion = () => {
-    setShowModalCreacion(true);
   };
 
   const handleCloseModalAbrir = () => {
@@ -139,30 +118,20 @@ const FCaja = () => {
   };
 
   const handleInputChange = (event) => {
-    if (event.target.id === 'cajaCajero') {
-      setCajero(event.target.value);
-    } else if (event.target.id === 'cajaMontoInicial') {
-      setMontoInicial(event.target.value);
-    } else if (event.target.id === 'cajaClave') {
-      setClave(event.target.value);
-    }
+    const newValue = event.target.value;
+    setMontoInicial(newValue);
   };
 
+
   const handleAbrirCaja = () => {
-    axios.post('https://localhost:7137/api/Caja/VerificarUsuario', {
-      nombre: cajero,
-      clave: clave,
-      montoApertura: montoInicial
+    axios.post('https://localhost:7137/api/Caja/cajas', {
+      montoInicial: montoInicial
     })
       .then(response => {
-        localStorage.setItem('idCajero', JSON.stringify(response.data.idUsuario));
-
-        setCajero('');
-        setClave('');
-        setMontoInicial('');
+        localStorage.setItem('idCajero', JSON.stringify(response.data));
         setShowModalAbrir(false);
-        abrirCaja(response.data.idUsuario);
-        setIdCajero(response.data.idUsuario);
+        abrirCaja(response.data);
+        setIdCajero(response.data);
 
       })
       .catch(error => {
@@ -171,25 +140,11 @@ const FCaja = () => {
     recargarPagina();
   };
 
-  const handleCrearCaja = () => {
-    axios.post('https://localhost:7137/api/Caja/cajas', {
-      nombre: cajero,
-      clave: clave
-    })
-      .then(response => {
-        setCajero('');
-        setClave('');
-        handleCreateSuccess();
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  };
-
 
   const abrirCaja = async (id) => {
     try {
       const response = await axios.get(`https://localhost:7137/api/Caja/cajas/${id}`);
+      console.log("RESPUESTA CAJERO: ", response.data);
       localStorage.setItem('cajero', JSON.stringify(response.data));
     } catch (error) {
       console.error("Error al obtener los datos de la caja:", error);
@@ -197,32 +152,37 @@ const FCaja = () => {
   };
 
 
-  const datosCerrarPut = {
-    montoCierre: totalCaja,
-    id: idCajero,
-  }
-
   const cerrarCaja = () => {
-    localStorage.removeItem('cajero');
-    localStorage.removeItem('idCajero');
+    try {
+      axios.put(`https://localhost:7137/api/Caja/cajas/${idCajero}/cerrar`, {
+        montoCierre: totalCaja
+      })
+      localStorage.removeItem('cajero');
+      localStorage.removeItem('idCajero');
+      setMontoInicial('');
+    } catch (error) {
+      console.error("Error al Cerrar la Caja: ", error)
+    }
   }
 
-  const fnTotalCaja = (valorInicial) => {
-    let total = valorInicial;
+  const fnTotalCaja = (montoApertura) => {
+    let total = montoApertura;
 
     if (sumaEntradas === null && sumaSalidas === null) {
-      total = valorInicial;
+      total = montoApertura;
     } else {
-      total = datosCajero.montoApertura + (sumaEntradas || 0) - (sumaSalidas || 0);
-
-      if (total < 0) {
-        total *= -1;
-      }
+      const suma = (sumaEntradas || 0) - (sumaSalidas || 0);
+      total = montoApertura + suma;
+      setSumaTotal(suma);
     }
     return total;
   };
 
-
+  useEffect(() => {
+    const total = fnTotalCaja(datosCajero.montoApertura);
+    setTotalCaja(total);
+    setSumaTotal((sumaEntradas || 0) - (sumaSalidas || 0));
+  }, [datosCajero.montoApertura, sumaEntradas, sumaSalidas]);
 
   return (
     <>
@@ -230,28 +190,24 @@ const FCaja = () => {
         <p className="titulo-caja">
           Caja
         </p>
-        <hr id="linea" />
 
         {showCaja ? (
           <div className="custom-component">
-            <p>Cajero: {datosCajero.nombre}</p>
             <h4 className="monto">Monto</h4>
             <p>Inicial: {datosCajero.montoApertura}</p>
             <p>Entrada: {sumaEntradas ?? 0}</p>
             <p>Salida: {sumaSalidas ?? 0}</p>
             <hr id="linea" />
-            <p>Total: {fnTotalCaja(datosCajero.montoApertura)}</p>
+            <p>Total: {totalCaja ?? 0}</p>
             <hr />
             <button id="btn-cerrar" className="btn btn-outline-primary btn-sm" onClick={() => handleCerrarSesion()}>Cerrar</button>
           </div>
         ) : (
 
           <div>
+            <hr id="linea" />
             <p className="botones">
-              <button className="btn btn-outline-primary btn-sm" onClick={handleShowModalCreacion}>Crear</button>
-            </p>
-            <p className="botones">
-              <button className="btn btn-outline-success btn-sm" onClick={handleShowModalAbrir}>Abrir</button>
+              <button className="btn btn-outline-primary btn-sm" onClick={handleShowModalAbrir}>Abrir</button>
             </p>
             <hr id="linea" />
             <br />
@@ -267,28 +223,6 @@ const FCaja = () => {
           <Modal.Body>
             <form>
               <div className="form-group">
-                <label htmlFor="cajaCajero">Cajero:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="cajaCajero"
-                  value={cajero}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="cajaClave">Clave:</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="cajaClave"
-                  value={clave}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
                 <label htmlFor="cajaMontoInicial">Monto Inicial:</label>
                 <input
                   type="number"
@@ -298,7 +232,6 @@ const FCaja = () => {
                   onChange={handleInputChange}
                 />
               </div>
-
             </form>
           </Modal.Body>
           <Modal.Footer>
@@ -307,56 +240,6 @@ const FCaja = () => {
             </Button>
             <Button variant="primary" onClick={handleAbrirCaja}>
               Abrir
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-
-
-
-        <Modal show={showModalCreacion} onHide={handleCloseModalCreacion}>
-          <Modal.Header closeButton>
-            <Modal.Title>Crear una Nueva Caja</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <form>
-              <div className="form-group">
-                <label htmlFor="cajaCajero">Cajero:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="cajaCajero"
-                  value={cajero}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="cajaClave">Clave:</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="cajaClave"
-                  value={clave}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div>
-                {showSuccess && (
-                  <div className="success-animation">
-                    <span>¡Creado con éxito!</span>
-                  </div>
-                )}
-              </div>
-            </form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModalCreacion}>
-              Cerrar
-            </Button>
-            <Button variant="primary" onClick={handleCrearCaja}>
-              Crear
             </Button>
           </Modal.Footer>
         </Modal>
