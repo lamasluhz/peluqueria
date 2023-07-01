@@ -1,108 +1,148 @@
-import { useEffect, useState } from 'react';
-import { Modal, Form, Button, Dropdown } from 'react-bootstrap';
-import Select from 'react-select';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { Modal, Form, Button, Dropdown } from "react-bootstrap";
+import Select from "react-select";
+import axios from "axios";
 
 const CompraModal = ({ showModal, handleClose, idProveedores }) => {
-    const [formValues, setFormValues] = useState({
-        idTipoProducto: 1,
-        nombre: '',
-        precioUnitario: 0,
-        idProveedor: idProveedores,
-        notasAdicionales: '',
-        iva: 0
-    });
+  const [formValues, setFormValues] = useState({
+    idTipoProducto: 1,
+    nombre: "",
+    precioUnitario: 0,
+    idProveedor: idProveedores,
+    notasAdicionales: "",
+    iva: 0,
+  });
 
-    const [productoData, setProductoData] = useState({
-        idProducto: 11,
-        idDeposito: 1,
-        cantidad: 0,
-        idProveedor: idProveedores,
-    });
+  const [productoData, setProductoData] = useState({
+    idProducto: 11,
+    idDeposito: 1,
+    cantidad: 0,
+    idProveedor: idProveedores,
+  });
 
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
-    };
+  const [options, setOptions] = useState([]);
 
-    const handleAgregarProducto = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.post(`https://localhost:7137/Producto?IdTipoProducto=${formValues.idTipoProducto}&Nombre=${formValues.nombre}&PrecioUnitario=${formValues.precioUnitario}&NotasAdicionales=${formValues.notasAdicionales}&Iva=1`);
+  useEffect(() => {
+    axios
+      .get("https://localhost:7137/TipoProducto")
+      .then((response) => {
+        const options = response.data.map((d) => ({
+          value: d.id,
+          label: d.descripcion,
+        }));
+        setOptions(options);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-            const { data: productos } = await axios.get('https://localhost:7137/Producto');
-            const maxIdProducto = Math.max(...productos.map(producto => producto.id));
-            console.log(maxIdProducto)
-            setProductoData(prevData => ({ ...prevData, idProducto: maxIdProducto }));
-        } catch (error) {
-            console.error(`Error: ${error}`);
-        }
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
+  };
 
-        handleClose();
-    };
-    useEffect(() => {
-        if (productoData.idProducto !== 11) {
-            axios.post(`https://localhost:7137/StockProducto?IdProducto=${productoData.idProducto}&IdDeposito=${productoData.idDeposito}&Cantidad=${productoData.cantidad}&IdProveedor=${productoData.idProveedor}`)
-                .then(() => handleClose())
-                .catch(error => console.error(`Error: ${error}`));
-        }
-    }, [productoData]);
+  const handleSelectChange = (selectedOption) => {
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      idTipoProducto: selectedOption.value,
+    }));
+  };
 
-    return (
-        <Modal show={showModal} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Agregar Producto</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form>
-                    <Form.Group controlId="formNombre">
-                        <Form.Label>Nombre</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="nombre"
-                            value={formValues.nombre}
-                            onChange={handleInputChange}
-                        />
-                    </Form.Group>
+  const handleAgregarProducto = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        `https://localhost:7137/Producto?IdTipoProducto=${formValues.idTipoProducto}&Nombre=${formValues.nombre}&PrecioUnitario=${formValues.precioUnitario}&NotasAdicionales=${formValues.notasAdicionales}&Iva=1`
+      );
 
-                    <Form.Group controlId="formApellido">
-                        <Form.Label>Precio Unitario</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="precioUnitario"
-                            value={formValues.precioUnitario}
-                            onChange={handleInputChange}
-                        />
-                    </Form.Group>
+      const { data: productos } = await axios.get(
+        "https://localhost:7137/Producto"
+      );
+      const maxIdProducto = Math.max(
+        ...productos.map((producto) => producto.id)
+      );
+      console.log(maxIdProducto);
+      setProductoData((prevData) => ({
+        ...prevData,
+        idProducto: maxIdProducto,
+      }));
+    } catch (error) {
+      console.error(`Error: ${error}`);
+    }
 
-                    <Form.Group controlId="formCedula">
-                        <Form.Label>Notas Adicionales</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="notasAdicionales"
-                            value={formValues.notasAdicionales}
-                            onChange={handleInputChange}
-                        />
-                    </Form.Group>
+    handleClose();
+  };
+  useEffect(() => {
+    if (productoData.idProducto !== 11) {
+      axios
+        .post(
+          `https://localhost:7137/StockProducto?IdProducto=${productoData.idProducto}&IdDeposito=${productoData.idDeposito}&Cantidad=${productoData.cantidad}&IdProveedor=${productoData.idProveedor}`
+        )
+        .then(() => handleClose())
+        .catch((error) => console.error(`Error: ${error}`));
+    }
+  }, [productoData]);
 
+  return (
+    <Modal show={showModal} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Agregar Producto</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group controlId="formNombre">
+            <Form.Label>Nombre</Form.Label>
+            <Form.Control
+              type="text"
+              name="nombre"
+              value={formValues.nombre}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
 
+          <Form.Group controlId="formApellido">
+            <Form.Label>Precio Unitario</Form.Label>
+            <Form.Control
+              type="text"
+              name="precioUnitario"
+              value={formValues.precioUnitario}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
 
-
-
-
-                </Form>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Cancelar
-                </Button>
-                <Button variant="primary" onClick={handleAgregarProducto}>
-                    Agregar
-                </Button>
-            </Modal.Footer>
-        </Modal>
-    );
+          <Form.Group controlId="formCedula">
+            <Form.Label>Notas Adicionales</Form.Label>
+            <Form.Control
+              type="text"
+              name="notasAdicionales"
+              value={formValues.notasAdicionales}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="formTipoProducto">
+            <Form.Label>Tipo Producto</Form.Label>
+            <Select
+              name="idTipoProducto"
+              value={options.find(
+                (option) => option.value === formValues.idTipoProducto
+              )}
+              onChange={handleSelectChange}
+              options={options}
+            />
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Cancelar
+        </Button>
+        <Button variant="primary" onClick={handleAgregarProducto}>
+          Agregar
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 };
-
 
 export default CompraModal;

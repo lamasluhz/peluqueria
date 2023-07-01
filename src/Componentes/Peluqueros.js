@@ -3,108 +3,120 @@ import React, { useState, useEffect } from "react";
 import Buscador from "./Buscador";
 import PeluqueroModal from "./PeluqueroModal";
 import PeluquerosRow from "./PeluquerosRow";
-import '../css/Estilos.css';
+import "../css/Estilos.css";
 
-const url = 'https://localhost:7137/api/Peluquero/getPeluqueros'
-
+const url = "https://localhost:7137/api/Peluquero/getPeluqueros";
 
 const Peluquero = () => {
-    const [peluqueros, setPeluqueros] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [showModal, setShowModal] = useState(false);
+  const [peluqueros, setPeluqueros] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-    const obtenerPeluqueros = async () => {
-        const response = await axios.get(url);
-        setPeluqueros(response.data);
-    }
-    const headers = {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
-    }
-    useEffect(() => {
+  const obtenerPeluqueros = async () => {
+    const response = await axios.get(url);
+    setPeluqueros(response.data);
+  };
+  const headers = {
+    accept: "text/plain",
+    "Content-Type": "application/json",
+  };
+  useEffect(() => {
+    obtenerPeluqueros();
+  }, []);
+
+  const handleFieldUpdate = (id, values) => {
+    axios
+      .put(
+        `https://localhost:7137/api/Peluquero/UpdatePeluquero/${id}`,
+        {
+          ...values,
+        },
+        headers
+      )
+      .then((response) => {
+        console.log(response);
+        obtenerPeluqueros(); // Refresh the client list after field update
+      })
+      .catch((error) => {
+        console.error("Error updating cliente:", error);
+      });
+  };
+  const handleModal = () => {
+    console.log(showModal);
+    setShowModal(!showModal);
+  };
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+  const handleDeletePeluquero = (id) => {
+    axios
+      .delete(`https://localhost:7137/api/Peluquero/${id}`)
+      .then((response) => {
+        console.log(response);
+        obtenerPeluqueros(); // Refresh the client list after deletion
+      })
+      .catch((error) => {
+        console.error("Error deleting cliente:", error);
         obtenerPeluqueros();
-    }, []);
+      });
+  };
 
-    const handleFieldUpdate = (id, values) => {
-        axios.put(`https://localhost:7137/api/Peluquero/UpdatePeluquero/${id}`, {
-            ...values
-        }, headers)
-            .then(response => {
-                console.log(response);
-                obtenerPeluqueros(); // Refresh the client list after field update
-            })
-            .catch(error => {
-                console.error('Error updating cliente:', error);
-            });
-    };
-    const handleModal = () => {
-        console.log(showModal);
-        setShowModal(!showModal);
-    };
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-    };
-    const handleDeletePeluquero = (id) => {
-        axios.delete(`https://localhost:7137/api/Peluquero/${id}`)
-            .then(response => {
-                console.log(response);
-                obtenerPeluqueros(); // Refresh the client list after deletion
-            })
-            .catch(error => {
-                console.error('Error deleting cliente:', error);
-                obtenerPeluqueros();
-            });
-    };
+  const renderPeluqueros = () => {
+    const lowerCaseSearchQuery = searchQuery.toLowerCase();
+    const filteredClientes = peluqueros.filter(
+      (peluquero) =>
+        peluquero.nombres.toLowerCase().includes(lowerCaseSearchQuery) ||
+        peluquero.apellidos.toLowerCase().includes(lowerCaseSearchQuery) ||
+        peluquero.cedula.toLowerCase().includes(lowerCaseSearchQuery)
+    );
 
-    const renderPeluqueros = () => {
-        const filteredClientes = peluqueros.filter(peluquero =>
-            peluquero.nombres.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+    return filteredClientes.map((peluquero, i) => {
+      if (peluquero.eliminado) {
+        return null; // Skip rendering if 'eliminado' is true
+      }
 
-        return filteredClientes.map((peluquero, i) => {
-            if (peluquero.eliminado) {
-                return null; // Skip rendering if 'eliminado' is true
-            }
+      return (
+        <PeluquerosRow
+          key={peluquero.id}
+          peluquero={peluquero}
+          handleFieldUpdate={handleFieldUpdate}
+          handleDeletePeluquero={handleDeletePeluquero}
+        />
+      );
+    });
+  };
+  return (
+    <div>
+      <div>
+        <h3 className="titulos">Peluqueros</h3>
+        <hr className="hr" />
+      </div>
 
-            return (
-                <PeluquerosRow
-                    key={peluquero.id}
-                    peluquero={peluquero}
-                    handleFieldUpdate={handleFieldUpdate}
-                    handleDeletePeluquero={handleDeletePeluquero}
-                />
-            );
-        });
-    };
-    return (
-        <div>
-            <div>
-                <h3 className="titulos">Peluqueros</h3>
-                <hr className="hr" />
-            </div>
+      <div class="container">
+        <br />
+        <PeluqueroModal showModal={showModal} handleClose={handleModal} />
+        <Buscador action={handleModal} handleSearch={handleSearch} />
+        <table
+          className="table table-striped table-hover border-white"
+          style={{ border: "1px solid white" }}
+          id="myTable"
+        >
+          <thead>
+            <tr style={{ backgroundColor: "#B4D8E9" }}>
+              <th scope="col">Nombre</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">C.I.</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Direccion</th>
+              <th scope="col">Telefono</th>
+              <th scope="col">Especialidades</th> <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>{renderPeluqueros()}</tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
 
-            <div class="container">
-
-                <br />
-                <PeluqueroModal showModal={showModal} handleClose={handleModal} />
-                <Buscador action={handleModal} handleSearch={handleSearch} />
-                <table className="table table-striped table-hover border-white" style={{ border: '1px solid white' }} id="myTable">
-                    <thead>
-                        <tr style={{ backgroundColor: '#B4D8E9' }}>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">C.I.</th>
-                            <th scope="col">Correo</th>
-                            <th scope="col">Direccion</th>
-                            <th scope="col">Telefono</th>
-                            <th scope="col">Especialidades</th>  <th scope="col">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {renderPeluqueros()}
-                    </tbody>
-                </table>
-            </div>
-        </div >)
-}
-
-export default Peluquero
+export default Peluquero;
