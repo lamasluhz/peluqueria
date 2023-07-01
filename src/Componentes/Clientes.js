@@ -2,28 +2,24 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ClienteModal from "./ClienteModal";
 import Buscador from "./Buscador";
-import { Modal, Form, Button } from 'react-bootstrap';
+import { Modal, Form, Button } from "react-bootstrap";
 import ClienteRow from "./ClientesRow";
-import '../css/Estilos.css';
+import "../css/Estilos.css";
 
-const url = 'https://localhost:7137/api/Cliente/getCliente';
-
+const url = "https://localhost:7137/api/Cliente/getCliente";
 
 const Clientes = () => {
-
   const [clientes, setClientes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false); // Estado para el modal de confirmación
   const [selectedClienteId, setSelectedClienteId] = useState(null); // Estado para almacenar el ID del cliente seleccionado
 
-
-  const [searchQuery, setSearchQuery] = useState('');
-
+  const [searchQuery, setSearchQuery] = useState("");
 
   const headers = {
-    'accept': 'text/plain',
-    'Content-Type': 'application/json'
-  }
+    accept: "text/plain",
+    "Content-Type": "application/json",
+  };
   const handleModal = () => {
     console.log(showModal);
     setShowModal(!showModal);
@@ -34,11 +30,12 @@ const Clientes = () => {
   }, []);
 
   const obtenerClientes = () => {
-    axios.get(url)
-      .then(response => {
+    axios
+      .get(url)
+      .then((response) => {
         setClientes(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -46,7 +43,6 @@ const Clientes = () => {
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
-
 
   const handleDeleteCliente = (id) => {
     setSelectedClienteId(id); // Guardar el ID del cliente seleccionado
@@ -72,32 +68,39 @@ const Clientes = () => {
   };
 
   const handleFieldUpdate = (id, values) => {
-    axios.put(`https://localhost:7137/api/Cliente/${id}`,
-      values
-      // {
-      //   "id": 0,
-      //   "nombres": "string",
-      //   "apellidos": "string",
-      //   "correo": "string",
-      //   "telefono": "string",
-      //   "direccion": "string",
-      //   "cedula": "string",
-      //   "ruc": "string",
-      //   "eliminado": true
-      // }
-      , headers)
-      .then(response => {
+    axios
+      .put(
+        `https://localhost:7137/api/Cliente/${id}`,
+        values,
+        // {
+        //   "id": 0,
+        //   "nombres": "string",
+        //   "apellidos": "string",
+        //   "correo": "string",
+        //   "telefono": "string",
+        //   "direccion": "string",
+        //   "cedula": "string",
+        //   "ruc": "string",
+        //   "eliminado": true
+        // }
+        headers
+      )
+      .then((response) => {
         console.log(response);
         obtenerClientes(); // Refresh the client list after field update
       })
-      .catch(error => {
-        console.error('Error updating cliente:', error);
+      .catch((error) => {
+        console.error("Error updating cliente:", error);
       });
   };
 
   const renderClientes = () => {
-    const filteredClientes = clientes.filter(cliente =>
-      cliente.nombres.toLowerCase().includes(searchQuery.toLowerCase())
+    const lowerCaseSearchQuery = searchQuery.toLowerCase();
+    const filteredClientes = clientes.filter(
+      (cliente) =>
+        cliente.nombres.toLowerCase().includes(lowerCaseSearchQuery) ||
+        cliente.apellidos.toLowerCase().includes(lowerCaseSearchQuery) ||
+        cliente.cedula.toLowerCase().includes(lowerCaseSearchQuery)
     );
 
     return filteredClientes.map((cliente, i) => {
@@ -117,31 +120,35 @@ const Clientes = () => {
   };
 
   const handleClose = (data) => {
-    axios.post('https://localhost:7137/api/Cliente/postCliente', {
-      "id": 0,
-      "nombres": data,
-      "apellidos": "string",
-      "correo": "string",
-      "telefono": "string",
-      "direccion": "string",
-      "cedula": "string",
-      "ruc": "string",
-      "eliminado": true
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'accept': 'text/plain'
-      }
-
-    })
-      .then(response => {
+    axios
+      .post(
+        "https://localhost:7137/api/Cliente/postCliente",
+        {
+          id: 0,
+          nombres: data,
+          apellidos: "string",
+          correo: "string",
+          telefono: "string",
+          direccion: "string",
+          cedula: "string",
+          ruc: "string",
+          eliminado: true,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            accept: "text/plain",
+          },
+        }
+      )
+      .then((response) => {
         obtenerClientes(); // Refresh the client list after adding a new client
       })
-      .catch(error => {
-        console.error('Error adding cliente:', error);
+      .catch((error) => {
+        console.error("Error adding cliente:", error);
       });
     setShowModal(!showModal);
-  }
+  };
 
   return (
     <div>
@@ -159,8 +166,9 @@ const Clientes = () => {
         <div className="TablaBordes">
           <table className="table table-striped table-hover" id="myTable">
             <thead>
-              <tr style={{ backgroundColor: '#B4D8E9' }}>
+              <tr style={{ backgroundColor: "#B4D8E9" }}>
                 <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
                 <th scope="col">C.I.</th>
                 <th scope="col">Correo</th>
                 <th scope="col">Direccion</th>
@@ -169,9 +177,7 @@ const Clientes = () => {
                 <th scope="col">Otros</th>
               </tr>
             </thead>
-            <tbody>
-              {renderClientes()}
-            </tbody>
+            <tbody>{renderClientes()}</tbody>
           </table>
         </div>
         <Modal show={showConfirmationModal} onHide={handleCancelDeleteCliente}>
@@ -194,7 +200,5 @@ const Clientes = () => {
     </div>
   );
 };
-
-
 
 export default Clientes;
