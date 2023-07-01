@@ -4,7 +4,7 @@ import { BsSearch } from "react-icons/bs";
 import axios from "axios";
 import FacturaVenta from "./FacturaVenta";
 import ConvertirFecha from "./ConvertirFecha";
-import { format, isSameDay, parseISO } from "date-fns";
+import {isSameDay, parseISO } from "date-fns";
 import FacturaCompra from "./FacturaCompra";
 import FCaja from "./FCaja";
 

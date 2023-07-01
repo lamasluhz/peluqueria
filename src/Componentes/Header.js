@@ -67,7 +67,7 @@ const Header = (props) => {
                         <NavLink className="nav-link" to="/facturacion" style={estilo}> <img src='/factura.png' style={estiloImagen} />Caja</NavLink>
                         <NavDropdown title="Reportes" id="reportes-dropdown" style={estilo} >
                             <NavDropdown.Item href="/facturascobradas">Facturas</NavDropdown.Item>
-                            <NavDropdown.Item href="/reporte2">Reporte 2</NavDropdown.Item>
+                            <NavDropdown.Item href="/arqueocaja">Arqueo de Caja</NavDropdown.Item>
                             <NavDropdown.Item href="/reporte3">Reporte 3</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
