@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import '../css/Caja.css';
 import { Button, Modal } from "react-bootstrap";
 import axios from 'axios';
-
+import '../css/Estilos.css';
+import { IoLogoHtml5 } from "react-icons/io5";
 
 
 const FCaja = () => {
@@ -252,6 +253,31 @@ const FCaja = () => {
           <Modal.Title>Confirmación de Cierre de Caja</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {console.log(datosCajero)}
+          <h5>Inicio</h5>
+          <span style={{ paddingRight: '5px' }}>Fecha: {datosCajero.fechaApertura}</span>
+          <span style={{ marginLeft: '10px' }}>Hora: {datosCajero.horaInicio}</span>
+          <hr className="linea" />
+          <h5>Montos</h5>
+          <table className="mt-0 table table-striped table-hover">
+            <thead>
+              <tr style={{ backgroundColor: "#B4D8E9" }}>
+                <th>Inicial</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{datosCajero.montoApertura}</td>
+                <td>{sumaEntradas}</td>
+                <td>{sumaSalidas}</td>
+                <td>{totalCaja}</td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
           ¿Estás seguro que deseas cerrar la caja?
         </Modal.Body>
         <Modal.Footer>

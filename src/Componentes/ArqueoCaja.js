@@ -26,7 +26,7 @@ const ArqueoCaja = () => {
   return (
     <>
       <div>
-        <h3 className="titulos">Arqueo de Caja</h3>
+        <h3 className="titulos">Reportes de Cajas</h3>
         <hr className="hr" />
       </div>
 
@@ -84,13 +84,13 @@ const ArqueoCaja = () => {
                       <ConvertirFecha fecha={movimientos.caja.fechaInicio} />
                     </td>
                     <td>
-                      {movimientos.caja.horaInicio}hs
+                      {movimientos.caja.horaInicio} hs
                     </td>
                     <td>
                       <ConvertirFecha fecha={movimientos.caja.fechaFin} />
                     </td>
                     <td>
-                      {movimientos.caja.horaFin}hs
+                      {movimientos.caja.horaFin} hs
                     </td>
                     <td>{movimientos.caja.montoApertura}</td>
                     <td>{movimientos.movimientoTotalEntrada}</td>
