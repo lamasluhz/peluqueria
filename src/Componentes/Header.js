@@ -68,7 +68,7 @@ const Header = (props) => {
                         <NavDropdown title="Reportes" id="reportes-dropdown" style={estilo} >
                             <NavDropdown.Item href="/facturascobradas">Facturas</NavDropdown.Item>
                             <NavDropdown.Item href="/arqueocaja">Arqueo de Caja</NavDropdown.Item>
-                            <NavDropdown.Item href="/reporte3">Reporte 3</NavDropdown.Item>
+                            <NavDropdown.Item href="/masPedidos">Reporte 3</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                     <div style={{ borderLeft: '1px solid blue', paddingLeft: '20px' }}>

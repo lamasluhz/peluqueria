@@ -205,7 +205,7 @@ const VentaProductos = () => {
           <SuccessModal
             show={showSuccessModal}
             handleClose={() => setShowSuccessModal(false)}
-            message="Compra Confirmada"
+            message="Venta Confirmada"
           />
         </Col>
       </Row>
@@ -221,7 +221,7 @@ const VentaProductos = () => {
             <tr style={{ backgroundColor: '#B4D8E9' }}>
               <th>Nombre</th>
               <th>Detalles</th>
-              <th>Costo</th>
+              <th>Precio</th>
               <th></th>
             </tr>
           </thead>
@@ -248,7 +248,7 @@ const VentaProductos = () => {
               <tr style={{ backgroundColor: '#B4D8E9' }}>
                 <th>Nombre</th>
                 <th>Detalles</th>
-                <th>Costo</th>
+                <th>Precio</th>
                 <th>Cantidad</th>
                 <th>IVA 5%</th>
                 <th>Total</th>
