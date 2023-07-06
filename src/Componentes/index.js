@@ -22,3 +22,4 @@ export { default as VentasProductosServicios} from "./VentasProductosServicios";
 export {default as FacturasCobradas} from "./FacturasCobradas";
 export {default as ArqueoCaja} from "./ArqueoCaja";
 export {default as ReportesVentas} from "./ReporteVentas";
+export {default as Turnos} from "./Turnos";
