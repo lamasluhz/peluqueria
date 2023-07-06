@@ -123,7 +123,7 @@ namespace PeluqueriaWebApi.Controllers
 var nuevaFactura = new FacturaProveedore()
 {
     IdCompra = nuevaCompra.Id,
-     FechaEmision = DateTime.Today, // Establece la fecha de emisión como la fecha actual
+     FechaEmision = DateTime.Now, // Establece la fecha de emisión como la fecha actual
             IdMedioPago = 1,
             Estado = "Pendiente", // asignar el estado de la factura correspondiente
 };

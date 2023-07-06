@@ -282,68 +282,43 @@ public IActionResult ObtenerMovimientosCajaReportes()
         return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
     }
 }
+//f => f.FechaEmision.Date == fecha.Date
 
-// GET: api/MovimientosCaja/ventasDetalle/{fecha}
-[HttpGet("ventasDetalleEntrada/{fecha}")]
-public IActionResult ObtenerVentasDetallePorFecha(DateTime fecha)
-{
-    try
-    {
-        var facturas = _context.Facturas
-            .Include(f => f.IdVentaNavigation)
-                .ThenInclude(v => v.VentasDetalles)
-                    .ThenInclude(d => d.IdProductoNavigation)
-            .Where(f => f.FechaEmision.Date == fecha.Date)
-            .ToList();
 
-        var ventasDetalle = facturas
-            .SelectMany(f => f.IdVentaNavigation.VentasDetalles)
-            .Select(d => new
-            {
-                FacturaId = d.IdVenta,  // Cambia la propiedad a la que deseas acceder en lugar de FacturaId
-                ProductoNombre = d.IdProductoNavigation.Nombre,
-                Cantidad = d.Cantidad,
-                PrecioUnitario = d.PrecioUnitario,
-                SubTotal = d.SubTotal,
-                Iva = d.Iva
-            })
-            .ToList();
 
-        return Ok(ventasDetalle);
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
-    }
-}
-
-// GET: api/MovimientosCaja/ventasDetalleSalida/{fecha}
 [HttpGet("ventasDetalleSalida/{fecha}")]
 public IActionResult ObtenerVentasDetalleSalidaPorFecha(DateTime fecha)
 {
     try
     {
-        var facturasSalida = _context.FacturaProveedores
+        var ventasDetalleSalida = _context.FacturaProveedores
             .Where(f => f.FechaEmision.Date == fecha.Date && f.Estado == "Facturado")
             .Include(f => f.IdCompraNavigation)
                 .ThenInclude(c => c.DetallesCompras)
                     .ThenInclude(d => d.IdProductoNavigation)
-            .ToList();
-
-        var ventasDetalleSalida = facturasSalida
             .SelectMany(f => f.IdCompraNavigation.DetallesCompras)
-            .Select(d => new
+            .GroupBy(d => new { d.IdProductoNavigation.Nombre, d.PrecioUnitario })
+            .Select(g => new
             {
-                FacturaId = d.IdCompra,
-                ProductoNombre = d.IdProductoNavigation.Nombre,
-                Cantidad = d.Cantidad,
-                PrecioUnitario = d.PrecioUnitario,
-                SubTotal = d.SubTotal,
-                Iva = d.Iva
+                ProductoNombre = g.Key.Nombre,
+                Cantidad = g.Sum(d => d.Cantidad),
+                PrecioUnitario = g.Key.PrecioUnitario,
+                SubTotal = g.Sum(d => d.SubTotal),
+                Iva = g.Sum(d => d.Iva)
             })
             .ToList();
 
-        return Ok(ventasDetalleSalida);
+        decimal totalVentas = ventasDetalleSalida.Sum(v => v.SubTotal);
+        int totalCantidad = ventasDetalleSalida.Sum(v => v.Cantidad);
+
+        var resultado = new
+        {
+            VentasDetalleSalida = ventasDetalleSalida,
+            TotalVentas = totalVentas,
+            TotalCantidad = totalCantidad
+        };
+
+        return Ok(resultado);
     }
     catch (Exception ex)
     {
@@ -351,6 +326,64 @@ public IActionResult ObtenerVentasDetalleSalidaPorFecha(DateTime fecha)
     }
 }
 
+
+
+//////
+[HttpGet("ventasDetalleEntrada/{fecha}")]
+public IActionResult ObtenerVentasDetallePorFecha(DateTime fecha)
+{
+    try
+    {
+        var ventasDetalle = _context.Facturas
+            .Where(f => f.FechaEmision.Date == fecha.Date  && f.Estado == "Facturado")
+            .Include(f => f.IdVentaNavigation)
+                .ThenInclude(v => v.VentasDetalles)
+                    .ThenInclude(d => d.IdProductoNavigation)
+            .SelectMany(f => f.IdVentaNavigation.VentasDetalles)
+            .Select(d => new
+            {
+                ProductoId = d.IdProductoNavigation.IdTipoProducto,
+                ProductoNombre = d.IdProductoNavigation.Nombre,
+                PrecioUnitario = d.PrecioUnitario,
+                Cantidad = d.Cantidad,
+                SubTotal = d.SubTotal,
+                Iva = d.Iva,
+                Servicios = _context.Facturas
+                    .Where(f => f.Estado == "Facturado" && f.FechaEmision.Date.Equals(fecha.Date))
+                    .SelectMany(f => f.IdVentaNavigation.IdTurnoNavigation.DetallesTurnos)
+                    .Where(dt => dt.IdTipoServicioNavigation != null)
+                    .Select(dt => new
+                    {
+                        Cliente = dt.IdTurnoNavigation.IdClienteNavigation.IdPersonaNavigation.Nombres + " " + dt.IdTurnoNavigation.IdClienteNavigation.IdPersonaNavigation.Apellidos,
+                        Servicio = dt.IdTipoServicioNavigation.Descripcion,
+                        Costo = dt.IdTipoServicioNavigation.DecMonto,
+                    })
+                    .ToList()
+            })
+            .ToList();
+
+        // Calcular suma total de ventas
+        decimal totalVentas = ventasDetalle.Sum(v => v.SubTotal);
+
+        // Calcular suma total de costos de servicios
+       decimal totalCostosServicios = ventasDetalle.SelectMany(v => v.Servicios).Sum(s => s.Costo ?? 0);
+
+
+        var respuesta = new
+        {
+            VentasDetalle = ventasDetalle,
+            TotalVentas = totalVentas,
+            TotalCostosServicios = totalCostosServicios,
+            TotalGeneral =totalVentas + totalCostosServicios
+        };
+
+        return Ok(respuesta);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
 
     }
 }

@@ -125,6 +125,7 @@ namespace PeluqueriaWebApi.Controllers
                 // Actualizar el medio de pago de la factura y el estado 
                 factura.Estado = "Facturado";
                 factura.IdMedioPago = dto.IdMedioPago;
+                factura.FechaEmision= DateTime.Now;
                 _context.SaveChanges();
 
                 return Ok(); // Actualización exitosa
