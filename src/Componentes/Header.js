@@ -69,6 +69,8 @@ const Header = (props) => {
                             <NavDropdown.Item href="/facturascobradas">Facturas</NavDropdown.Item>
                             <NavDropdown.Item href="/arqueocaja">Cajas</NavDropdown.Item>
                             <NavDropdown.Item href="/masPedidos">Servicios Más Pedidos</NavDropdown.Item>
+                            <NavDropdown.Item href="/reportesVentas">Ventas</NavDropdown.Item>
+
                         </NavDropdown>
                     </Nav>
                     <div style={{ borderLeft: '1px solid blue', paddingLeft: '20px' }}>
