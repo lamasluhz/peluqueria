@@ -263,7 +263,7 @@ public IActionResult ObtenerMovimientosCajaReportes()
                 FechaInicio = caja.FechaApertura.ToString("yyyy-MM-dd"),
                 FechaFin = caja.FechaCierre?.ToString("yyyy-MM-dd"),
                 MontoApertura = caja.MontoApertura,
-                MontoCierre = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto) - movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto)
+                MontoCierre = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto)+caja.MontoApertura  - movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto)
             },
             Movimientos = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja).Select(m => new
             {
@@ -272,7 +272,7 @@ public IActionResult ObtenerMovimientosCajaReportes()
             }).ToList(),
             MovimientoTotalEntrada = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto),
             MovimientoTotalSalida = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto),
-            Diferencia = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto) - movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto)
+            Diferencia = movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Entrada").Sum(m => m.Monto)+caja.MontoApertura - movimientosCajas.Where(m => m.IdCaja == caja.IdCaja && m.TipoMovimiento == "Salida").Sum(m => m.Monto)
         });
 
         return Ok(resultado);
@@ -283,11 +283,74 @@ public IActionResult ObtenerMovimientosCajaReportes()
     }
 }
 
+// GET: api/MovimientosCaja/ventasDetalle/{fecha}
+[HttpGet("ventasDetalleEntrada/{fecha}")]
+public IActionResult ObtenerVentasDetallePorFecha(DateTime fecha)
+{
+    try
+    {
+        var facturas = _context.Facturas
+            .Include(f => f.IdVentaNavigation)
+                .ThenInclude(v => v.VentasDetalles)
+                    .ThenInclude(d => d.IdProductoNavigation)
+            .Where(f => f.FechaEmision.Date == fecha.Date)
+            .ToList();
+
+        var ventasDetalle = facturas
+            .SelectMany(f => f.IdVentaNavigation.VentasDetalles)
+            .Select(d => new
+            {
+                FacturaId = d.IdVenta,  // Cambia la propiedad a la que deseas acceder en lugar de FacturaId
+                ProductoNombre = d.IdProductoNavigation.Nombre,
+                Cantidad = d.Cantidad,
+                PrecioUnitario = d.PrecioUnitario,
+                SubTotal = d.SubTotal,
+                Iva = d.Iva
+            })
+            .ToList();
+
+        return Ok(ventasDetalle);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
+
+// GET: api/MovimientosCaja/ventasDetalleSalida/{fecha}
+[HttpGet("ventasDetalleSalida/{fecha}")]
+public IActionResult ObtenerVentasDetalleSalidaPorFecha(DateTime fecha)
+{
+    try
+    {
+        var facturasSalida = _context.FacturaProveedores
+            .Where(f => f.FechaEmision.Date == fecha.Date && f.Estado == "Facturado")
+            .Include(f => f.IdCompraNavigation)
+                .ThenInclude(c => c.DetallesCompras)
+                    .ThenInclude(d => d.IdProductoNavigation)
+            .ToList();
+
+        var ventasDetalleSalida = facturasSalida
+            .SelectMany(f => f.IdCompraNavigation.DetallesCompras)
+            .Select(d => new
+            {
+                FacturaId = d.IdCompra,
+                ProductoNombre = d.IdProductoNavigation.Nombre,
+                Cantidad = d.Cantidad,
+                PrecioUnitario = d.PrecioUnitario,
+                SubTotal = d.SubTotal,
+                Iva = d.Iva
+            })
+            .ToList();
+
+        return Ok(ventasDetalleSalida);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.InnerException?.Message ?? ex.Message);
+    }
+}
 
 
     }
 }
- // get de facturas ventasfacturadas 
- //factura compras ya facturadas 
- // los pendientes de ambos 
-
