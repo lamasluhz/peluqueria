@@ -27,6 +27,8 @@ import {
   FacturasCobradas,
   ArqueoCaja,
   ReportesVentas,
+  Turnos,
+  ReportesCompras,
   
 } from "./Componentes";
 import MasPedidos from "./Componentes/MasPedidos";
@@ -65,6 +67,9 @@ const App = () => {
         <Route path="/arqueocaja" element={<ArqueoCaja />} />
         <Route path="/reportesVentas" element={<ReportesVentas />} />
         
+        <Route path="/turnos" element={<Turnos/>} />
+        <Route path="/reportesCompras" element={<ReportesCompras/>} />
+
 
       </Routes>: null}
     </Router> 
